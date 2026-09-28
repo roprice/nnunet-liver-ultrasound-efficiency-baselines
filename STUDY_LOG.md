@@ -13,7 +13,7 @@ The baselines don't need to establish clinical value as long as they establish r
 - data-feasible: can detection AI be trained and tested on a realistic quantity of annotated imagery data?
 - low cost to train, primarily in terms of GPU compute
 - low-cognitive cost: easily reproduced and understood, even for those without clinical or ML expertise
-- low cost to deploy and run. Does it fit on consumer-grade laptops and phone and can it run inference there cheaply?
+- low cost to deploy and run. Does it fit on consumer-grade laptops and phones; can it run inference there cheaply?
 
 For the reasons above, the imaging modality must be ultrasound, the lowest-cost and most widely available form of medical imaging. Furthermore, it means B-mode ultrasound, as on portable handheld "POCUS" ultrasound devices. No POCUS dataset being publicly available for research, however, the study's training corpus will be the Annotated Liver Ultrasound (AUL) images dataset, consisting of B-Mode imagery, a mix of malignant-mass, benign-mass and normal livers. This dataset has been been used in several published studies though none concerned with efficiency.
 
