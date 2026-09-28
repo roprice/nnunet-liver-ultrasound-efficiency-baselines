@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# compressed files
+*.zip
+*.tar
+
+# nnU-Net stuff
+nnUNet_results
+nnUNet_raw
+nnUNet_preprocessed
+
+# archives
+archives
+
+# python environmnet
+.venv311
+
+# notes
+NOTES.md
