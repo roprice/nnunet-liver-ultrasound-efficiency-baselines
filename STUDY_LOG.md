@@ -6,10 +6,11 @@
 
 The larger interest motivating the study is low-cost, small-footprint, accessible cancer screening and monitoring. That interest will be bounded in this study by liver cancer in particular, a major and growing concern in many regions of the world. 
 
-To that end, the primary goal of this study is to establish efficient baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is an interest in detecting smaller masses, let's say below 2 centimeters (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
+To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is an interest in detecting smaller masses, let's say below 2 centimeters (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
 
 The baselines don't need to establish clinical value as long as they establish research value. Efficiency doesn't just mean compute, though that's part of it. It means low-cost and broadly accessible in every way that matters: 
 - low development effort: reasonable to plan, research, design, tune, setup, and run
+- data feasibility: can detection AI be trained on a feasible quantity of annotated imagery data?
 - low cost to train, primarily in terms of GPU compute
 - low-cognitive cost: easily reproduced and understood, even for those without clinical or ML expertise
 - low cost to deploy and run. Can it run inference cheaply on consumer hardware?
