@@ -6,7 +6,7 @@
 
 The larger interest motivating the study is low-cost, small-footprint, accessible cancer screening and monitoring. That interest will be bounded in this study by liver cancer in particular, a major and growing concern in many regions of the world. 
 
-To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is an interest in detecting smaller masses, let's say below 2 centimeters (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
+To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is detecting relatively small masses, let's say below 2 centimeters, that roughly correlated to early stage detection (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
 
 The baselines don't need to establish clinical value as long as they establish research value. Efficiency doesn't just mean compute, though that's part of it. It means low-cost and broadly accessible in every way that matters: 
 - low development effort: reasonable to plan, research, design, tune, setup, and run
@@ -19,9 +19,7 @@ For the reasons above, the imaging modality must be ultrasound, the lowest-cost 
 
 On the technology side, the deep learning network architecture used to train models on B-mode ultrasound must be open source, relatively simple, segmentation-based, and 2D-capable. Based on those premises, the study will use a simple 2D U-Net. And based on the importance of low development effort, the study will adopt the U-Net framework nnU-Net, using its PlainConvUNet 2D network architecture. The study will leverage and adhere to nnU-Net defaults, except when in conflict with the goal of efficiency (eg trying to establish a more economical epoch budget than nnU-Net's 1000 epoch default).
 
-The study will evaluate the performance of trained models across a broad range of detection metrics meant to correlate to either triage screening or monitoring clinical uses cases (or both). We will also report and provide analysis on segmentation. Our expectation is that 5 of the 8 metrics we report will correlate to the study's primary use case concern of triage screening, with the other 3 better correlated to monitoring. 
-
-That distinction will be left to readers however, and the study will be too data-limited in any case to establish clinical relevance; the goal is research-relevant baselines.
+The study will evaluate the performance of trained models across a broad range of detection metrics meant to correlate to either triage screening or monitoring clinical uses cases (or both). We will also report and provide analysis on segmentation. 5 of the 8 metrics we will report correlate triage screening, the rest correlate to monitoring. Ultimately however, that's a clinical distinction the study will leave up to readers.
 
 To provide efficiency insight addressing the commonly cited concern of the limited availability of labelled data, the study will determine optimal training (epoch budget) against baselines to be specified later, report results across a sweep of data scales, detail model footprints, and report both GPU and CPU performance on training and, in particular, inference.
 
