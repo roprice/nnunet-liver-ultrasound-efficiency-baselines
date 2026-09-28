@@ -10,9 +10,9 @@ To that end, the primary goal of this study is to establish efficient baselines 
 
 The baselines don't need to establish clinical value as long as they establish research value. Efficiency doesn't just mean compute, though that's part of it. It means low-cost and broadly accessible in every dimension: 
 - low development effort: reasonable to plan, research, design, tune, setup, and run
-- easy and intuitive to reproduce with out ML or clinical expertise
-- low cost to compute, especially on rented GPU instances 
-- post training, it means easily reproduced and understood, easy to understand to those without clinical or machine learning expertise, and most importantly, low cost to run. Can it run inference cheaply on consumer hardware?
+- low cost to train, primarily in terms of GPU compute
+- low-cognitive cost: easily reproduced and understood, even for those without clinical or machine learning expertise
+- low cost to deploy and run. Can it run inference cheaply on consumer hardware?
 
 For the reasons above, the imaging modality must be ultrasound, the lowest-cost and most broadly available form of medical imaging. Furthermore, low quality, B-mode ultrasound, loosely corresponding to cheaper and more portable handheld "POCUS" ultrasound devices is preferable. The study will use the Annotated Liver Ultrasound (AUL) images dataset as the training corpus.
 
