@@ -4,7 +4,7 @@
 
 ## 2026-09-27
 
-The larger interest motivating the study is low-cost, small-footprint, accessible cancer screening and monitoring. That interest will be bounded in this study by liver cancer in particular, a major and growing concern in many regions of the world. 
+The larger interest motivating the study is affordable, accessible cancer screening and monitoring. That interest will be bounded in this study by liver cancer in particular, a major and growing concern in many regions of the world. 
 
 To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is detecting relatively small masses, let's say below 2 centimeters, corresponding to early stage detection (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
 
@@ -16,7 +16,7 @@ Efficiency means accessible and low-cost in these ways:
 - Development-effort cost: can the needed research, planning, design, tuning, setup, and execution - of the entire training pipeline - fit into a modest budget?
 - Data acquisition cost: can detection AI be trained and tested on a realistic quantity of labelled and annotated imagery?
 - Cognition cost: can an AI detection training project be broadly understood by a range of stakeholders, including those without clinical or ML expertise
-- Verification cost: how easy is it to reproduce the entire study and thereby verify its results? 
+- Verification cost: how easy and affordable is it to reproduce the entire study and thereby verify its results? 
 - Deployment cost. Does it fit on consumer-grade laptops and phones; can it run inference on such devices cheaply, just like in a real-world patient care setting?
 
 To meet these concerns, the imaging modality must be ultrasound, the lowest-cost and most widely available form of medical imaging. Furthermore, it means B-mode ultrasound, as on portable handheld "POCUS" ultrasound devices. No POCUS dataset being publicly available for research, however, the study's training corpus will be the Annotated Liver Ultrasound (AUL) images dataset, consisting of B-Mode imagery, a mix of malignant-mass, benign-mass and normal livers. This dataset has been been used in several published studies though none concerned with efficiency.
