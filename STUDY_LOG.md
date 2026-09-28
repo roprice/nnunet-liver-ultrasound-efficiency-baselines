@@ -8,12 +8,12 @@ The larger interest motivating the study is low-cost, small-footprint, accessibl
 
 To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is detecting relatively small masses, let's say below 2 centimeters, corresponding to early stage detection (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
 
-The baselines don't need to establish clinical value as long as they establish research value. Efficiency doesn't just mean compute, though that's part of it. It means low-cost and broadly accessible in every way that matters: 
-- low development effort: reasonable to plan, research, design, tune, setup, and run
-- data feasibility: can detection AI be trained on a feasible quantity of annotated imagery data?
+The baselines don't need to establish clinical value as long as they establish research value. Efficiency means accessible and low-cost in every way that matters: 
+- low development effort: reasonable to research, plan, design, tune, setup, and run the entire training pipeline
+- data-feasible: can detection AI be trained and tested on a realistic quantity of annotated imagery data?
 - low cost to train, primarily in terms of GPU compute
 - low-cognitive cost: easily reproduced and understood, even for those without clinical or ML expertise
-- low cost to deploy and run. Can it run inference cheaply on consumer hardware?
+- low cost to deploy and run. Does it fit on consumer-grade laptops and phone and can it run inference there cheaply?
 
 For the reasons above, the imaging modality must be ultrasound, the lowest-cost and most widely available form of medical imaging. Furthermore, it means B-mode ultrasound, as on portable handheld "POCUS" ultrasound devices. No POCUS dataset being publicly available for research, however, the study's training corpus will be the Annotated Liver Ultrasound (AUL) images dataset, consisting of B-Mode imagery, a mix of malignant-mass, benign-mass and normal livers. This dataset has been been used in several published studies though none concerned with efficiency.
 
