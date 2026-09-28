@@ -8,14 +8,18 @@ The larger interest motivating the study is low-cost, small-footprint, accessibl
 
 To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is detecting relatively small masses, let's say below 2 centimeters, corresponding to early stage detection (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
 
-The baselines don't need to establish clinical value as long as they establish research value. Efficiency means accessible and low-cost in every way that matters: 
-- low development effort: reasonable to research, plan, design, tune, setup, and run the entire training pipeline
-- data-feasible: can detection AI be trained and tested on a realistic quantity of annotated imagery data?
-- low cost to train, primarily in terms of GPU compute
-- low-cognitive cost: easily reproduced and understood, even for those without clinical or ML expertise
-- low cost to deploy and run. Does it fit on consumer-grade laptops and phones; can it run inference there cheaply?
+The baselines don't need to, and probably won't, establish clinical value. The will establish research value into the efficient creation of malignant liver-mass detection AI. 
 
-For the reasons above, the imaging modality must be ultrasound, the lowest-cost and most widely available form of medical imaging. Furthermore, it means B-mode ultrasound, as on portable handheld "POCUS" ultrasound devices. No POCUS dataset being publicly available for research, however, the study's training corpus will be the Annotated Liver Ultrasound (AUL) images dataset, consisting of B-Mode imagery, a mix of malignant-mass, benign-mass and normal livers. This dataset has been been used in several published studies though none concerned with efficiency.
+Efficiency means accessible and low-cost in these ways:
+
+- Training cost, primarily in terms of GPU compute; can it be trained cheaply - where and how exactly?
+- Development-effort cost: can the needed research, planning, design, tuning, setup, and execution - of the entire training pipeline - fit into a modest budget?
+- Data acquisition cost: can detection AI be trained and tested on a realistic quantity of labelled and annotated imagery?
+- Cognition cost: can an AI detection training project be broadly understood by a range of stakeholders, including those without clinical or ML expertise
+- Verification cost: how easy is it to reproduce the entire study and thereby verify its results? 
+- Deployment cost. Does it fit on consumer-grade laptops and phones; can it run inference on such devices cheaply, just like in a real-world patient care setting?
+
+To meet these concerns, the imaging modality must be ultrasound, the lowest-cost and most widely available form of medical imaging. Furthermore, it means B-mode ultrasound, as on portable handheld "POCUS" ultrasound devices. No POCUS dataset being publicly available for research, however, the study's training corpus will be the Annotated Liver Ultrasound (AUL) images dataset, consisting of B-Mode imagery, a mix of malignant-mass, benign-mass and normal livers. This dataset has been been used in several published studies though none concerned with efficiency.
 
 On the technology side, the deep learning network architecture used to train models on B-mode ultrasound must be open source, relatively simple, segmentation-based, and 2D-capable. Based on those premises, the study will use a simple 2D U-Net. And based on the importance of low development effort, the study will adopt the U-Net framework nnU-Net, using its PlainConvUNet 2D network architecture. The study will leverage and adhere to nnU-Net defaults, except when in conflict with the goal of efficiency (eg trying to establish a more economical epoch budget than nnU-Net's 1000 epoch default).
 
