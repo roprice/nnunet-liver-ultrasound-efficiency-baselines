@@ -4,9 +4,9 @@
 
 ## 2026-09-27
 
-The larger interest motivating the study is affordable, accessible cancer screening and monitoring. That interest will be bounded in this study by liver cancer in particular, a major and growing concern in many regions of the world. 
+The larger interest motivating the study is affordable, accessible cancer screening and monitoring. This study focuses that interest on liver cancer, a major and growing concern in many regions of the world. 
 
-To that end, the primary goal of this study is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is detecting relatively small masses, let's say below 2 centimeters, corresponding to early stage detection (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
+The study's primary goal is to establish resource-efficiency baselines for training AI to perform triage-level detection of malignant masses in the liver. Implicit in 'triage-level detection' is detecting relatively small masses, let's say below 2 centimeters, corresponding to early stage detection (Reig et al 2026). The secondary goal is to establish corresponding baselines for monitoring.
 
 Efficiency means accessible and low-cost in several ways:
 
