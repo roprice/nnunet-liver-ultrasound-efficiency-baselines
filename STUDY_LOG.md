@@ -23,6 +23,6 @@ On the technology side, the deep learning network architecture used to train mod
 
 The study will evaluate the performance of trained models across a broad range of detection metrics meant to correlate to either triage screening or monitoring clinical uses cases (or both). We will also report and provide analysis on segmentation. Many of the 8 metrics we'll report could be proxies for triage screening and have been used as such in published studies. Others may better correlate to monitoring. Ultimately those are clinical distinctions that the study will leave up to readers.
 
-To provide efficiency insight addressing the commonly cited concern of the limited availability of labelled data, the study will determine optimal training (epoch budget) against baselines to be specified later, report results across a sweep of data scales, detail model footprints, and report both GPU and CPU performance on training and, in particular, inference.
+To address the common concern of the limited availability of labelled data, the study will report and evaluate results across a sweep of training-dataset sizes. Other analysis will include determining optimal training length (epoch budget), investigating ideal noise floors for ultrasound speckle, detailing model footprints, and wall-clock measuring GPU and CPU performance on training and especially on inference.
 
 Estimated hours of research and experimentation preceding and inclusive of this log entry: 80.
