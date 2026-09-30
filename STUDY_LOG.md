@@ -1,6 +1,129 @@
 ## Study log
 
+## 2026-09-29
 
+### Morning
+
+Organizing the layout of the study to be intuitive visually and support the narrative of the study as follows:
+
+`
+analysis/
+  training_efficiency/
+  data_efficiency/
+  inference_efficiency/
+  external_testing/
+  study_reports/
+experiment_execution/
+  training_efficiency/
+    custom_trainers/
+  data_efficiency/
+    custom_trainers/  
+  inference_efficiency/
+    custom_trainers/  
+  external_testing/
+    custom_trainers/  
+logs/
+  training_efficiency/
+  data_efficiency/
+  inference_efficiency/
+  external_testing/`
+
+
+
+
+
+
+## 2026-09-28
+
+
+### Morning
+
+#### Data scaling experiment
+
+The data scaling experiment will train models at various training-set sizes across the nnUnet default of 5 folds. Thus the study will use an 80/20 train test-split (588/147).
+
+The planned data scales are 100%, 50%, 25%, and 12.5%: 588 images, 294 images, 147 images, and 74 images. 
+
+Smaller sizes will be nested subsets of larger ones and keep the proportions of AUL:
+
+- 435 malignant (59.2%)
+- 200 benign (27.2%)
+- 100 normal (13.6%)
+
+We may add a smaller 6.25% (37 images) size if it seems valuable.
+
+The 588/147 split was also used on AUL in Tupper & Gagné's 2025 augmentation study, letting us ground results in prior research and make comparisons.
+
+The training budget of the data scaling experiment will be determined by a preliminary experiment.
+
+#### Detection metrics
+
+The study will measure:
+- presence-based detection 
+- overlap based detection with an IoU>0.0 
+- overlap based detection with an IoU>0.2
+- overlap based detection with an IoU>0.5
+- centroid within 0.25x GT equivalent diameter
+- centroid within 0.5x GT equivalent diameter
+- centroid within 1.0x GT equivalent diameter
+
+While the study will evaluate detection of both malignant and benign masses, the focus is on malignant masses. 
+
+Of these 7, our working assumption is that these three to be most closely correlated to triage-level detection:
+
+- presence-based detection 
+- overlap based detection with an IoU>0.0 
+- centroid within 1.0x GT equivalent diameter
+
+Of these, we consider overlap-based detection with an IoU>0.0 to be the dedicated triage metric, as the most permissive metric to incorporate localization and second most permissive triage-level metric overall
+
+
+#### Training budget experiment
+
+The training budget experiment will train on all 588 images to the nnUnet default of 1000 epochs across five folds, while saving internal checkpoints at these epochs: 25, 50, 75, 100, 150, 300, 500, 750. 
+
+Each internal checkpoint will be compared against one another and against the final budget. 
+
+Training budget selection will account for three factors: 
+- Detection rate of the overlap IoU>0.0 detection metric on malignant masses*
+- Training cost; larger training costs will be penalized
+- Learning rate. The greater the learning rate of a checkpoint, the worse it can perform at detection
+
+Today we'll register the selection criteria as follows: the winning budget is the smallest one across seeds whose detection rates comes within a 0.03 of the highest one.
+
+Why not train separate runs at varying epoch budgets to compare fully annealed final epochs against one another?  Accounting for learning rate discrepancies nets us a comparable and more efficient methodology. In any case, either way incorporates a gut call on the value of training cost in determining the winner.
+
+
+#### False positives
+
+False positives are important but will suffer from lack of data. The 588-image training-set will include just 80 normals and 74-image training-set 10. For both, the held out false positives will be 20, giving us a fairly large confidence interval.
+
+Still we will evaluate each detection metric against its corresponding false positives.
+
+Because the AUL dataset has exactly one patient per image, all false positive rates are effectively case-level, as opposed to lesion level.
+
+
+#### Noise floor
+
+To elimate speckle-driven small predictions, we will use the training budget experiment to set a noise floor that is as high as possible without causing malignant-mass detection misses across all 7 metrics against the 147-image held out test set. 
+
+Because AUL has no physical calibration, and because its images vary greatly in size and composition, we'll use a relative metric (against the total image size). We'll test the following noise-floor sizes: 0.0, 0.005, 0.01,  0.015, 0.02,  0.025, 0.03,  0.035, 0.04, 0.045, and 0.05.
+
+#### External validation
+
+After concluding the training budget experiment, data scaling experiment, CPU predictions experiment, and any ablations studies, we'll also perform an external validation experiment against another liver ultrasound dataset: SMC-LUD. SMC-LUD contains 5,385  2D B-mode liver ultrasound images from 1,021 patients - 2,716 are HCC and the other 2,669 are hemangioma. It has no normals and no  segmentation annotations, only pathology classification. This will allow us to measure:
+
+- Malignant-mass detection rate
+- Benign-mass detection rate
+- Combined-mass detection rate
+
+Because we don't have annotations in SMC-LUD, the only detection view we can assess is presence-based detection.
+
+#### Network architecture
+
+We will run the study on PlainConvUNet 2D, as opposed to the new nnUNet architecture Resenc. Most literature and published benchmarks about Resenc concern 3D. Resenc M 3D, the lowest-cost tier of Resenc in terms of compute, appears to have a small performance edge over PlainConv in large sizes. There's no evidence one way or the other of a performance benefit with either 2D or with smaller training size models. Meanwhile, there's direct evidence that Resenc incurs greater inference cost (https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/resenc_presets.md); thus it is off the table for this study.
+
+Estimated development effort: 8
 
 ## 2026-09-27
 
@@ -23,6 +146,6 @@ On the technology side, the deep learning network architecture used to train mod
 
 The study will evaluate the performance of trained models across a broad range of detection metrics meant to correlate to either triage screening or monitoring clinical uses cases (or both). We will also report and provide analysis on segmentation. Many of the 8 metrics we'll report could be proxies for triage screening and have been used as such in published studies. Others may better correlate to monitoring. Ultimately those are clinical distinctions that the study will leave up to readers.
 
-To address the common concern of the limited availability of labelled data, the study will report and evaluate results across a sweep of training-dataset sizes. Other analysis will include determining optimal training length (epoch budget), investigating ideal noise floors for ultrasound speckle, detailing model footprints, and wall-clock measuring GPU and CPU performance on training and especially on inference.
+To address the common concern of the limited availability of labelled data, the study will report and evaluate results across a sweep of training-dataset sizes. Other analysis will include determining optimal training length (epoch budget), investigating ideal noise floors for ultrasound speckle, detailing model footprints, and wall-clock measuring GPU and CPU performance on training and especially on inference. These may call for separate experiments within the study.
 
-Estimated hours of research and experimentation preceding and inclusive of this log entry: 80.
+Estimated development effort: 80, including health, clinical, and technical research and experimentation preceding and inclusive of this log entry
