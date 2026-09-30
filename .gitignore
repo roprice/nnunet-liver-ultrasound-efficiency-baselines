@@ -20,5 +20,5 @@ archives
 # python environmnet
 .venv311
 
-# notes
-NOTES.md
+# private
+private/
