@@ -2,7 +2,7 @@
 
 Rehearse the [full training-efficiency runbook](training_efficiency_runbook.md) without running five 1,000-epoch folds. This run trains fold 0 for two epochs, saves an epoch-1 milestone plus nnU-Net's final and best checkpoints, predicts on all 147 test images from epoch 1 and final, and runs both final and best inference benchmarks. It then verifies the logs, downloads the entire dataset and results, checks the transferred files, and analyzes the downloaded predictions. No full-run training is started.
 
-Use a fresh instance or fresh output directories. The runner refuses existing `smoke_test` output; don't delete previous results to make room for another attempt without first retaining them. If setup is already complete on the same instance, do not repeat steps 3–9 below: step 3 would overwrite the existing GPU event log. The dry run produces the same kinds of evidence as the full run, not five folds or 1,000-epoch measurements.
+Use a fresh instance or fresh output directories. The runner refuses existing `dryrun` output; don't delete previous results to make room for another attempt without first retaining them. If setup is already complete on the same instance, do not repeat steps 3–9 of the full runbook: step 3 would overwrite the existing GPU event log. The dry run produces the same kinds of evidence as the full run, not five folds or 1,000-epoch measurements.
 
 ## 1. Set up the GPU server
 
@@ -21,10 +21,10 @@ Inside tmux, from the repository root, run this entire block. The commands times
 ```sh
 . "$HOME/.venv/bin/activate"
 rm -f dryrun_exit_status.txt
-sh experiment_logs/training_efficiency/record_event.sh smoke_started
-if bash -o pipefail -c 'bash experiments/01_training_efficiency/training_efficiency_smoke_test_runner.sh 2>&1 | tee logs/training_efficiency_smoke_test.log'; then
+sh experiment_logs/training_efficiency/record_event.sh dryrun_started
+if bash -o pipefail -c 'bash experiments/01_training_efficiency/training_efficiency_dryrun_runner.sh 2>&1 | tee logs/training_efficiency_dryrun.log'; then
   RUN_STATUS=0
-  sh experiment_logs/training_efficiency/record_event.sh smoke_complete
+  sh experiment_logs/training_efficiency/record_event.sh dryrun_complete
 else
   RUN_STATUS=$?
 fi
@@ -32,9 +32,9 @@ printf '%s\n' "$RUN_STATUS" > dryrun_exit_status.txt.tmp
 mv dryrun_exit_status.txt.tmp dryrun_exit_status.txt
 ```
 
-Detach without stopping work with `Ctrl+b` then `d`. Reattach with `tmux attach -t training_dryrun`, or inspect `logs/training_efficiency_smoke_test.log` from another SSH session. The success message must say `Smoke test passed`. A nonzero `dryrun_exit_status.txt` means stop here and inspect the log; do not proceed to download or delete the GPU.
+Detach without stopping work with `Ctrl+b` then `d`. Reattach with `tmux attach -t training_dryrun`, or inspect `logs/training_efficiency_dryrun.log` from another SSH session. The success message must say `Dry run passed`. A nonzero `dryrun_exit_status.txt` means stop here and inspect the log; do not proceed to download or delete the GPU.
 
-## 3. Verify and close the GPU recording
+## 3. Verify the GPU recording
 
 After the short experiment finishes, run this block from the repository root on the GPU server. The short-run launcher already checks checkpoint contents, 294 predictions (147 each for epoch 1 and final), and both final and best benchmarks. This also checks that the supporting evidence was recorded:
 
@@ -45,10 +45,10 @@ import json
 from pathlib import Path
 
 repo = Path.cwd()
-logs = repo / 'logs/01_training_efficiency_smoke_test'
+logs = repo / 'logs/01_training_efficiency_dryrun'
 raw = Path.home() / 'nnUNet_raw/Dataset001_AUL'
-preprocessed = Path.home() / 'nnUNet_preprocessed/smoke_test/Dataset001_AUL'
-results = Path.home() / 'nnUNet_results/smoke_test'
+preprocessed = Path.home() / 'nnUNet_preprocessed/dryrun/Dataset001_AUL'
+results = Path.home() / 'nnUNet_results/dryrun'
 model = results / 'Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_0'
 
 def require_file(path):
@@ -56,8 +56,8 @@ def require_file(path):
 
 require_file(repo / 'dryrun_exit_status.txt')
 assert (repo / 'dryrun_exit_status.txt').read_text().strip() == '0'
-require_file(repo / 'logs/training_efficiency_smoke_test.log')
-assert 'Smoke test passed:' in (repo / 'logs/training_efficiency_smoke_test.log').read_text()
+require_file(repo / 'logs/training_efficiency_dryrun.log')
+assert 'Dry run passed:' in (repo / 'logs/training_efficiency_dryrun.log').read_text()
 for name in ('gpu_monitor_instance.csv',):
     require_file(repo / 'logs/01_training_efficiency' / name)
 for name in ('run_settings.txt', 'gpu_monitor_fold0.csv', 'training_times.csv',
@@ -95,10 +95,12 @@ for kind in ('inference', 'inference_best'):
     masks = directory / 'predictions_cuda_seed42_fold0_repeat1'
     assert {path.name for path in masks.glob('*.png')} == cases, masks
 events = list(csv.DictReader((repo / 'experiment_logs/training_efficiency/gpu_events.csv').open()))
-assert {'recording_started', 'setup_complete', 'smoke_started', 'smoke_complete'} <= {row['event'] for row in events}
+assert {'recording_started', 'setup_complete', 'dryrun_started', 'dryrun_complete'} <= {row['event'] for row in events}
 print('Dry run verified: checkpoints, predictions, benchmark masks, timings, GPU monitoring, and metadata.')
 PY
 ```
+
+## 4. Close the GPU recording
 
 Stop recording after verification, and calculate the same instance-level cost estimate as the full runbook. These commands write the event and summary files; no values are entered by hand:
 
@@ -122,12 +124,12 @@ print(summary, end='')
 PY
 ```
 
-## 4. Download and check the complete copy
+## 5. Download the complete copy
 
-On the **local computer**, set `GPU_SSH` to the actual GPU login (for example `root@65.109.75.2`). Choose a new backup directory. The same four source trees as the full-run transfer are copied with `rsync -a`; do not use the full-run remote controller's `finish` command, which requires five folds and deletes the GPU.
+On the **local computer**, replace `YOUR_GPU_IP` with the current GPU server's IP address. Choose a new backup directory. The same four source trees as the full-run transfer are copied with `rsync -a`; do not use the full-run remote controller's `finish` command, which requires five folds and deletes the GPU.
 
 ```sh
-GPU_SSH=root@65.109.75.2
+GPU_SSH='root@YOUR_GPU_IP'
 BACKUP="$HOME/training_efficiency_dryrun_backup"
 test ! -e "$BACKUP" || { echo "Backup destination already exists: $BACKUP" >&2; exit 1; }
 mkdir -p "$BACKUP"
@@ -142,9 +144,13 @@ for name in repo nnUNet_raw nnUNet_preprocessed nnUNet_results; do
 done
 ```
 
-Check every copied file against the server using SHA-256. Save the inventory program outside the copied trees so it cannot change the files being checked:
+## 6. Check the downloaded files
+
+Check every copied file against the server using SHA-256. Set `GPU_SSH` to the address used in step 5; these shell variables must be set again in a new terminal. Save the inventory program outside the copied trees so it cannot change the files being checked:
 
 ```sh
+GPU_SSH='root@YOUR_GPU_IP'
+BACKUP="$HOME/training_efficiency_dryrun_backup"
 cat > "$BACKUP/sha256_inventory.py" <<'PY'
 import hashlib
 from pathlib import Path
@@ -173,13 +179,14 @@ python3 "$BACKUP/sha256_inventory.py" "$BACKUP/repo" "$BACKUP" > "$BACKUP/local_
 diff -u "$BACKUP/remote_sha256_manifest.txt" "$BACKUP/local_sha256_manifest.txt"
 ```
 
-`diff` must produce no output. Do not delete the GPU until the copy and the next step both pass. The complete repository, source archives, raw labels, preprocessed data, results, events, and GPU logs are now in the backup.
+`diff` must produce no output. Do not delete the GPU until the copy and step 7 both pass. The complete repository, source archives, raw labels, preprocessed data, results, events, and GPU logs are now in the backup.
 
-## 5. Analyze the downloaded predictions
+## 7. Analyze the downloaded predictions
 
 On the **local computer**, use a separate environment for NumPy and Pillow. This computes per-case liver and mass Dice against the downloaded test labels for both epoch 1 and final predictions; it does not pretend the two-epoch scores are final model performance.
 
 ```sh
+BACKUP="$HOME/training_efficiency_dryrun_backup"
 python3 -m venv "$HOME/.training_efficiency_dryrun_analysis_venv"
 "$HOME/.training_efficiency_dryrun_analysis_venv/bin/python" -m pip install numpy Pillow
 "$HOME/.training_efficiency_dryrun_analysis_venv/bin/python" - "$BACKUP" <<'PY'
@@ -192,7 +199,7 @@ from PIL import Image
 
 backup = Path(sys.argv[1])
 labels = backup / 'nnUNet_raw/Dataset001_AUL/labelsTs'
-results = backup / 'nnUNet_results/smoke_test'
+results = backup / 'nnUNet_results/dryrun'
 cases = sorted(labels.glob('*.png'))
 assert len(cases) == 147
 rows = []

@@ -7,21 +7,21 @@ REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 : "${nnUNet_preprocessed:?Set nnUNet_preprocessed before running}"
 : "${nnUNet_results:?Set nnUNet_results before running}"
 
-SMOKE_PREPROCESSED="${nnUNet_preprocessed%/}/smoke_test"
-SMOKE_RESULTS="${nnUNet_results%/}/smoke_test"
-SMOKE_LOGS="$REPO_DIR/logs/01_training_efficiency_smoke_test"
-for path in "$SMOKE_PREPROCESSED" "$SMOKE_RESULTS" "$SMOKE_LOGS"; do
+DRYRUN_PREPROCESSED="${nnUNet_preprocessed%/}/dryrun"
+DRYRUN_RESULTS="${nnUNet_results%/}/dryrun"
+DRYRUN_LOGS="$REPO_DIR/logs/01_training_efficiency_dryrun"
+for path in "$DRYRUN_PREPROCESSED" "$DRYRUN_RESULTS" "$DRYRUN_LOGS"; do
     [[ ! -e "$path" && ! -L "$path" ]] || {
-        echo "Smoke test output already exists: $path" >&2
+        echo "Dry-run output already exists: $path" >&2
         exit 1
     }
 done
-export nnUNet_preprocessed="$SMOKE_PREPROCESSED"
-export nnUNet_results="$SMOKE_RESULTS"
+export nnUNet_preprocessed="$DRYRUN_PREPROCESSED"
+export nnUNet_results="$DRYRUN_RESULTS"
 
-bash "$SCRIPT_DIR/training_efficiency_runner.sh" --smoke-test
+bash "$SCRIPT_DIR/training_efficiency_runner.sh" --dry-run
 
-python - "$SMOKE_RESULTS" "$SMOKE_LOGS" "$nnUNet_raw" <<'PY'
+python - "$DRYRUN_RESULTS" "$DRYRUN_LOGS" "$nnUNet_raw" <<'PY'
 import csv
 import json
 from pathlib import Path
@@ -78,12 +78,12 @@ for directory, checkpoint, timing in (
 with (logs / 'training_times.csv').open(newline='') as stream:
     training = list(csv.DictReader(stream))
 if len(training) != 1 or training[0]['fold'] != '0' or training[0]['epochs'] != '2':
-    raise SystemExit('Wrong smoke-test training record')
+    raise SystemExit('Wrong dry-run training record')
 with (logs / 'prediction_times.csv').open(newline='') as stream:
     predictions = list(csv.DictReader(stream))
 if ({row['checkpoint'] for row in predictions} != {'epoch1', 'final'}
         or len(predictions) != 2
         or any(row['fold'] != '0' or row['case_count'] != '147' for row in predictions)):
-    raise SystemExit('Wrong smoke-test prediction records')
-print('Smoke test passed: fold 0, two epochs, epoch 1 and final checkpoints, 294 prediction masks, and both inference benchmarks.')
+    raise SystemExit('Wrong dry-run prediction records')
+print('Dry run passed: fold 0, two epochs, epoch 1 and final checkpoints, 294 prediction masks, and both inference benchmarks.')
 PY

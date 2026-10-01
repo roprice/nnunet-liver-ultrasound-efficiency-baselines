@@ -155,6 +155,8 @@ Check that `dataset.json` reports 588 training cases and `case_mapping.json` rec
 sh experiment_logs/training_efficiency/record_event.sh setup_complete
 ```
 
+Before a full run in step 10, you can do a [dry run](training_efficiency_dryrun_runbook.md) for ~0.01% of the cost. The dry run will take 5-10 minutes and help ensure that the compute environment on which you're reproducing the study is sufficiently similar to the one the study's experiments were run on.
+
 ## 10. Run the training efficiency experiment
 
 ```sh
