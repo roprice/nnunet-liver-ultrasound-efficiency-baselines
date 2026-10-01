@@ -16,8 +16,8 @@ if [[ $# -eq 0 ]]; then
     TOTAL_EPOCHS=1000
     LOGS_DIR="$REPO_DIR/logs/01_training_efficiency"
 elif [[ $# -eq 1 && "$1" == --dry-run ]]; then
-    [[ "$nnUNet_preprocessed" == */dryrun && "$nnUNet_results" == */dryrun ]] || {
-        echo 'Dry run requires isolated nnUNet_preprocessed/dryrun and nnUNet_results/dryrun roots.' >&2
+    [[ "$nnUNet_preprocessed" == */dry_run && "$nnUNet_results" == */dry_run ]] || {
+        echo 'Dry run requires isolated nnUNet_preprocessed/dry_run and nnUNet_results/dry_run roots.' >&2
         exit 2
     }
     export TRAINING_EFFICIENCY_DRYRUN=1

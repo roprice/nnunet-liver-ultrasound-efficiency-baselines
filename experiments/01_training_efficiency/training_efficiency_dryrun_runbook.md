@@ -2,7 +2,7 @@
 
 Rehearse the [full training-efficiency runbook](training_efficiency_runbook.md) without running five 1,000-epoch folds. This run trains fold 0 for two epochs, saves an epoch-1 milestone plus nnU-Net's final and best checkpoints, predicts on all 147 test images from epoch 1 and final, and runs both final and best inference benchmarks. It then verifies the logs, downloads the entire dataset and results, checks the transferred files, and analyzes the downloaded predictions. No full-run training is started.
 
-Use a fresh instance or fresh output directories. The runner refuses existing `dryrun` output; don't delete previous results to make room for another attempt without first retaining them. If setup is already complete on the same instance, do not repeat steps 3–9 of the full runbook: step 3 would overwrite the existing GPU event log. The dry run produces the same kinds of evidence as the full run, not five folds or 1,000-epoch measurements.
+Use a fresh instance or fresh output directories. The runner refuses existing `dry_run` output; don't delete previous results to make room for another attempt without first retaining them. If setup is already complete on the same instance, do not repeat steps 3–9 of the full runbook: step 3 would overwrite the existing GPU event log. The dry run produces the same kinds of evidence as the full run, not five folds or 1,000-epoch measurements.
 
 ## 1. Set up the GPU server
 
@@ -47,8 +47,8 @@ from pathlib import Path
 repo = Path.cwd()
 logs = repo / 'logs/01_training_efficiency_dryrun'
 raw = Path.home() / 'nnUNet_raw/Dataset001_AUL'
-preprocessed = Path.home() / 'nnUNet_preprocessed/dryrun/Dataset001_AUL'
-results = Path.home() / 'nnUNet_results/dryrun'
+preprocessed = Path.home() / 'nnUNet_preprocessed/dry_run/Dataset001_AUL'
+results = Path.home() / 'nnUNet_results/dry_run'
 model = results / 'Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_0'
 
 def require_file(path):
@@ -183,50 +183,113 @@ diff -u "$BACKUP/remote_sha256_manifest.txt" "$BACKUP/local_sha256_manifest.txt"
 
 ## 7. Analyze the downloaded predictions
 
-On the **local computer**, use a separate environment for NumPy and Pillow. This computes per-case liver and mass Dice against the downloaded test labels for both epoch 1 and final predictions; it does not pretend the two-epoch scores are final model performance.
+On the **local computer**, run this with `python3`. It computes mean per-image Dice for liver across all 147 test cases and for mass separately in the malignant and benign cases from `case_mapping.json`. When both masks are empty, Dice is 1. No packages are installed and no files are written.
 
 ```sh
 BACKUP="$HOME/training_efficiency_dryrun_backup"
-python3 -m venv "$HOME/.training_efficiency_dryrun_analysis_venv"
-"$HOME/.training_efficiency_dryrun_analysis_venv/bin/python" -m pip install numpy Pillow
-"$HOME/.training_efficiency_dryrun_analysis_venv/bin/python" - "$BACKUP" <<'PY'
-import csv
+python3 - "$BACKUP" <<'PY'
+import json
 from pathlib import Path
+import struct
 import sys
+import zlib
 
-import numpy as np
-from PIL import Image
+
+def read_mask(path):
+    png = path.read_bytes()
+    if png[:8] != b'\x89PNG\r\n\x1a\n':
+        raise ValueError(f'Not a PNG: {path}')
+    position = 8
+    chunks = []
+    while position < len(png):
+        length = struct.unpack_from('>I', png, position)[0]
+        kind = png[position + 4:position + 8]
+        content = png[position + 8:position + 8 + length]
+        position += length + 12
+        if kind == b'IHDR':
+            width, height, depth, color, compression, filtering, interlace = struct.unpack('>IIBBBBB', content)
+            if (depth, color, compression, filtering, interlace) != (8, 0, 0, 0, 0):
+                raise ValueError(f'Expected non-interlaced 8-bit grayscale PNG: {path}')
+        elif kind == b'IDAT':
+            chunks.append(content)
+        elif kind == b'IEND':
+            break
+    encoded = zlib.decompress(b''.join(chunks))
+    if len(encoded) != height * (width + 1):
+        raise ValueError(f'Wrong PNG pixel count: {path}')
+    pixels = bytearray(width * height)
+    previous = bytearray(width)
+    for row_number in range(height):
+        start = row_number * (width + 1)
+        filter_type = encoded[start]
+        row = bytearray(encoded[start + 1:start + 1 + width])
+        for index in range(width):
+            left = row[index - 1] if index else 0
+            above = previous[index]
+            upper_left = previous[index - 1] if index else 0
+            if filter_type == 0:
+                predictor = 0
+            elif filter_type == 1:
+                predictor = left
+            elif filter_type == 2:
+                predictor = above
+            elif filter_type == 3:
+                predictor = (left + above) // 2
+            elif filter_type == 4:
+                estimate = left + above - upper_left
+                distances = (abs(estimate - left), abs(estimate - above), abs(estimate - upper_left))
+                predictor = (left, above, upper_left)[distances.index(min(distances))]
+            else:
+                raise ValueError(f'Unknown PNG filter {filter_type}: {path}')
+            row[index] = (row[index] + predictor) & 255
+        pixels[row_number * width:(row_number + 1) * width] = row
+        previous = row
+    return (width, height), pixels
+
+
+def dice(truth, prediction, label):
+    total = truth.count(label) + prediction.count(label)
+    if not total:
+        return 1.0
+    overlap = sum(actual == predicted == label for actual, predicted in zip(truth, prediction))
+    return 2 * overlap / total
+
 
 backup = Path(sys.argv[1])
-labels = backup / 'nnUNet_raw/Dataset001_AUL/labelsTs'
-results = backup / 'nnUNet_results/dryrun'
-cases = sorted(labels.glob('*.png'))
-assert len(cases) == 147
-rows = []
-for checkpoint in ('epoch1', 'final'):
-    predictions = results / f'predictions_training_efficiency_588images_seed42_fold0_{checkpoint}'
-    assert {path.name for path in predictions.glob('*.png')} == {path.name for path in cases}
-    for label_path in cases:
-        truth = np.asarray(Image.open(label_path))
-        predicted = np.asarray(Image.open(predictions / label_path.name))
-        assert truth.shape == predicted.shape, label_path.name
-        scores = []
-        for value in (1, 2):
-            reference = truth == value
-            estimate = predicted == value
-            total = int(reference.sum()) + int(estimate.sum())
-            scores.append(1.0 if total == 0 else 2 * int((reference & estimate).sum()) / total)
-        rows.append((checkpoint, label_path.stem, *scores))
-output = backup / 'dryrun_prediction_dice.csv'
-with output.open('w', newline='') as stream:
-    writer = csv.writer(stream)
-    writer.writerow(('checkpoint', 'case_id', 'liver_dice', 'mass_dice'))
-    writer.writerows(rows)
-for checkpoint in ('epoch1', 'final'):
-    group = [row for row in rows if row[0] == checkpoint]
-    print(f'{checkpoint}: {len(group)} cases; mean liver Dice {np.mean([row[2] for row in group]):.4f}; '
-          f'mean mass Dice {np.mean([row[3] for row in group]):.4f}')
-print(f'Per-case scores: {output}')
+raw = backup / 'nnUNet_raw/Dataset001_AUL'
+mapping = json.loads((raw / 'case_mapping.json').read_text())
+cases = {entry['case_name']: entry['category'] for entry in mapping if entry['split'] == 'test'}
+if len(cases) != 147:
+    raise ValueError(f'Expected 147 test cases, found {len(cases)}')
+name = 'predictions_training_efficiency_588images_seed42_fold0_'
+roots = [root for root in (backup / 'nnUNet_results').iterdir()
+         if root.is_dir() and all((root / f'{name}{checkpoint}').is_dir()
+                                  for checkpoint in ('epoch1', 'final'))]
+if len(roots) != 1:
+    raise ValueError(f'Expected one set of epoch 1 and final predictions, found {len(roots)}')
+
+for checkpoint, heading in (('epoch1', 'Epoch 1 Dice'), ('final', 'Final Epoch Dice')):
+    predictions = roots[0] / f'{name}{checkpoint}'
+    expected = {f'{case}.png' for case in cases}
+    found = {path.name for path in predictions.glob('*.png')}
+    if found != expected:
+        raise ValueError(f'Mismatched prediction masks in {predictions}: missing={len(expected - found)}, extra={len(found - expected)}')
+    scores = {'liver': [], 'malignant mass': [], 'benign mass': []}
+    for case, category in cases.items():
+        shape, truth = read_mask(raw / 'labelsTs' / f'{case}.png')
+        predicted_shape, prediction = read_mask(predictions / f'{case}.png')
+        if predicted_shape != shape:
+            raise ValueError(f'Different mask dimensions: {case}')
+        scores['liver'].append(dice(truth, prediction, 1))
+        if category in ('Malignant', 'Benign'):
+            scores[f'{category.lower()} mass'].append(dice(truth, prediction, 2))
+    print(f'{heading}:')
+    for label, values in scores.items():
+        if not values:
+            raise ValueError(f'No cases for {label}')
+        print(f'{label}: {sum(values) / len(values):.2f}')
+    if checkpoint == 'epoch1':
+        print()
 PY
 ```
 

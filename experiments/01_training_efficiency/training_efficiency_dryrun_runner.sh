@@ -7,8 +7,8 @@ REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 : "${nnUNet_preprocessed:?Set nnUNet_preprocessed before running}"
 : "${nnUNet_results:?Set nnUNet_results before running}"
 
-DRYRUN_PREPROCESSED="${nnUNet_preprocessed%/}/dryrun"
-DRYRUN_RESULTS="${nnUNet_results%/}/dryrun"
+DRYRUN_PREPROCESSED="${nnUNet_preprocessed%/}/dry_run"
+DRYRUN_RESULTS="${nnUNet_results%/}/dry_run"
 DRYRUN_LOGS="$REPO_DIR/logs/01_training_efficiency_dryrun"
 for path in "$DRYRUN_PREPROCESSED" "$DRYRUN_RESULTS" "$DRYRUN_LOGS"; do
     [[ ! -e "$path" && ! -L "$path" ]] || {
