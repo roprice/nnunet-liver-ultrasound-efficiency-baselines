@@ -1,5 +1,19 @@
 ## Study log
 
+Working on scripting the initial experiment today and mapping out what gets logged, how data is prepared and converted, how training is conducted and how predictions are run.
+
+We've created experiment runbooks that take users through instance preparation and a systematic way to verify results and download them before finishing an instance.
+
+We've created an optional cheap smoke test for the first experiment that can be used to test the runbook in a potentially differing GPU environment.
+
+WE also created an external remote control that can be run from any CPU, including a hosted cloud CPU that automatically deletes a rented Verda.com instance after downloading its results.
+
+The focus has been on reproducability both from a technical and cognistive perspective. 
+
+Well run the smoke test to verify the data conversion and prep scripts, runbooks, runners, and custom trainers, and a custom inference logging script.
+
+Renamed the 3rd experiment from inference_efficiency to prediction_efficiency so it's intelligible to a broader audience.
+
 ## 2026-09-29
 
 ### Morning
