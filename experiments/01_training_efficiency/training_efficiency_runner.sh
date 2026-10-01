@@ -12,6 +12,7 @@ if [[ $# -eq 0 ]]; then
     unset TRAINING_EFFICIENCY_SMOKE_TEST
     FOLDS=(0 1 2 3 4)
     EPOCHS=(25 50 75 100 150 300 500 750)
+    PREDICTION_LABELS=("${EPOCHS[@]/#/epoch}" best)
     TOTAL_EPOCHS=1000
     LOGS_DIR="$REPO_DIR/logs/01_training_efficiency"
 elif [[ $# -eq 1 && "$1" == --smoke-test ]]; then
@@ -21,7 +22,8 @@ elif [[ $# -eq 1 && "$1" == --smoke-test ]]; then
     }
     export TRAINING_EFFICIENCY_SMOKE_TEST=1
     FOLDS=(0)
-    EPOCHS=(1 2)
+    EPOCHS=(1)
+    PREDICTION_LABELS=(epoch1 final)
     TOTAL_EPOCHS=2
     LOGS_DIR="$REPO_DIR/logs/01_training_efficiency_smoke_test"
     [[ ! -e "$LOGS_DIR" ]] || { echo "Smoke test logs already exist: $LOGS_DIR" >&2; exit 1; }
@@ -134,7 +136,7 @@ cp "$PREPARED_DATASET/splits_final.json" "$LOGS_DIR/splits_final.json"
 printf 'fold,seed,epochs,wall_clock_seconds\n' > "$TRAIN_TIMES"
 printf 'fold,seed,checkpoint,wall_clock_seconds,case_count\n' > "$PRED_TIMES"
 if [[ "${TRAINING_EFFICIENCY_SMOKE_TEST:-}" == 1 ]]; then
-    printf 'mode=smoke_test\nseed=%s\nfold=0\nepochs=%s\nmilestones=1,2\n' \
+    printf 'mode=smoke_test\nseed=%s\nfold=0\nepochs=%s\nmilestones=1\npredictions=epoch1,final\n' \
         "$SEED" "$TOTAL_EPOCHS" > "$LOGS_DIR/run_settings.txt"
 fi
 
@@ -169,11 +171,9 @@ for FOLD in "${FOLDS[@]}"; do
         exit 1
     }
 
-    for LABEL in "${EPOCHS[@]/#/epoch}" best; do
-        if [[ "$LABEL" == best ]]; then
-            CHECKPOINT=checkpoint_best.pth
-        else
-            CHECKPOINT="checkpoint_${LABEL}.pth"
+    for LABEL in "${PREDICTION_LABELS[@]}"; do
+        CHECKPOINT="checkpoint_${LABEL}.pth"
+        if [[ "$LABEL" != best && "$LABEL" != final ]]; then
             test -s "$CHECKPOINT_DIR/$CHECKPOINT" || {
                 echo "Missing checkpoint for fold $FOLD: $CHECKPOINT" >&2
                 exit 1
@@ -214,6 +214,10 @@ for FOLD in "${FOLDS[@]}"; do
     echo "Fold $FOLD complete"
 done
 
-echo "Training efficiency complete: ${#FOLDS[@]} fold(s), ${#EPOCHS[@]} milestone and one best prediction per fold, and two inference benchmarks per fold."
+if [[ "${TRAINING_EFFICIENCY_SMOKE_TEST:-}" == 1 ]]; then
+    echo "Training efficiency dry run complete: fold 0, epoch 1 and final predictions, and two inference benchmarks."
+else
+    echo "Training efficiency complete: ${#FOLDS[@]} fold(s), ${#EPOCHS[@]} milestone and one best prediction per fold, and two inference benchmarks per fold."
+fi
 echo "End time: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo "Total wall clock: $(( $(date +%s) - RUN_START ))s"

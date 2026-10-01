@@ -24,6 +24,7 @@ Use a fresh Ubuntu GPU instance with Python 3.10+, working NVIDIA drivers/`nvidi
 python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ required"'
 apt update
 apt install python3-pip python3-venv git unzip tmux rsync time -y
+apt install python3-pip python3-venv python3.14-dev git unzip tmux rsync time -y
 ```
 
 ## 2. Clone the repository
@@ -134,7 +135,9 @@ ls "$nnUNet_raw/Dataset001_AUL/imagesTs" | wc -l  # expect 147
 Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases. Choose the positive epoch budget before launching the runner; replace the placeholder below. Then mark setup complete:
 
 ```sh
+# Set the training length
 export DATA_EFFICIENCY_EPOCHS='<chosen_positive_integer>'
+# Silently append a setup-complete event with the current UTC time to gpu_events.csv.
 sh experiment_logs/data_efficiency/record_event.sh setup_complete
 ```
 

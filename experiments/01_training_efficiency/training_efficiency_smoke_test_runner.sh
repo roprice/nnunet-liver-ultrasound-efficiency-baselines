@@ -31,7 +31,7 @@ import torch
 
 results, logs, raw = map(Path, sys.argv[1:])
 model = results / 'Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_0'
-for epoch in (1, 2):
+for epoch in (1,):
     checkpoint = model / f'checkpoint_epoch{epoch}.pth'
     saved = torch.load(checkpoint, map_location='cpu', weights_only=False)
     if saved.get('current_epoch') != epoch:
@@ -48,7 +48,7 @@ mapping = json.loads((raw / 'Dataset001_AUL/case_mapping.json').read_text())
 expected = {entry['case_name'] + '.png' for entry in mapping if entry['split'] == 'test'}
 if len(expected) != 147:
     raise SystemExit('Expected 147 distinct test cases')
-for label in ('epoch1', 'epoch2', 'best'):
+for label in ('epoch1', 'final'):
     masks = results / f'predictions_training_efficiency_588images_seed42_fold0_{label}'
     if {path.name for path in masks.glob('*.png')} != expected:
         raise SystemExit(f'Wrong prediction masks: {masks}')
@@ -81,9 +81,9 @@ if len(training) != 1 or training[0]['fold'] != '0' or training[0]['epochs'] != 
     raise SystemExit('Wrong smoke-test training record')
 with (logs / 'prediction_times.csv').open(newline='') as stream:
     predictions = list(csv.DictReader(stream))
-if ({row['checkpoint'] for row in predictions} != {'epoch1', 'epoch2', 'best'}
-        or len(predictions) != 3
+if ({row['checkpoint'] for row in predictions} != {'epoch1', 'final'}
+        or len(predictions) != 2
         or any(row['fold'] != '0' or row['case_count'] != '147' for row in predictions)):
     raise SystemExit('Wrong smoke-test prediction records')
-print('Smoke test passed: fold 0, two epochs, best checkpoint, 441 prediction masks, and both inference benchmarks.')
+print('Smoke test passed: fold 0, two epochs, epoch 1 and final checkpoints, 294 prediction masks, and both inference benchmarks.')
 PY

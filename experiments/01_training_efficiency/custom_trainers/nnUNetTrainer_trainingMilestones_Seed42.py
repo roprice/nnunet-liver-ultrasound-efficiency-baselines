@@ -15,7 +15,7 @@ class nnUNetTrainer_trainingMilestones_Seed42(nnUNetTrainer):
         super().__init__(plans, configuration, fold, dataset_json, device)
         if os.environ.get('TRAINING_EFFICIENCY_SMOKE_TEST') == '1':
             self.num_epochs = 2
-            self.MILESTONE_EPOCHS = {1, 2}
+            self.MILESTONE_EPOCHS = {1}
         else:
             self.num_epochs = 1000
 

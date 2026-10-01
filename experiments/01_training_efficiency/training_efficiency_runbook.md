@@ -19,7 +19,7 @@ Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL train
 Each fold trains on 470 or 471 cases and validates on 118 or 117; the 147 held-out test cases are excluded from both. The runner archives `case_mapping.json` and `splits_final.json`, produces 40 milestone and five best prediction directories with 147 masks each, and benchmarks inference using both `checkpoint_final.pth` and `checkpoint_best.pth` after 1,000 epochs.
 
 
-`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints.
+`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints. To rehearse setup, training, predictions, verification, transfer, and analysis without running all five folds, use [the dry-run runbook](training_efficiency_dryrun_runbook.md) instead.
 
 ## 1. Check Python and install system dependencies
 
@@ -27,12 +27,17 @@ Use a fresh Ubuntu GPU instance with Python 3.10+, working NVIDIA drivers/`nvidi
 
 ```sh
 python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ required"'
+apt update
+apt install python3-pip python3-venv python3-dev git unzip tmux rsync time -y
 ```
 
+### Optional: color the shell prompt
 
 ```sh
-apt update
-apt install python3-pip python3-venv git unzip tmux rsync time -y
+cat >> ~/.bashrc << 'PROMPTEOF'
+PS1='\[\e[38;5;208m\]\u@\h:\w \t \[\e[0m\]\$ '
+PROMPTEOF
+source ~/.bashrc
 ```
 
 ## 2. Clone the repository
@@ -146,25 +151,11 @@ ls "$nnUNet_raw/Dataset001_AUL/imagesTs" | wc -l  # expect 147
 Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases and their original source images. After setup and data are ready, run from the repository root on the GPU server:
 
 ```sh
+# Silently append a setup-complete event with the current UTC time to gpu_events.csv.
 sh experiment_logs/training_efficiency/record_event.sh setup_complete
 ```
 
-## 10a. Run a smoke test of the training efficiency experiment (optional)
-
-From the repository root, with the Python environment active, run fold 0 for two epochs. This runs the same preprocessing, prediction, and benchmarking pipeline using isolated `smoke_test` directories under `$nnUNet_preprocessed` and `$nnUNet_results`. The launcher checks both milestone checkpoints, the final and best checkpoints, all three sets of masks, and both final and best benchmark reports. Smoke-test outputs must not already exist.
-
-```sh
-sh experiment_logs/training_efficiency/record_event.sh smoke_started
-if bash -o pipefail -c 'bash experiments/01_training_efficiency/training_efficiency_smoke_test_runner.sh 2>&1 | tee logs/training_efficiency_smoke_test.log'; then
-  sh experiment_logs/training_efficiency/record_event.sh smoke_complete
-else
-  echo 'Smoke test failed; inspect logs/training_efficiency_smoke_test.log' >&2
-fi
-```
-
-Run step 11 only after the smoke test passes. Smoke-test time is inside the recorded GPU window but outside the production experiment; the `smoke_started` and `smoke_complete` events mark it separately. Skip this step to run the production experiment directly.
-
-## 10b. Run the training efficiency experiment
+## 10. Run the training efficiency experiment
 
 ```sh
 tmux new -s training
@@ -201,9 +192,9 @@ tail -f ~/nnunet-liver-ultrasound-efficiency-baselines/training_efficiency.log
 
 Use `Ctrl+C` to close `tail`.
 
-## 12. Complete the run
+## 11a. Complete the run manually
 
-Choose **Option A (Manual control)** to verify and retain outputs on the instance, or **Option B (Automated)** to verify, pull and check a copy, and delete the GPU instance. Do not run both branches.
+Either perform 11a manually, or choose 11b and automate the completion of the run. Do not run both branches.
 
 ### Option A: Manual completion
 
@@ -287,13 +278,15 @@ PY
 
 Keep `experiment_logs/training_efficiency/`, `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance. The instance can remain running; its later usage is outside this recorded window.
 
+## 11b. Complete the run
+
 ### Option B: Automated completion
 
 #### Verify completion
 
-The hosted CPU needs this checkout, Python 3.10+, and non-interactive SSH access to the GPU with a trusted host key. Keep the SSH private key on the CPU. After the experiment starts, the controller waits for runner exit status `0`, verifies the splits, checkpoints, predictions, benchmarks, and logs, then records `experiment_complete`.
+The CPU that executes the automated completion needs this checkout, Python 3.10+, and non-interactive SSH access to the GPU with a trusted host key. Keep the SSH private key on the CPU. After the experiment starts, the controller waits for runner exit status `0`, verifies the splits, checkpoints, predictions, benchmarks, and logs, then records `experiment_complete`.
 
-From the repository root **on the hosted CPU**, using the GPU's actual SSH address and absolute home and checkout paths:
+From the repository root **on the CPU**, using the GPU's actual SSH address and absolute home and checkout paths:
 
 ```sh
 python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py verify \
@@ -309,7 +302,7 @@ This command fails without deleting the instance if the runner exits unsuccessfu
 
 After the controller's `verify` command succeeds, install `rsync` and configure the [Verda CLI](https://docs.verda.com/cli/getting-started/) with Cloud API credentials **on the CPU only**. Check the instance ID with `verda vm describe <gpu-instance-id>`; its ID, hostname, and IP must match the SSH-connected GPU. Choose a nonexistent destination with space for the repository and all three nnU-Net directories.
 
-From the repository root **on the hosted CPU**:
+From the repository root **on the CPU** running `training_efficiency_runner_remote_control.py`:
 
 ```sh
 python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py finish \
@@ -366,4 +359,4 @@ logs/
 
 Predictions are written to `$nnUNet_results/predictions_training_efficiency_588images_seed42_fold{FOLD}_{LABEL}/`. Each of the 45 prediction directories has 147 masks (6,615 total); the final and best benchmark directories each hold another 147 masks per fold (1,470 total). `checkpoint_best.pth`, `checkpoint_final.pth`, eight milestone checkpoints, and `training_log_*.txt` files are under `$nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_{FOLD}/`. Training logs record model parameter counts and peak PyTorch GPU memory.
 
-Keep `experiment_logs/training_efficiency/` with its GPU rate, events, event script, and usage summary alongside these outputs. If step 10 was run, retain `logs/training_efficiency_smoke_test.log`, `logs/01_training_efficiency_smoke_test/`, and the `smoke_test/` directories under `$nnUNet_preprocessed` and `$nnUNet_results`.
+Keep `experiment_logs/training_efficiency/` with its GPU rate, events, event script, and usage summary alongside these outputs.
