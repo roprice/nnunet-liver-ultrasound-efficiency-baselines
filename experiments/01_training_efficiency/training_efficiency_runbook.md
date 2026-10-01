@@ -19,9 +19,11 @@ Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL train
 Each fold trains on 470 or 471 cases and validates on 118 or 117; the 147 held-out test cases are excluded from both. The runner archives `case_mapping.json` and `splits_final.json`, produces 40 milestone and five best prediction directories with 147 masks each, and benchmarks inference using both `checkpoint_final.pth` and `checkpoint_best.pth` after 1,000 epochs.
 
 
-`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints. To rehearse setup, training, predictions, verification, transfer, and deletion without running all five folds, use [the dry-run runbook](training_efficiency_dryrun_runbook.md) on a separate, disposable instance.
+`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints. To rehearse setup, training, predictions, verification and analysis without running all five folds, use the manual [dry-run runbook](dry_run/dry_run_runbook.md).
 
 **What the seed fixes.** Seed 42 fixes network initialization and the main-process random generators. Training is still not exactly repeatable run to run: nnU-Net's data-augmentation workers are unseeded, and training runs with `cudnn.benchmark=True` and `deterministic=False`. With 87 malignant test cases, one case moves a detection rate by 0.0115, so the study log's 0.03 selection margin is about 2.6 cases. Ordinary run-to-run variation from a single seed may be of that size.
+
+**Continuing on the instance where you did the dry run?** Its optional last step removes the dry run's outputs. Then skip steps 1, 2 and 4 to 8 below, do step 3 (a fresh cost record), then the `setup_complete` command at the end of step 9, then step 10. On a fresh instance, start at step 1.
 
 ## 1. Check Python and install system dependencies
 
@@ -160,9 +162,9 @@ Check that `dataset.json` reports 588 training cases and `case_mapping.json` rec
 sh experiment_logs/training_efficiency/record_event.sh setup_complete
 ```
 
-Before a full run in step 10, you can do a [dry run](training_efficiency_dryrun_runbook.md). Do it on its own disposable instance, not on this one. It keeps its own cost record, and its last step deletes its instance. Start the full run from step 1 on a fresh instance, so its cost record contains no dry-run events.
+Before a full run in step 10, you can do a manual [dry run](dry_run/dry_run_runbook.md). It is separate from the remote controller in step 11b and never uses it. By default, do it on its own instance and start this runbook at step 1 on a fresh one. It keeps its own cost record, sampler, outputs and trainer name, so it can also be followed by this runbook on the same instance; its last step explains how.
 
-The dry run trains one fold for two epochs, so it costs a small fraction of the full run: about 1-3% if the full run takes 25-30 GPU-hours. Setup, preprocessing, final validation, the predictions, both benchmarks and the download are fixed costs that dominate it. Its short experiment (step 2 of the dry-run runbook) takes about 5-10 minutes; setup and download add to that. The dry run rehearses the automated completion in step 11b, and compares the environment with committed reference files, which helps show whether the compute environment on which you're reproducing the study is sufficiently similar to the one the study's experiments were run on.
+The dry run trains one fold for two epochs, so it costs a small fraction of the full run: about 1-3% if the full run takes 25-30 GPU-hours. Setup, preprocessing, final validation, the predictions, both benchmarks and the archive download are fixed costs that dominate it. Its short experiment takes about 5-10 minutes; setup and download add to that. It compares the environment with committed reference files, which helps show whether the compute environment on which you're reproducing the study is sufficiently similar to the one the study's experiments were run on.
 
 ## 10. Run the training efficiency experiment
 
@@ -308,7 +310,17 @@ print(summary, end='')
 PY
 ```
 
-Keep `experiment_logs/training_efficiency/`, `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance. The instance can remain running; its later usage is outside this recorded window.
+#### Download everything
+
+On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
+
+```sh
+bash experiments/download_archive.sh 01_training_efficiency root@<gpu-ip>
+```
+
+The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/01_training_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `environment.json` and `pip_freeze.txt` under `logs/01_training_efficiency/`; the Python environment itself is not copied. An existing `archives/01_training_efficiency/dry_run/` from the dry run is kept. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. If it reports differences, move the incomplete folder aside and run it again.
+
+Keep `experiment_logs/training_efficiency/`, `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance until you have `Archive verified`. The instance can remain running; its later usage is outside this recorded window.
 
 ## 11b. Complete the run
 
@@ -332,7 +344,7 @@ This command fails without deleting the instance if the runner exits unsuccessfu
 
 #### Finish recording, copy results, and delete the GPU
 
-After the controller's `verify` command succeeds, install `rsync` and configure the [Verda CLI](https://docs.verda.com/cli/getting-started/) with Cloud API credentials **on the CPU only**. Check the instance ID with `verda vm describe <gpu-instance-id>`; its ID, hostname, and IP must match the SSH-connected GPU. Choose a nonexistent destination with space for the repository and all three nnU-Net directories.
+After the controller's `verify` command succeeds, install `rsync` and configure the [Verda CLI](https://docs.verda.com/cli/getting-started/) with Cloud API credentials **on the CPU only**. Check the instance ID with `verda vm describe <gpu-instance-id>`; its ID, hostname, and IP must match the SSH-connected GPU. Choose `archives/01_training_efficiency` on the CPU, with space for the repository and all three nnU-Net directories. It must not exist, or hold only the `dry_run/` archive from the dry run.
 
 From the repository root **on the CPU** running `training_efficiency_runner_remote_control.py`:
 
@@ -343,12 +355,24 @@ python3 experiments/01_training_efficiency/training_efficiency_runner_remote_con
   --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
   --poll-max-seconds 604800 \
   --instance-id '<gpu-instance-id>' \
-  --destination "$HOME/training_efficiency_backup"
+  --destination archives/01_training_efficiency
 ```
 
-The controller finishes recording, copies the repository and all three nnU-Net directories with `rsync`, checks SHA-256 inventories, and saves a completion manifest before deleting the GPU instance. Any failed check prevents deletion. The cost estimate excludes transfer and deletion time.
+The controller finishes recording, copies the repository and all three nnU-Net directories with `rsync` into `repo/`, `nnUNet_raw/`, `nnUNet_preprocessed/` and `nnUNet_results/` under the destination, checks SHA-256 inventories, and saves a completion manifest before deleting the GPU instance. Any failed check prevents deletion. The cost estimate excludes transfer and deletion time.
 
 The deletion command has no volume-retention option. If the GPU block volume must be retained, confirm the CLI's deletion behavior before running `finish`.
+
+## 12. Optional: run experiment 02 on this instance
+
+By default, run [experiment 02](../02_data_efficiency/data_efficiency_runbook.md) on its own instance, from its step 1. To reuse this one instead, you must have completed Option A: Option B deletes the instance. Do it only after `Archive verified`, since this deletes the only server copy of experiment 01's training outputs. On the GPU server:
+
+```sh
+rm -rf ~/nnUNet_preprocessed/Dataset001_AUL \
+  ~/nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d \
+  ~/nnUNet_results/predictions_training_efficiency_588images_seed42_fold*
+```
+
+Experiment 02's runner refuses to start while `nnUNet_preprocessed/Dataset001_AUL` exists, and its archive would otherwise repeat experiment 01's outputs. The checkout, Python environment, downloaded AUL data, converted `nnUNet_raw` and experiment 01's logs stay in place. Then follow the data-efficiency runbook: skip its steps 1, 2, 4, 5, 7 and 8, do its step 3, run `python -m pip freeze > experiment_logs/data_efficiency/pip_freeze.txt` from its step 5, then do its steps 6, 9, 10 and 11.
 
 ## Output layout
 

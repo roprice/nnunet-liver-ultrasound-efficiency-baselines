@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""CPU-side controller for the five-fold run and its one-fold dry-run profile.
-
-Run `python3 training_efficiency_runner_remote_control.py --help`."""
+"""CPU-side five-fold controller. Run `python3 training_efficiency_runner_remote_control.py --help`."""
 
 import sys
 
@@ -25,37 +23,11 @@ import subprocess
 import time
 
 
+FOLDS = range(5)
+EPOCHS = (25, 50, 75, 100, 150, 300, 500, 750)
 RECORD = Path('experiment_logs/training_efficiency')
-INSTANCE_MONITOR = Path('logs/01_training_efficiency/gpu_monitor_instance.csv')
+TRAINER = 'nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d'
 SOURCES = ('repo', 'nnUNet_raw', 'nnUNet_preprocessed', 'nnUNet_results')
-PROFILES = {
-    'full': {
-        'folds': tuple(range(5)),
-        'epochs': (25, 50, 75, 100, 150, 300, 500, 750),
-        'trainer': 'nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d',
-        'logs': 'logs/01_training_efficiency',
-        'runner_log': 'training_efficiency.log',
-        'status_file': 'runner_exit_status.txt',
-        'start_event': 'experiment_started',
-        'complete_event': 'experiment_complete',
-        'root_subdir': '',
-        'success_marker': None,
-        'extra_logs': (),
-    },
-    'dryrun': {
-        'folds': (0,),
-        'epochs': (1,),
-        'trainer': 'nnUNetTrainer_trainingMilestonesDryRun_Seed42__nnUNetPlans__2d',
-        'logs': 'logs/01_training_efficiency_dryrun',
-        'runner_log': 'logs/training_efficiency_dryrun.log',
-        'status_file': 'dryrun_exit_status.txt',
-        'start_event': 'dryrun_started',
-        'complete_event': 'dryrun_complete',
-        'root_subdir': 'dry_run',
-        'success_marker': 'Dry run passed:',
-        'extra_logs': ('run_settings.txt',),
-    },
-}
 
 
 def require(condition, message):
@@ -67,12 +39,8 @@ def required_file(path):
     require(path.is_file() and path.stat().st_size > 0, f'Missing or empty file: {path}')
 
 
-def profile_of(config):
-    return PROFILES[config.get('profile', 'full')]
-
-
-def status(repo, profile):
-    file = repo / profile['status_file']
+def status(repo):
+    file = repo / 'runner_exit_status.txt'
     if not file.exists():
         return 'pending'
     required_file(file)
@@ -94,7 +62,7 @@ def case_ids(directory, suffix, metadata=()):
     return set(names)
 
 
-def check_csv(path, expected, kind, profile):
+def check_csv(path, expected, kind):
     required_file(path)
     with path.open(newline='') as stream:
         reader = csv.DictReader(stream)
@@ -111,11 +79,11 @@ def check_csv(path, expected, kind, profile):
         require(None not in row and all(value is not None for value in row.values()),
                 f'Malformed row in {path}')
         fold = row['fold']
-        require(fold in {str(number) for number in profile['folds']}, f'Invalid fold in {path}: {fold}')
+        require(fold in {str(number) for number in FOLDS}, f'Invalid fold in {path}: {fold}')
         if kind == 'prediction':
             label = row.get('label') or row.get('checkpoint')
             label = label.removeprefix('checkpoint_').removesuffix('.pth')
-            require(label in {f'epoch{epoch}' for epoch in profile['epochs']} | {'best'},
+            require(label in {f'epoch{epoch}' for epoch in EPOCHS} | {'best'},
                     f'Invalid checkpoint in {path}: {label}')
             require(row['case_count'] == '147', f'Wrong case count in {path}: {row}')
             key = (fold, label)
@@ -144,33 +112,26 @@ def events_at(record):
 def verify(config):
     repo = Path(config['repo'])
     home = Path(config['home'])
-    profile = profile_of(config)
-    folds, epochs = profile['folds'], profile['epochs']
-    start_event = profile['start_event']
     require(repo.is_dir(), f'Missing repo: {repo}')
-    require(status(repo, profile) == 'success', 'Runner has not completed')
-    logs = repo / profile['logs']
+    require(status(repo) == 'success', 'Runner has not completed')
+    logs = repo / 'logs/01_training_efficiency'
     record = repo / RECORD
-    required_file(repo / profile['runner_log'])
-    if profile['success_marker']:
-        require(profile['success_marker'] in (repo / profile['runner_log']).read_text(),
-                f'Runner log lacks {profile["success_marker"]!r}')
-    required_file(repo / INSTANCE_MONITOR)
+    required_file(repo / 'training_efficiency.log')
     for name in ('nnUNetPlans.json', 'dataset_fingerprint.json', 'splits_final.json',
-                 'predict_defaults.txt', 'time_preprocess.txt', 'environment.json',
-                 'pip_freeze.txt') + profile['extra_logs']:
+                 'predict_defaults.txt', 'time_preprocess.txt', 'gpu_monitor_instance.csv',
+                 'environment.json', 'pip_freeze.txt'):
         required_file(logs / name)
     for name in ('gpu_rate.csv', 'gpu_events.csv', 'record_event.sh'):
         required_file(record / name)
     events = events_at(record)
     require(all(name in events for name in ('recording_started', 'setup_complete',
-                                          start_event)), 'Missing startup GPU events')
+                                          'experiment_started')), 'Missing startup GPU events')
     require(events['recording_started'] <= events['setup_complete'] <=
-            events[start_event], 'GPU events out of order')
-    require((repo / profile['status_file']).stat().st_mtime >=
-            events[start_event].timestamp(), f'Runner status predates {start_event}')
-    check_csv(logs / 'training_times.csv', len(folds), 'training', profile)
-    check_csv(logs / 'prediction_times.csv', len(folds) * (len(epochs) + 1), 'prediction', profile)
+            events['experiment_started'], 'GPU events out of order')
+    require((repo / 'runner_exit_status.txt').stat().st_mtime >=
+            events['experiment_started'].timestamp(), 'Runner status predates experiment_started')
+    check_csv(logs / 'training_times.csv', 5, 'training')
+    check_csv(logs / 'prediction_times.csv', 45, 'prediction')
 
     raw = home / 'nnUNet_raw/Dataset001_AUL'
     training = case_ids(raw / 'imagesTr', '_0000.png')
@@ -199,7 +160,7 @@ def verify(config):
             'Archived AUL mapping differs from raw mapping')
     for size in TRAINING_SIZES:
         folds_for_scale(mapping, size)
-    splits_file = home / 'nnUNet_preprocessed' / profile['root_subdir'] / 'Dataset001_AUL/splits_final.json'
+    splits_file = home / 'nnUNet_preprocessed/Dataset001_AUL/splits_final.json'
     required_file(splits_file)
     splits = json.loads(splits_file.read_text())
     require(splits == folds_for_scale(mapping, 588), 'Full training folds differ from the AUL mapping')
@@ -222,10 +183,10 @@ def verify(config):
     required_file(logs / 'splits_final.json')
     require(json.loads((logs / 'splits_final.json').read_text()) == splits,
             'Archived training splits differ from preprocessed splits')
-    result_root = home / 'nnUNet_results' / profile['root_subdir']
+    result_root = home / 'nnUNet_results'
     expected_predictions = set()
-    for fold in folds:
-        checkpoint_dir = result_root / 'Dataset001_AUL' / profile['trainer'] / f'fold_{fold}'
+    for fold in FOLDS:
+        checkpoint_dir = result_root / 'Dataset001_AUL' / TRAINER / f'fold_{fold}'
         training_logs = list(checkpoint_dir.glob('training_log_*.txt'))
         require(training_logs, f'Missing training logs for fold {fold}')
         for log in training_logs:
@@ -256,7 +217,7 @@ def verify(config):
                 ('dataset.json', 'plans.json', 'predict_from_raw_data_args.json'))
             require(benchmark_masks == testing, f'Wrong inference benchmark masks for fold {fold}: {directory}')
         required_file(checkpoint_dir / 'checkpoint_final.pth')
-        for label in (f'epoch{epoch}' for epoch in epochs):
+        for label in (f'epoch{epoch}' for epoch in EPOCHS):
             required_file(checkpoint_dir / f'checkpoint_{label}.pth')
             required_file(logs / f'time_predict_fold{fold}_{label}.txt')
             prediction_name = f'predictions_training_efficiency_588images_seed42_fold{fold}_{label}'
@@ -274,8 +235,7 @@ def verify(config):
         require(masks == testing, f'Wrong test masks in {prediction_name}')
     actual_predictions = {entry.name for entry in result_root.iterdir()
                           if entry.name.startswith('predictions_training_efficiency_588images_seed42_fold')}
-    require(actual_predictions == expected_predictions,
-            f'Expected exactly {len(expected_predictions)} named prediction directories')
+    require(actual_predictions == expected_predictions, 'Expected exactly 45 named prediction directories')
     return events
 
 
@@ -286,18 +246,16 @@ def record_event(repo, name):
 
 def mark_complete(config):
     repo = Path(config['repo'])
-    complete_event = profile_of(config)['complete_event']
     events = verify(config)
-    require('recording_ended' not in events or complete_event in events,
-            f'Recording ended without {complete_event}')
-    if complete_event not in events:
-        record_event(repo, complete_event)
+    require('recording_ended' not in events or 'experiment_complete' in events,
+            'Recording ended without experiment_complete')
+    if 'experiment_complete' not in events:
+        record_event(repo, 'experiment_complete')
     return 'verified'
 
 
 def finish_remote(config):
     repo = Path(config['repo'])
-    profile = profile_of(config)
     mark_complete(config)
     events = events_at(repo / RECORD)
     if 'recording_ended' not in events:
@@ -312,7 +270,7 @@ def finish_remote(config):
         else:
             require(session.returncode == 1, 'Could not check GPU sampler session')
     events = events_at(repo / RECORD)
-    require(events[profile['start_event']] <= events[profile['complete_event']] <=
+    require(events['experiment_started'] <= events['experiment_complete'] <=
             events['recording_ended'], 'Completion events out of order')
     with (repo / RECORD / 'gpu_rate.csv').open(newline='') as stream:
         rates = list(csv.DictReader(stream))
@@ -368,7 +326,7 @@ def ssh_identity():
 def remote_dispatch(action, encoded):
     config = json.loads(base64.urlsafe_b64decode(encoded))
     if action == 'status':
-        return status(Path(config['repo']), profile_of(config))
+        return status(Path(config['repo']))
     if action == 'identity':
         return ssh_identity()
     if action == 'verify':
@@ -473,12 +431,14 @@ def run(args):
     require(all(value > 0 for value in (args.ssh_timeout, args.poll_interval,
                                        args.poll_max_seconds, args.operation_timeout)),
             'All timeouts and intervals must be positive')
-    config = {'repo': args.remote_repo, 'home': args.remote_home, 'profile': args.profile}
+    config = {'repo': args.remote_repo, 'home': args.remote_home}
     if args.command == 'finish':
         require(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', args.instance_id),
                 'Invalid Verda instance ID')
         destination = args.destination.resolve()
-        require(not destination.exists(), f'Destination already exists: {destination}')
+        require(not destination.exists() or
+                (destination.is_dir() and {entry.name for entry in destination.iterdir()} <= {'dry_run'}),
+                f'Destination exists and holds more than a dry_run archive: {destination}')
         require(not any(destination.is_relative_to(root) for root in source_paths(config).values()),
                 'Destination overlaps source')
     wait_for_runner(args, config)
@@ -489,7 +449,7 @@ def run(args):
         return
     summary = remote(args, config, 'finish', args.operation_timeout)
     print(summary, end='', flush=True)
-    destination.mkdir(parents=True)
+    destination.mkdir(parents=True, exist_ok=True)
     sources = source_paths(config)
     for name, root in sources.items():
         print(f'Copying {name}...', flush=True)
@@ -510,8 +470,7 @@ def run(args):
     connected_identity = remote(args, config, 'identity', args.operation_timeout)
     require(connected_identity == initial_identity, 'SSH-connected GPU identity changed during backup')
     confirm_instance_identity(args, connected_identity)
-    completion = {'profile': args.profile, 'instance_id': args.instance_id,
-                  'ssh_target': args.ssh_target,
+    completion = {'instance_id': args.instance_id, 'ssh_target': args.ssh_target,
                   'connected_gpu_identity': connected_identity,
                   'remote_repo': args.remote_repo, 'remote_home': args.remote_home,
                   'verified_at_utc': datetime.now(timezone.utc).isoformat(),
@@ -530,8 +489,6 @@ def main():
     subcommands = parser.add_subparsers(dest='command', required=True)
     for name in ('verify', 'finish'):
         sub = subcommands.add_parser(name)
-        sub.add_argument('--profile', choices=sorted(PROFILES), default='full',
-                         help='full: five folds, 1,000 epochs; dryrun: the one-fold, two-epoch rehearsal')
         sub.add_argument('--ssh-target', required=True, help='GPU SSH user@host (host key must be trusted)')
         sub.add_argument('--remote-home', required=True, help='GPU home containing nnUNet_raw, nnUNet_preprocessed and nnUNet_results')
         sub.add_argument('--remote-repo', required=True, help='Absolute GPU checkout path')
@@ -541,7 +498,7 @@ def main():
         sub.add_argument('--operation-timeout', type=int, default=21600, help='Maximum seconds for each verify, hash, copy or delete')
         if name == 'finish':
             sub.add_argument('--instance-id', required=True, help='Exact Verda VM ID; JSON id, hostname and IP must match SSH')
-            sub.add_argument('--destination', type=Path, required=True, help='New, nonexistent CPU backup directory')
+            sub.add_argument('--destination', type=Path, required=True, help='CPU archive directory, e.g. archives/01_training_efficiency. Must not exist, or hold only dry_run/')
     args = parser.parse_args()
     try:
         run(args)

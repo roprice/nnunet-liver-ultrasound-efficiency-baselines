@@ -14,7 +14,7 @@ Train folds 0–4 at training-pool sizes 588, 294, 147, and 74 with seed 42 on G
 | Epoch budget | One chosen positive integer for all 20 models |
 | Checkpoints | `checkpoint_final.pth` and `checkpoint_best.pth` |
 
-`experiments/prepare_data/aul_splits.py` defines the common train/test split, nested training subsets, and folds. This experiment runs on its own GPU instance, independently of training efficiency.
+`experiments/prepare_data/aul_splits.py` defines the common train/test split, nested training subsets, and folds. By default this experiment runs on its own GPU instance, independently of training efficiency. To reuse the instance where you completed experiment 01 with manual completion (Option A), follow [step 12 of its runbook](../01_training_efficiency/training_efficiency_runbook.md) to clear 01's outputs and learn which steps below to skip.
 
 ## 1. Check Python and install system dependencies
 
@@ -213,7 +213,17 @@ print(summary, end='')
 PY
 ```
 
-Keep `experiment_logs/data_efficiency/`, `logs/02_data_efficiency/`, `logs/data_efficiency_runner.log`, the runner status, and all three nnU-Net directories. The recorded-window estimate ends before any later usage.
+#### Download everything
+
+On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
+
+```sh
+bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
+```
+
+The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `experiment_logs/data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. If it reports differences, move the incomplete folder aside and run it again.
+
+Keep `experiment_logs/data_efficiency/`, `logs/02_data_efficiency/`, `logs/data_efficiency_runner.log`, the runner status, and all three nnU-Net directories on the instance until you have `Archive verified`. The recorded-window estimate ends before any later usage.
 
 ### Option B: Automated completion
 
@@ -229,7 +239,7 @@ python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py 
   --poll-max-seconds 604800
 ```
 
-After `verify` succeeds, install `rsync` and configure the [Verda CLI](https://docs.verda.com/cli/getting-started/) on the CPU. Confirm the instance ID with `verda vm describe <gpu-instance-id>`; its ID, hostname, and IP must match the SSH-connected GPU. Choose a nonexistent backup destination large enough for the repository and all three nnU-Net directories:
+After `verify` succeeds, install `rsync` and configure the [Verda CLI](https://docs.verda.com/cli/getting-started/) on the CPU. Confirm the instance ID with `verda vm describe <gpu-instance-id>`; its ID, hostname, and IP must match the SSH-connected GPU. Choose `archives/02_data_efficiency` on the CPU, which must not exist yet, with space for the repository and all three nnU-Net directories:
 
 ```sh
 python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py finish \
@@ -238,7 +248,7 @@ python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py 
   --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
   --poll-max-seconds 604800 \
   --instance-id '<gpu-instance-id>' \
-  --destination "$HOME/data_efficiency_backup"
+  --destination archives/02_data_efficiency
 ```
 
 The controller ends GPU sampling, calculates the recorded-window cost, copies all four source trees with `rsync`, checks remote and local SHA-256 inventories, and saves a completion manifest **before** deleting the instance. A failed check or transfer prevents deletion; transfer and deletion time are outside the recorded window. The deletion command has no volume-retention option: confirm its behavior if the GPU block volume must be retained.

@@ -35,6 +35,9 @@ else
     exit 2
 fi
 export nnUNet_extTrainer="$SCRIPT_DIR/custom_trainers"
+if [[ "$DRY_RUN" == 1 ]]; then
+    export nnUNet_extTrainer="$SCRIPT_DIR/dry_run/custom_trainers:$nnUNet_extTrainer"
+fi
 
 DATASET_ID=1
 DATASET_NAME=Dataset001_AUL
@@ -55,6 +58,10 @@ for command in python nnUNetv2_plan_and_preprocess nnUNetv2_train nnUNetv2_predi
 done
 [[ -f "$SCRIPT_DIR/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py" ]] || {
     echo 'The seed-42 internal-checkpoint trainer is missing.' >&2
+    exit 1
+}
+[[ "$DRY_RUN" == 0 || -f "$SCRIPT_DIR/dry_run/custom_trainers/${TRAINER}.py" ]] || {
+    echo 'The dry-run trainer is missing.' >&2
     exit 1
 }
 

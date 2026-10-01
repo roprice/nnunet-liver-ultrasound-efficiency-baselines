@@ -68,10 +68,3 @@ class nnUNetTrainer_trainingMilestones_Seed42(nnUNetTrainer):
             self._log_gpu_memory(f'Milestone {completed_epoch}')
         if completed_epoch == self.num_epochs:
             self._log_gpu_memory('Training complete')
-
-
-class nnUNetTrainer_trainingMilestonesDryRun_Seed42(nnUNetTrainer_trainingMilestones_Seed42):
-    """Two-epoch rehearsal trainer for the dry run. Its distinct name keeps its
-    checkpoints and model folder separate from the full run's."""
-    NUM_EPOCHS = 2
-    MILESTONE_EPOCHS = {1}
