@@ -1,10 +1,12 @@
-This section contains the code used to run the training using nnUnet. Each experiment has its own set of code, including a markdown runbook.
+This section contains the code used to run the training pipeline. 
 
-These files are shared:
+Each experiment has its own set of code, including a markdown runbook for step by step reproduction, allowing for environment issues to be pinpointed.
+
+These files are shared among experiments:
 - benchmark_inference.py
-- download_archive.sh (copies a finished run from the GPU server to `archives/<experiment>` and verifies it by checksum; the optional remote controllers write the same layout)
-- prepare_data/aul_conversion.py (requires `--reference-mapping prepare_data/reference/case_mapping.json`, the committed seed-42 assignments)
-- prepare_data/aul_splits.py (shared train/test split, nested subsets, and five-fold assignments)
-- prepare_data/aul_splits_verification.py (split tests; run with `python3 -m unittest discover -s experiments/prepare_data -p '*_verification.py'`)
+- download_archive.sh (downloads/checksum-verifies a run from the GPU  to `archives/<experiment>`)
+- prepare_data/aul_conversion.py
+- prepare_data/aul_splits.py 
+- prepare_data/aul_splits_verification.py 
 
-The training-efficiency dry run is manual and lives in `01_training_efficiency/dry_run/`, with its own runbook. It is separate from the remote controller.
+A training-efficiency dry run experiment lives in `01_training_efficiency/dry_run/` and lets you diagnose any issues before starting a full run.
