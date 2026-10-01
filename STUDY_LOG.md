@@ -1,5 +1,13 @@
 ## Study log
 
+## 2026-10-01
+
+Refining the runbooks for usability since reproducibility is a key component of cognitive effiency related to the study's baselines.
+
+
+## 2026-09-30
+
+
 Working on scripting the initial experiment today and mapping out what gets logged, how data is prepared and converted, how training is conducted and how predictions are run.
 
 We've created experiment runbooks that take users through instance preparation and a systematic way to verify results and download them before finishing an instance.
@@ -14,7 +22,7 @@ Well run the dry run to verify the data conversion and prep scripts, runbooks, r
 
 Renamed the 3rd experiment from inference_efficiency to prediction_efficiency so it's intelligible to a broader audience.
 
-## 2026-09-29
+
 
 ### Morning
 
