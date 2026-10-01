@@ -8,8 +8,10 @@ cd "$REPO_DIR"
 : "${nnUNet_raw:?Set nnUNet_raw before running}"
 : "${nnUNet_preprocessed:?Set nnUNet_preprocessed before running}"
 : "${nnUNet_results:?Set nnUNet_results before running}"
+SEED=42
 if [[ $# -eq 0 ]]; then
-    unset TRAINING_EFFICIENCY_DRYRUN
+    DRY_RUN=0
+    TRAINER=nnUNetTrainer_trainingMilestones_Seed42
     FOLDS=(0 1 2 3 4)
     EPOCHS=(25 50 75 100 150 300 500 750)
     PREDICTION_LABELS=("${EPOCHS[@]/#/epoch}" best)
@@ -20,10 +22,11 @@ elif [[ $# -eq 1 && "$1" == --dry-run ]]; then
         echo 'Dry run requires isolated nnUNet_preprocessed/dry_run and nnUNet_results/dry_run roots.' >&2
         exit 2
     }
-    export TRAINING_EFFICIENCY_DRYRUN=1
+    DRY_RUN=1
+    TRAINER=nnUNetTrainer_trainingMilestonesDryRun_Seed42
     FOLDS=(0)
     EPOCHS=(1)
-    PREDICTION_LABELS=(epoch1 final)
+    PREDICTION_LABELS=(epoch1 best)
     TOTAL_EPOCHS=2
     LOGS_DIR="$REPO_DIR/logs/01_training_efficiency_dryrun"
     [[ ! -e "$LOGS_DIR" ]] || { echo "Dry-run logs already exist: $LOGS_DIR" >&2; exit 1; }
@@ -35,8 +38,7 @@ export nnUNet_extTrainer="$SCRIPT_DIR/custom_trainers"
 
 DATASET_ID=1
 DATASET_NAME=Dataset001_AUL
-TRAINER=nnUNetTrainer_trainingMilestones_Seed42
-SEED=42
+TRAINER_PREFIX="${TRAINER%"$SEED"}"
 RAW_DATASET="$nnUNet_raw/$DATASET_NAME"
 PREPARED_DATASET="$nnUNet_preprocessed/$DATASET_NAME"
 RESULTS_DATASET="$nnUNet_results/$DATASET_NAME/${TRAINER}__nnUNetPlans__2d"
@@ -51,7 +53,7 @@ fi
 for command in python nnUNetv2_plan_and_preprocess nnUNetv2_train nnUNetv2_predict nvidia-smi; do
     command -v "$command" >/dev/null || { echo "Missing command: $command" >&2; exit 1; }
 done
-[[ -f "$SCRIPT_DIR/custom_trainers/${TRAINER}.py" ]] || {
+[[ -f "$SCRIPT_DIR/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py" ]] || {
     echo 'The seed-42 internal-checkpoint trainer is missing.' >&2
     exit 1
 }
@@ -109,11 +111,42 @@ echo "=== Training efficiency: folds ${FOLDS[*]}, $TOTAL_EPOCHS epochs, seed $SE
 echo "Start time: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo "Host: $(hostname)"
 echo "Repo SHA: $(git rev-parse HEAD 2>/dev/null || echo unavailable)"
-python - <<'PY'
+echo 'Repo status (git status --porcelain):'
+git status --porcelain 2>/dev/null || echo unavailable
+if [[ -n "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]]; then
+    echo 'WARNING: tracked files differ from the repo SHA above.'
+fi
+python -m pip freeze > "$LOGS_DIR/pip_freeze.txt"
+python - "$LOGS_DIR" <<'PY'
+import json
+import os
+from pathlib import Path
+import platform
+import sys
 from importlib.metadata import version
+
 import torch
-print(f'nnU-Net: {version("nnunetv2")}; PyTorch: {torch.__version__}; CUDA: {torch.version.cuda}')
-print(f'CUDA devices: {torch.cuda.device_count()}')
+from nnunetv2.utilities.default_n_proc_DA import get_allowed_n_proc_DA
+
+environment = {
+    'python': platform.python_version(),
+    'nnunetv2': version('nnunetv2'),
+    'torch': torch.__version__,
+    'cuda': torch.version.cuda,
+    'cudnn': torch.backends.cudnn.version(),
+    'gpu_count': torch.cuda.device_count(),
+    'gpu_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+    'cpu_count': os.cpu_count(),
+    'usable_cpus': len(os.sched_getaffinity(0)),
+    'nnUNet_n_proc_DA_set': os.environ.get('nnUNet_n_proc_DA'),
+    'nnUNet_n_proc_DA_used': get_allowed_n_proc_DA(),
+    'nnUNet_compile_set': os.environ.get('nnUNet_compile'),
+}
+(Path(sys.argv[1]) / 'environment.json').write_text(json.dumps(environment, indent=2) + '\n')
+print(f'nnU-Net: {environment["nnunetv2"]}; PyTorch: {environment["torch"]}; '
+      f'CUDA: {environment["cuda"]}; cuDNN: {environment["cudnn"]}')
+print(f'CUDA devices: {environment["gpu_count"]}; usable CPUs: {environment["usable_cpus"]}; '
+      f'data-augmentation workers: {environment["nnUNet_n_proc_DA_used"]}')
 PY
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader
 if [[ ! -x /usr/bin/time ]]; then
@@ -135,9 +168,9 @@ cp "$PREPARED_DATASET/splits_final.json" "$LOGS_DIR/splits_final.json"
 
 printf 'fold,seed,epochs,wall_clock_seconds\n' > "$TRAIN_TIMES"
 printf 'fold,seed,checkpoint,wall_clock_seconds,case_count\n' > "$PRED_TIMES"
-if [[ "${TRAINING_EFFICIENCY_DRYRUN:-}" == 1 ]]; then
-    printf 'mode=dryrun\nseed=%s\nfold=0\nepochs=%s\nmilestones=1\npredictions=epoch1,final\n' \
-        "$SEED" "$TOTAL_EPOCHS" > "$LOGS_DIR/run_settings.txt"
+if [[ "$DRY_RUN" == 1 ]]; then
+    printf 'mode=dryrun\ntrainer=%s\nseed=%s\nfold=0\nepochs=%s\nmilestones=1\npredictions=epoch1,best\n' \
+        "$TRAINER" "$SEED" "$TOTAL_EPOCHS" > "$LOGS_DIR/run_settings.txt"
 fi
 
 GPU_MONITOR_PID=''
@@ -173,7 +206,7 @@ for FOLD in "${FOLDS[@]}"; do
 
     for LABEL in "${PREDICTION_LABELS[@]}"; do
         CHECKPOINT="checkpoint_${LABEL}.pth"
-        if [[ "$LABEL" != best && "$LABEL" != final ]]; then
+        if [[ "$LABEL" != best ]]; then
             test -s "$CHECKPOINT_DIR/$CHECKPOINT" || {
                 echo "Missing checkpoint for fold $FOLD: $CHECKPOINT" >&2
                 exit 1
@@ -199,7 +232,7 @@ for FOLD in "${FOLDS[@]}"; do
         python "$REPO_DIR/experiments/benchmark_inference.py" \
             --nnunet-raw "$nnUNet_raw" --dataset-name "$DATASET_NAME" \
             --dataset-id "$DATASET_ID" --seeds "$SEED" \
-            --trainer-prefix nnUNetTrainer_trainingMilestones_Seed \
+            --trainer-prefix "$TRAINER_PREFIX" \
             --fold "$FOLD" --checkpoint checkpoint_final.pth \
             --device cuda --output-dir "$INFERENCE_DIR"
     INFERENCE_BEST_DIR="$LOGS_DIR/inference_best/fold${FOLD}"
@@ -207,15 +240,15 @@ for FOLD in "${FOLDS[@]}"; do
         python "$REPO_DIR/experiments/benchmark_inference.py" \
             --nnunet-raw "$nnUNet_raw" --dataset-name "$DATASET_NAME" \
             --dataset-id "$DATASET_ID" --seeds "$SEED" \
-            --trainer-prefix nnUNetTrainer_trainingMilestones_Seed \
+            --trainer-prefix "$TRAINER_PREFIX" \
             --fold "$FOLD" --checkpoint checkpoint_best.pth \
             --device cuda --output-dir "$INFERENCE_BEST_DIR"
     stop_gpu_monitor
     echo "Fold $FOLD complete"
 done
 
-if [[ "${TRAINING_EFFICIENCY_DRYRUN:-}" == 1 ]]; then
-    echo "Training efficiency dry run complete: fold 0, epoch 1 and final predictions, and two inference benchmarks."
+if [[ "$DRY_RUN" == 1 ]]; then
+    echo "Training efficiency dry run complete: fold 0, epoch 1 and best predictions, and two inference benchmarks."
 else
     echo "Training efficiency complete: ${#FOLDS[@]} fold(s), ${#EPOCHS[@]} milestone and one best prediction per fold, and two inference benchmarks per fold."
 fi

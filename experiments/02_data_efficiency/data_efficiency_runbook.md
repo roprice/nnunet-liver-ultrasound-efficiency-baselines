@@ -72,11 +72,12 @@ Keep `.venv` outside the checkout: the remote controller copies the entire repos
 
 ```sh
 python -m pip install --upgrade pip
-python -m pip install 'nnunetv2==2.8.1' zenodo-get
+python -m pip install 'nnunetv2==2.8.1' 'torch==2.14.1' zenodo-get
 python -c 'import torch, numpy, PIL; assert torch.cuda.is_available()'
+python -m pip freeze > experiment_logs/data_efficiency/pip_freeze.txt
 ```
 
-If the CUDA check fails, install a compatible CUDA-enabled PyTorch build before proceeding.
+PyTorch is pinned to 2.14.1, the version an unpinned `nnunetv2==2.8.1` install resolved to on 2026-10-01. If the CUDA check fails, install a CUDA-enabled build of that same version before proceeding. The `pip freeze` goes in `experiment_logs/data_efficiency/` because `logs/02_data_efficiency/` must be empty when the runner starts.
 
 ## 6. Configure nnU-Net directories
 
@@ -120,10 +121,11 @@ mkdir -p data/source
 ```sh
 python experiments/prepare_data/aul_conversion.py \
   --raw-data-dir data/source/AUL \
-  --output-dir "$nnUNet_raw/Dataset001_AUL"
+  --output-dir "$nnUNet_raw/Dataset001_AUL" \
+  --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
-Expect 588 training and 147 test image/label pairs. The runner validates `case_mapping.json`, creates the three nested subsets, and preprocesses all four datasets with five folds each.
+Expect 588 training and 147 test image/label pairs. The converter stops if the seed-42 assignments differ from the committed reference or if annotation files are missing or unexpected, and writes `conversion_report.json`. Three Malignant images (229, 306 and 374) have no liver polygon in AUL; their labels contain the mass only. The runner validates `case_mapping.json`, creates the three nested subsets, and preprocesses all four datasets with five folds each.
 
 ## 9. Verify input data and mark setup complete
 
@@ -166,6 +168,8 @@ mv data_efficiency_runner_exit_status.txt.tmp data_efficiency_runner_exit_status
 ```
 
 The runner requires nonempty final and best checkpoints after each fold, then predicts and calls `experiments/benchmark_inference.py` on GPU for each checkpoint (40 predictions and 40 benchmarks total). Final outputs remain in `predictions/` and `inference/`; best outputs use `predictions_best/` and `inference_best/` to avoid collisions. Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`. Check `logs/data_efficiency_runner.log` and per-stage logs if it fails.
+
+Each timed training step includes more than epochs: `nnUNetv2_train` finishes with a full validation of the held-out fold cases, and `--npz` adds exporting their softmax probabilities. Training wall-clock in `training_times.csv` therefore includes validation inference and file writing; state this when reporting training cost.
 
 ## 11. Complete the run
 
@@ -239,6 +243,19 @@ python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py 
 
 The controller ends GPU sampling, calculates the recorded-window cost, copies all four source trees with `rsync`, checks remote and local SHA-256 inventories, and saves a completion manifest **before** deleting the instance. A failed check or transfer prevents deletion; transfer and deletion time are outside the recorded window. The deletion command has no volume-retention option: confirm its behavior if the GPU block volume must be retained.
 
+## Reporting note: planning differs by training-pool size
+
+nnU-Net's planner caps the batch size so that one batch covers at most 5% of the dataset (`max_dataset_covered = 0.05`, minimum batch size 2), and it plans the patch size from each dataset's median image shape. The four pools are therefore planned differently. Planning the pools with nnunetv2 2.8.1 on the converted AUL data gave:
+
+| Training pool | Batch size | Patch size | Median image size |
+|---:|---:|---|---|
+| 588 | 7 | 640 × 768 | 542 × 736 |
+| 294 | 5 | 768 × 896 | 667 × 792 |
+| 147 | 5 | 768 × 896 | 671 × 815 |
+| 74 | 4 | 512 × 768 | 512 × 732 |
+
+Every epoch runs a fixed 250 iterations, so samples seen per epoch (250 × batch size) and per-iteration compute differ across pools. This is default nnU-Net behavior, consistent with adhering to defaults. Report it with the data-efficiency results. The runner archives each pool's plan as `logs/02_data_efficiency/size<size>/nnUNetPlans.json`; check those against this table.
+
 ## Output layout
 
 Model datasets are `Dataset001_AUL`, `Dataset002_AUL_294`, `Dataset003_AUL_147`, and `Dataset004_AUL_074`. Test images and labels stay in `Dataset001_AUL`. For each `<name>`:
@@ -287,6 +304,7 @@ experiment_logs/data_efficiency/
   gpu_rate.csv
   gpu_events.csv
   gpu_monitor_instance.csv
+  pip_freeze.txt
   record_event.sh
   gpu_usage_summary.txt
 ```

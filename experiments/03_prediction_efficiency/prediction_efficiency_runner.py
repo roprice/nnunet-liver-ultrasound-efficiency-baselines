@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Run the data-efficiency models' predictions and inference benchmarks on Mac CPU."""
+"""Run the data-efficiency models' inference benchmarks (masks, latency, throughput) on Mac CPU."""
 
 import argparse
-import csv
 import json
 import os
 from pathlib import Path
@@ -11,7 +10,6 @@ import shlex
 import shutil
 import subprocess
 import sys
-import time
 
 
 SCALES = ((588, 1, "Dataset001_AUL"), (294, 2, "Dataset002_AUL_294"),
@@ -70,7 +68,7 @@ def check_masks(folder, testing, images):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=REPO / "logs/03_prediction_efficiency")
-    parser.add_argument("--dry-run", action="store_true", help="Check inputs and print commands without writing")
+    parser.add_argument("--check-only", action="store_true", help="Check inputs and print commands without writing")
     args = parser.parse_args()
     try:
         raw = Path(os.environ["nnUNet_raw"]).resolve()
@@ -82,7 +80,7 @@ def main():
         require((trainer_dir / f"{TRAINER}.py").is_file(), f"Missing trainer: {trainer_dir}")
         os.environ["nnUNet_extTrainer"] = str(trainer_dir)
         images, testing = check_inputs(raw, results)
-        if not args.dry_run:
+        if not args.check_only:
             require(platform.system() == "Darwin", "This experiment requires macOS")
             cli = shutil.which("nnUNetv2_predict")
             require(cli is not None, "Missing nnUNetv2_predict on PATH")
@@ -97,8 +95,8 @@ def main():
 
     output = args.output_dir.resolve()
     benchmark = REPO / "experiments/benchmark_inference.py"
-    rows = []
-    if not args.dry_run:
+    completed = 0
+    if not args.check_only:
         output.mkdir(parents=True, exist_ok=True)
         (output / "run_settings.json").write_text(json.dumps({
             "device": "cpu", "epochs": int(epochs), "trainer": TRAINER,
@@ -107,63 +105,35 @@ def main():
             "host": platform.node(), "platform": platform.platform(),
             "python": sys.version, "model_count": 20, "checkpoint_count": 40,
         }, indent=2) + "\n")
-        times = (output / "prediction_times.csv").open("w", newline="")
-        writer = csv.DictWriter(times, fieldnames=["size", "dataset_id", "fold", "seed",
-                                                    "checkpoint", "device", "wall_clock_seconds",
-                                                    "case_count", "prediction_output"])
-        writer.writeheader()
-        times.flush()
-    try:
-        for size, dataset_id, name in SCALES:
-            for fold in range(5):
-                stage = output / f"size{size}" / f"fold{fold}"
-                for checkpoint in CHECKPOINTS:
-                    is_best = checkpoint == "checkpoint_best.pth"
-                    predictions = stage / ("predictions_best_cpu" if is_best else "predictions_cpu")
-                    inference = stage / ("inference_best" if is_best else "inference")
+    for size, dataset_id, name in SCALES:
+        for fold in range(5):
+            stage = output / f"size{size}" / f"fold{fold}"
+            for checkpoint in CHECKPOINTS:
+                is_best = checkpoint == "checkpoint_best.pth"
+                inference = stage / ("inference_best" if is_best else "inference")
 
-                    prediction_command = ["nnUNetv2_predict", "-i", str(images), "-o", str(predictions),
-                                          "-d", str(dataset_id), "-c", "2d", "-f", str(fold),
-                                          "-tr", TRAINER, "-chk", checkpoint, "-device", "cpu",
-                                          "-npp", "1", "-nps", "1"]
-                    benchmark_command = [sys.executable, str(benchmark), "--nnunet-raw", str(raw),
-                                         "--dataset-name", name, "--test-dataset-name", "Dataset001_AUL",
-                                         "--dataset-id", str(dataset_id), "--seeds", "42",
-                                         "--trainer-prefix", "nnUNetTrainer_dataSubsets_Seed",
-                                         "--fold", str(fold), "--checkpoint", checkpoint,
-                                         "--device", "cpu", "--output-dir", str(inference)]
-                    if args.dry_run:
-                        print(shlex.join(prediction_command))
-                        print(shlex.join(benchmark_command))
-                        continue
-                    stage.mkdir(parents=True, exist_ok=True)
-                    print(f"Predicting size={size} fold={fold} checkpoint={checkpoint} on CPU", flush=True)
-                    with (stage / ("predict_best.log" if is_best else "predict.log")).open("w") as log:
-                        start = time.perf_counter()
-                        subprocess.run(prediction_command, stdout=log, stderr=subprocess.STDOUT, check=True)
-                        seconds = time.perf_counter() - start
-                    check_masks(predictions, testing, images)
-                    row = {"size": size, "dataset_id": dataset_id, "fold": fold, "seed": 42,
-                           "checkpoint": checkpoint, "device": "cpu",
-                           "wall_clock_seconds": f"{seconds:.6f}", "case_count": len(testing),
-                           "prediction_output": str(predictions)}
-                    rows.append(row)
-                    writer.writerow(row)
-                    times.flush()
-                    print(f"Benchmarking size={size} fold={fold} checkpoint={checkpoint} on CPU", flush=True)
-                    with (stage / ("benchmark_best.log" if is_best else "benchmark.log")).open("w") as log:
-                        subprocess.run(benchmark_command, stdout=log, stderr=subprocess.STDOUT, check=True)
-                    check_masks(inference / f"predictions_cpu_seed42_fold{fold}_repeat1", testing, images)
-                    for kind, suffix in (("per_image", "csv"), ("summary", "csv"),
-                                         ("throughput", "csv"), ("settings", "json")):
-                        report = inference / f"inference_{kind}_cpu_fold{fold}.{suffix}"
-                        require(report.is_file() and report.stat().st_size > 0,
-                                f"Missing benchmark report: {report}")
-        if not args.dry_run:
-            print(f"Completed {len(rows)} CPU checkpoint runs across 20 models; outputs: {output}", flush=True)
-    finally:
-        if not args.dry_run:
-            times.close()
+                benchmark_command = [sys.executable, str(benchmark), "--nnunet-raw", str(raw),
+                                     "--dataset-name", name, "--test-dataset-name", "Dataset001_AUL",
+                                     "--dataset-id", str(dataset_id), "--seeds", "42",
+                                     "--trainer-prefix", "nnUNetTrainer_dataSubsets_Seed",
+                                     "--fold", str(fold), "--checkpoint", checkpoint,
+                                     "--device", "cpu", "--output-dir", str(inference)]
+                if args.check_only:
+                    print(shlex.join(benchmark_command))
+                    continue
+                stage.mkdir(parents=True, exist_ok=True)
+                print(f"Benchmarking size={size} fold={fold} checkpoint={checkpoint} on CPU", flush=True)
+                with (stage / ("benchmark_best.log" if is_best else "benchmark.log")).open("w") as log:
+                    subprocess.run(benchmark_command, stdout=log, stderr=subprocess.STDOUT, check=True)
+                check_masks(inference / f"predictions_cpu_seed42_fold{fold}_repeat1", testing, images)
+                for kind, suffix in (("per_image", "csv"), ("summary", "csv"),
+                                     ("throughput", "csv"), ("settings", "json")):
+                    report = inference / f"inference_{kind}_cpu_fold{fold}.{suffix}"
+                    require(report.is_file() and report.stat().st_size > 0,
+                            f"Missing benchmark report: {report}")
+                completed += 1
+    if not args.check_only:
+        print(f"Completed {completed} CPU checkpoint runs across 20 models; outputs: {output}", flush=True)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7279 @@
+[
+  {
+    "case_name": "liver_0001",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "73.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0002",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "153.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0003",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "108.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0004",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "49.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0005",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "63.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0006",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "146.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0007",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "31.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0008",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "195.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0009",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "165.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0010",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "200.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0011",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "194.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0012",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "185.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0013",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "192.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0014",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "5.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0015",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "138.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0016",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "1.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0017",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "64.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0018",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "92.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0019",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "113.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0020",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "171.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0021",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "191.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0022",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "133.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0023",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "6.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0024",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "78.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0025",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "40.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0026",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "17.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0027",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "22.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0028",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "116.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0029",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "111.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0030",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "79.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0031",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "50.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0032",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "80.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0033",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "158.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0034",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "175.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0035",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "68.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0036",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "140.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0037",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "193.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0038",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "170.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0039",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "148.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0040",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "96.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0041",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "176.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0042",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "25.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0043",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "198.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0044",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "39.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0045",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "47.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0046",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "129.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0047",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "115.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0048",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "45.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0049",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "3.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0050",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "77.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0051",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "156.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0052",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "174.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0053",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "52.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0054",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "19.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0055",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "59.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0056",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "164.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0057",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "123.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0058",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "85.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0059",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "20.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0060",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "145.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0061",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "76.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0062",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "102.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0063",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "125.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0064",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "84.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0065",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "189.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0066",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "188.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0067",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "37.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0068",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "30.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0069",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "98.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0070",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "4.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0071",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "8.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0072",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "27.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0073",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "13.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0074",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "142.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0075",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "71.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0076",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "43.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0077",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "53.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0078",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "38.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0079",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "33.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0080",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "118.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0081",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "172.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0082",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "169.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0083",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "107.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0084",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "173.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0085",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "67.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0086",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "26.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0087",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "18.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0088",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "160.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0089",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "147.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0090",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "180.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0091",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "184.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0092",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "136.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0093",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "183.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0094",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "23.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0095",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "99.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0096",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "60.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0097",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "121.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0098",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "81.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0099",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "51.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0100",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "166.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0101",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "151.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0102",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "56.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0103",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "114.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0104",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "143.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0105",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "182.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0106",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "167.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0107",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "46.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0108",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "117.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0109",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "186.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0110",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "127.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0111",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "42.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0112",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "24.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0113",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "109.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0114",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "16.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0115",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "179.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0116",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "181.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0117",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "120.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0118",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "187.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0119",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "83.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0120",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "90.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0121",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "177.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0122",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "82.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0123",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "134.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0124",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "70.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0125",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "178.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0126",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "86.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0127",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "135.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0128",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "10.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0129",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "163.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0130",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "54.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0131",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "21.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0132",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "15.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0133",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "196.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0134",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "91.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0135",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "69.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0136",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "144.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0137",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "48.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0138",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "97.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0139",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "58.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0140",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "35.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0141",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "152.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0142",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "149.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0143",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "12.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0144",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "105.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0145",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "106.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0146",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "197.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0147",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "55.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0148",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "119.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0149",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "44.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0150",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "75.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0151",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "122.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0152",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "89.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0153",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "130.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0154",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "150.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0155",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "155.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0156",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "162.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0157",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "9.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0158",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "104.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0159",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "124.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0160",
+    "split": "train",
+    "category": "Benign",
+    "original_file": "66.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0161",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "223.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0162",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "231.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0163",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "49.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0164",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "280.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0165",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "429.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0166",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "331.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0167",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "206.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0168",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "174.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0169",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "169.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0170",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "166.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0171",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "93.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0172",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "276.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0173",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "67.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0174",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "273.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0175",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "424.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0176",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "318.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0177",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "205.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0178",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "97.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0179",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "328.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0180",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "68.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0181",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "119.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0182",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "376.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0183",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "177.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0184",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "291.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0185",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "434.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0186",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "28.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0187",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "120.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0188",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "69.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0189",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "309.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0190",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "63.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0191",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "92.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0192",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "254.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0193",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "269.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0194",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "394.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0195",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "325.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0196",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "270.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0197",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "54.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0198",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "57.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0199",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "83.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0200",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "182.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0201",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "387.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0202",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "229.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0203",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "239.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0204",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "353.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0205",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "286.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0206",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "282.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0207",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "414.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0208",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "37.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0209",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "316.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0210",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "400.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0211",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "315.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0212",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "158.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0213",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "51.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0214",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "426.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0215",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "335.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0216",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "272.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0217",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "59.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0218",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "339.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0219",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "179.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0220",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "72.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0221",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "259.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0222",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "406.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0223",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "416.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0224",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "232.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0225",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "265.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0226",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "159.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0227",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "379.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0228",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "410.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0229",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "303.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0230",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "222.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0231",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "247.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0232",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "216.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0233",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "423.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0234",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "419.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0235",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "114.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0236",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "422.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0237",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "401.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0238",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "94.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0239",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "50.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0240",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "266.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0241",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "150.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0242",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "151.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0243",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "91.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0244",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "18.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0245",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "70.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0246",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "35.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0247",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "15.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0248",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "372.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0249",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "350.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0250",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "392.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0251",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "44.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0252",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "135.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0253",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "378.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0254",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "278.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0255",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "253.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0256",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "267.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0257",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "306.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0258",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "268.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0259",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "104.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0260",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "194.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0261",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "14.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0262",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "301.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0263",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "153.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0264",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "134.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0265",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "89.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0266",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "241.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0267",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "360.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0268",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "297.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0269",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "180.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0270",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "122.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0271",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "252.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0272",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "156.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0273",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "256.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0274",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "326.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0275",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "181.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0276",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "403.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0277",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "420.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0278",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "17.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0279",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "80.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0280",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "82.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0281",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "199.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0282",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "388.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0283",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "3.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0284",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "233.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0285",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "184.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0286",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "107.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0287",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "329.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0288",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "95.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0289",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "258.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0290",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "116.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0291",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "124.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0292",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "100.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0293",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "228.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0294",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "411.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0295",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "261.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0296",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "226.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0297",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "200.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0298",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "340.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0299",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "368.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0300",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "32.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0301",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "246.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0302",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "129.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0303",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "277.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0304",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "90.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0305",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "1.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0306",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "109.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0307",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "162.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0308",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "290.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0309",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "99.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0310",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "321.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0311",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "12.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0312",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "110.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0313",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "396.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0314",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "398.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0315",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "86.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0316",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "157.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0317",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "341.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0318",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "215.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0319",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "344.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0320",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "296.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0321",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "245.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0322",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "257.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0323",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "146.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0324",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "178.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0325",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "264.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0326",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "334.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0327",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "87.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0328",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "164.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0329",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "224.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0330",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "393.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0331",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "148.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0332",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "152.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0333",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "345.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0334",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "160.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0335",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "147.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0336",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "395.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0337",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "351.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0338",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "238.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0339",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "88.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0340",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "38.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0341",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "23.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0342",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "27.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0343",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "211.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0344",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "375.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0345",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "26.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0346",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "356.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0347",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "358.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0348",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "332.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0349",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "404.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0350",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "347.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0351",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "415.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0352",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "145.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0353",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "79.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0354",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "102.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0355",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "132.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0356",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "58.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0357",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "31.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0358",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "237.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0359",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "6.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0360",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "281.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0361",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "9.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0362",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "209.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0363",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "386.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0364",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "193.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0365",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "219.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0366",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "244.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0367",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "34.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0368",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "36.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0369",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "292.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0370",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "377.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0371",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "117.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0372",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "389.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0373",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "84.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0374",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "361.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0375",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "85.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0376",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "43.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0377",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "207.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0378",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "7.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0379",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "373.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0380",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "130.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0381",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "185.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0382",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "136.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0383",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "333.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0384",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "385.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0385",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "171.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0386",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "343.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0387",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "330.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0388",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "319.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0389",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "369.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0390",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "413.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0391",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "39.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0392",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "243.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0393",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "430.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0394",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "349.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0395",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "366.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0396",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "125.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0397",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "2.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0398",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "235.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0399",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "73.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0400",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "170.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0401",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "323.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0402",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "355.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0403",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "421.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0404",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "230.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0405",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "308.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0406",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "220.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0407",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "279.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0408",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "10.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0409",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "274.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0410",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "175.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0411",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "71.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0412",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "284.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0413",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "61.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0414",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "320.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0415",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "62.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0416",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "53.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0417",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "176.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0418",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "65.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0419",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "141.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0420",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "105.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0421",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "60.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0422",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "4.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0423",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "121.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0424",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "431.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0425",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "352.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0426",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "302.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0427",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "133.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0428",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "427.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0429",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "311.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0430",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "64.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0431",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "183.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0432",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "47.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0433",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "163.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0434",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "305.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0435",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "346.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0436",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "52.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0437",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "188.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0438",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "213.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0439",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "149.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0440",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "81.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0441",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "285.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0442",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "127.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0443",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "144.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0444",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "397.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0445",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "40.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0446",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "409.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0447",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "123.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0448",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "96.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0449",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "314.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0450",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "289.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0451",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "294.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0452",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "262.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0453",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "298.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0454",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "402.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0455",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "143.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0456",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "142.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0457",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "187.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0458",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "287.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0459",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "56.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0460",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "210.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0461",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "317.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0462",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "365.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0463",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "362.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0464",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "432.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0465",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "16.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0466",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "98.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0467",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "198.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0468",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "322.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0469",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "407.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0470",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "227.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0471",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "208.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0472",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "336.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0473",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "74.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0474",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "251.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0475",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "113.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0476",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "13.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0477",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "78.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0478",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "126.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0479",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "390.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0480",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "425.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0481",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "131.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0482",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "101.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0483",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "20.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0484",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "8.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0485",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "204.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0486",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "354.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0487",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "370.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0488",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "108.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0489",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "255.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0490",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "128.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0491",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "202.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0492",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "212.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0493",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "154.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0494",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "307.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0495",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "337.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0496",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "300.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0497",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "271.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0498",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "399.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0499",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "408.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0500",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "283.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0501",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "242.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0502",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "428.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0503",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "191.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0504",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "417.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0505",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "435.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0506",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "55.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0507",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "348.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0508",
+    "split": "train",
+    "category": "Malignant",
+    "original_file": "197.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0509",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "86.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0510",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "37.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0511",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "26.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0512",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "45.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0513",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "14.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0514",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "94.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0515",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "85.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0516",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "63.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0517",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "68.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0518",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "49.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147,
+      74
+    ]
+  },
+  {
+    "case_name": "liver_0519",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "73.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0520",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "12.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0521",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "21.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0522",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "29.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0523",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "54.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0524",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "88.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0525",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "60.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0526",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "36.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0527",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "6.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0528",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "8.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294,
+      147
+    ]
+  },
+  {
+    "case_name": "liver_0529",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "93.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0530",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "24.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0531",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "87.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0532",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "69.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0533",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "51.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0534",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "99.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0535",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "20.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0536",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "27.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0537",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "30.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0538",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "67.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0539",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "66.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0540",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "19.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0541",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "35.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0542",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "16.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0543",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "33.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0544",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "46.jpg",
+    "fold": 0,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0545",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "13.jpg",
+    "fold": 1,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0546",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "10.jpg",
+    "fold": 2,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0547",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "98.jpg",
+    "fold": 3,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0548",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "41.jpg",
+    "fold": 4,
+    "scales": [
+      588,
+      294
+    ]
+  },
+  {
+    "case_name": "liver_0549",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "42.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0550",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "31.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0551",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "61.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0552",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "72.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0553",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "23.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0554",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "96.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0555",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "28.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0556",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "55.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0557",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "48.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0558",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "82.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0559",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "11.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0560",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "77.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0561",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "59.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0562",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "4.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0563",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "78.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0564",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "65.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0565",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "34.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0566",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "79.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0567",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "97.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0568",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "70.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0569",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "92.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0570",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "91.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0571",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "43.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0572",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "5.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0573",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "1.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0574",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "64.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0575",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "52.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0576",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "75.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0577",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "100.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0578",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "9.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0579",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "76.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0580",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "53.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0581",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "95.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0582",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "32.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0583",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "15.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0584",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "57.jpg",
+    "fold": 0,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0585",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "62.jpg",
+    "fold": 1,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0586",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "71.jpg",
+    "fold": 2,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0587",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "47.jpg",
+    "fold": 3,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0588",
+    "split": "train",
+    "category": "Normal",
+    "original_file": "56.jpg",
+    "fold": 4,
+    "scales": [
+      588
+    ]
+  },
+  {
+    "case_name": "liver_0589",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "159.jpg"
+  },
+  {
+    "case_name": "liver_0590",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "88.jpg"
+  },
+  {
+    "case_name": "liver_0591",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "190.jpg"
+  },
+  {
+    "case_name": "liver_0592",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "93.jpg"
+  },
+  {
+    "case_name": "liver_0593",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "2.jpg"
+  },
+  {
+    "case_name": "liver_0594",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "28.jpg"
+  },
+  {
+    "case_name": "liver_0595",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "110.jpg"
+  },
+  {
+    "case_name": "liver_0596",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "100.jpg"
+  },
+  {
+    "case_name": "liver_0597",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "157.jpg"
+  },
+  {
+    "case_name": "liver_0598",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "139.jpg"
+  },
+  {
+    "case_name": "liver_0599",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "41.jpg"
+  },
+  {
+    "case_name": "liver_0600",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "72.jpg"
+  },
+  {
+    "case_name": "liver_0601",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "34.jpg"
+  },
+  {
+    "case_name": "liver_0602",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "168.jpg"
+  },
+  {
+    "case_name": "liver_0603",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "61.jpg"
+  },
+  {
+    "case_name": "liver_0604",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "7.jpg"
+  },
+  {
+    "case_name": "liver_0605",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "14.jpg"
+  },
+  {
+    "case_name": "liver_0606",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "36.jpg"
+  },
+  {
+    "case_name": "liver_0607",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "126.jpg"
+  },
+  {
+    "case_name": "liver_0608",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "101.jpg"
+  },
+  {
+    "case_name": "liver_0609",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "62.jpg"
+  },
+  {
+    "case_name": "liver_0610",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "112.jpg"
+  },
+  {
+    "case_name": "liver_0611",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "137.jpg"
+  },
+  {
+    "case_name": "liver_0612",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "32.jpg"
+  },
+  {
+    "case_name": "liver_0613",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "87.jpg"
+  },
+  {
+    "case_name": "liver_0614",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "65.jpg"
+  },
+  {
+    "case_name": "liver_0615",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "141.jpg"
+  },
+  {
+    "case_name": "liver_0616",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "199.jpg"
+  },
+  {
+    "case_name": "liver_0617",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "103.jpg"
+  },
+  {
+    "case_name": "liver_0618",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "94.jpg"
+  },
+  {
+    "case_name": "liver_0619",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "132.jpg"
+  },
+  {
+    "case_name": "liver_0620",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "29.jpg"
+  },
+  {
+    "case_name": "liver_0621",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "11.jpg"
+  },
+  {
+    "case_name": "liver_0622",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "131.jpg"
+  },
+  {
+    "case_name": "liver_0623",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "57.jpg"
+  },
+  {
+    "case_name": "liver_0624",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "161.jpg"
+  },
+  {
+    "case_name": "liver_0625",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "154.jpg"
+  },
+  {
+    "case_name": "liver_0626",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "95.jpg"
+  },
+  {
+    "case_name": "liver_0627",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "128.jpg"
+  },
+  {
+    "case_name": "liver_0628",
+    "split": "test",
+    "category": "Benign",
+    "original_file": "74.jpg"
+  },
+  {
+    "case_name": "liver_0629",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "45.jpg"
+  },
+  {
+    "case_name": "liver_0630",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "412.jpg"
+  },
+  {
+    "case_name": "liver_0631",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "25.jpg"
+  },
+  {
+    "case_name": "liver_0632",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "313.jpg"
+  },
+  {
+    "case_name": "liver_0633",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "236.jpg"
+  },
+  {
+    "case_name": "liver_0634",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "42.jpg"
+  },
+  {
+    "case_name": "liver_0635",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "310.jpg"
+  },
+  {
+    "case_name": "liver_0636",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "240.jpg"
+  },
+  {
+    "case_name": "liver_0637",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "221.jpg"
+  },
+  {
+    "case_name": "liver_0638",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "433.jpg"
+  },
+  {
+    "case_name": "liver_0639",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "165.jpg"
+  },
+  {
+    "case_name": "liver_0640",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "11.jpg"
+  },
+  {
+    "case_name": "liver_0641",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "364.jpg"
+  },
+  {
+    "case_name": "liver_0642",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "66.jpg"
+  },
+  {
+    "case_name": "liver_0643",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "391.jpg"
+  },
+  {
+    "case_name": "liver_0644",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "161.jpg"
+  },
+  {
+    "case_name": "liver_0645",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "405.jpg"
+  },
+  {
+    "case_name": "liver_0646",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "168.jpg"
+  },
+  {
+    "case_name": "liver_0647",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "196.jpg"
+  },
+  {
+    "case_name": "liver_0648",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "155.jpg"
+  },
+  {
+    "case_name": "liver_0649",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "374.jpg"
+  },
+  {
+    "case_name": "liver_0650",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "201.jpg"
+  },
+  {
+    "case_name": "liver_0651",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "225.jpg"
+  },
+  {
+    "case_name": "liver_0652",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "173.jpg"
+  },
+  {
+    "case_name": "liver_0653",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "214.jpg"
+  },
+  {
+    "case_name": "liver_0654",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "172.jpg"
+  },
+  {
+    "case_name": "liver_0655",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "380.jpg"
+  },
+  {
+    "case_name": "liver_0656",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "22.jpg"
+  },
+  {
+    "case_name": "liver_0657",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "138.jpg"
+  },
+  {
+    "case_name": "liver_0658",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "19.jpg"
+  },
+  {
+    "case_name": "liver_0659",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "312.jpg"
+  },
+  {
+    "case_name": "liver_0660",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "29.jpg"
+  },
+  {
+    "case_name": "liver_0661",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "203.jpg"
+  },
+  {
+    "case_name": "liver_0662",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "192.jpg"
+  },
+  {
+    "case_name": "liver_0663",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "371.jpg"
+  },
+  {
+    "case_name": "liver_0664",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "167.jpg"
+  },
+  {
+    "case_name": "liver_0665",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "367.jpg"
+  },
+  {
+    "case_name": "liver_0666",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "275.jpg"
+  },
+  {
+    "case_name": "liver_0667",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "41.jpg"
+  },
+  {
+    "case_name": "liver_0668",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "383.jpg"
+  },
+  {
+    "case_name": "liver_0669",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "106.jpg"
+  },
+  {
+    "case_name": "liver_0670",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "140.jpg"
+  },
+  {
+    "case_name": "liver_0671",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "327.jpg"
+  },
+  {
+    "case_name": "liver_0672",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "77.jpg"
+  },
+  {
+    "case_name": "liver_0673",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "342.jpg"
+  },
+  {
+    "case_name": "liver_0674",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "263.jpg"
+  },
+  {
+    "case_name": "liver_0675",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "288.jpg"
+  },
+  {
+    "case_name": "liver_0676",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "304.jpg"
+  },
+  {
+    "case_name": "liver_0677",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "46.jpg"
+  },
+  {
+    "case_name": "liver_0678",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "195.jpg"
+  },
+  {
+    "case_name": "liver_0679",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "111.jpg"
+  },
+  {
+    "case_name": "liver_0680",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "363.jpg"
+  },
+  {
+    "case_name": "liver_0681",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "381.jpg"
+  },
+  {
+    "case_name": "liver_0682",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "249.jpg"
+  },
+  {
+    "case_name": "liver_0683",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "21.jpg"
+  },
+  {
+    "case_name": "liver_0684",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "293.jpg"
+  },
+  {
+    "case_name": "liver_0685",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "217.jpg"
+  },
+  {
+    "case_name": "liver_0686",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "190.jpg"
+  },
+  {
+    "case_name": "liver_0687",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "139.jpg"
+  },
+  {
+    "case_name": "liver_0688",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "218.jpg"
+  },
+  {
+    "case_name": "liver_0689",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "260.jpg"
+  },
+  {
+    "case_name": "liver_0690",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "112.jpg"
+  },
+  {
+    "case_name": "liver_0691",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "186.jpg"
+  },
+  {
+    "case_name": "liver_0692",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "299.jpg"
+  },
+  {
+    "case_name": "liver_0693",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "248.jpg"
+  },
+  {
+    "case_name": "liver_0694",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "30.jpg"
+  },
+  {
+    "case_name": "liver_0695",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "76.jpg"
+  },
+  {
+    "case_name": "liver_0696",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "250.jpg"
+  },
+  {
+    "case_name": "liver_0697",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "234.jpg"
+  },
+  {
+    "case_name": "liver_0698",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "48.jpg"
+  },
+  {
+    "case_name": "liver_0699",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "418.jpg"
+  },
+  {
+    "case_name": "liver_0700",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "103.jpg"
+  },
+  {
+    "case_name": "liver_0701",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "75.jpg"
+  },
+  {
+    "case_name": "liver_0702",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "115.jpg"
+  },
+  {
+    "case_name": "liver_0703",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "384.jpg"
+  },
+  {
+    "case_name": "liver_0704",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "295.jpg"
+  },
+  {
+    "case_name": "liver_0705",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "359.jpg"
+  },
+  {
+    "case_name": "liver_0706",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "5.jpg"
+  },
+  {
+    "case_name": "liver_0707",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "24.jpg"
+  },
+  {
+    "case_name": "liver_0708",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "137.jpg"
+  },
+  {
+    "case_name": "liver_0709",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "33.jpg"
+  },
+  {
+    "case_name": "liver_0710",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "324.jpg"
+  },
+  {
+    "case_name": "liver_0711",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "189.jpg"
+  },
+  {
+    "case_name": "liver_0712",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "357.jpg"
+  },
+  {
+    "case_name": "liver_0713",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "382.jpg"
+  },
+  {
+    "case_name": "liver_0714",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "118.jpg"
+  },
+  {
+    "case_name": "liver_0715",
+    "split": "test",
+    "category": "Malignant",
+    "original_file": "338.jpg"
+  },
+  {
+    "case_name": "liver_0716",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "74.jpg"
+  },
+  {
+    "case_name": "liver_0717",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "44.jpg"
+  },
+  {
+    "case_name": "liver_0718",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "81.jpg"
+  },
+  {
+    "case_name": "liver_0719",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "25.jpg"
+  },
+  {
+    "case_name": "liver_0720",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "50.jpg"
+  },
+  {
+    "case_name": "liver_0721",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "3.jpg"
+  },
+  {
+    "case_name": "liver_0722",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "84.jpg"
+  },
+  {
+    "case_name": "liver_0723",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "18.jpg"
+  },
+  {
+    "case_name": "liver_0724",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "90.jpg"
+  },
+  {
+    "case_name": "liver_0725",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "17.jpg"
+  },
+  {
+    "case_name": "liver_0726",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "89.jpg"
+  },
+  {
+    "case_name": "liver_0727",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "83.jpg"
+  },
+  {
+    "case_name": "liver_0728",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "2.jpg"
+  },
+  {
+    "case_name": "liver_0729",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "39.jpg"
+  },
+  {
+    "case_name": "liver_0730",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "7.jpg"
+  },
+  {
+    "case_name": "liver_0731",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "38.jpg"
+  },
+  {
+    "case_name": "liver_0732",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "58.jpg"
+  },
+  {
+    "case_name": "liver_0733",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "40.jpg"
+  },
+  {
+    "case_name": "liver_0734",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "22.jpg"
+  },
+  {
+    "case_name": "liver_0735",
+    "split": "test",
+    "category": "Normal",
+    "original_file": "80.jpg"
+  }
+]

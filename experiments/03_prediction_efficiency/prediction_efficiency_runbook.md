@@ -1,6 +1,6 @@
 # Prediction efficiency: Mac CPU
 
-Predict and benchmark both `checkpoint_final.pth` and `checkpoint_best.pth` for experiment 02's 20 models on Mac CPU: four training-pool sizes × folds 0–4, seed 42, and the same 147 held-out AUL test cases. No training or new custom trainer is needed.
+Benchmark both `checkpoint_final.pth` and `checkpoint_best.pth` for experiment 02's 20 models on Mac CPU: four training-pool sizes × folds 0–4, seed 42, and the same 147 held-out AUL test cases. No training or new custom trainer is needed. Each benchmark runs `nnUNetv2_predict` over all 147 images with one preprocessing and one export worker, and saves the masks, so no separate prediction run is made.
 
 | Training-pool size | Model dataset |
 |---:|---|
@@ -44,10 +44,10 @@ export DATA_EFFICIENCY_EPOCHS='<chosen_positive_integer>'
 ## 4. Check the inputs and commands
 
 ```sh
-python experiments/03_prediction_efficiency/prediction_efficiency_runner.py --dry-run
+python experiments/03_prediction_efficiency/prediction_efficiency_runner.py --check-only
 ```
 
-The runner sets `nnUNet_extTrainer` to experiment 02's trainer. The dry run checks the mapping, test-image names, model metadata, and all 40 checkpoints, then prints the commands without writing output.
+The runner sets `nnUNet_extTrainer` to experiment 02's trainer. The check verifies the mapping, test-image names, model metadata, and all 40 checkpoints, then prints the commands without writing output.
 
 ## 5. Run the prediction efficiency experiment 
 
@@ -57,29 +57,24 @@ The runner sets `nnUNet_extTrainer` to experiment 02's trainer. The dry run chec
 caffeinate -i python experiments/03_prediction_efficiency/prediction_efficiency_runner.py
 ```
 
-The runner predicts and calls `experiments/benchmark_inference.py` for both checkpoints of each fold and training-pool size on CPU (40 prediction and 40 benchmark runs). It uses experiment 02's benchmark settings: 2D `nnUNetPlans`, step size 0.5, mirroring enabled, three warm-up images, one batch repeat, and one preprocessing and export worker. The benchmark saves a separate set of masks.
+The runner calls `experiments/benchmark_inference.py` for both checkpoints of each fold and training-pool size on CPU (40 benchmark runs). It uses experiment 02's benchmark settings: 2D `nnUNetPlans`, step size 0.5, mirroring enabled, three warm-up images, one batch repeat, and one preprocessing and export worker. Each benchmark's batch run is a full `nnUNetv2_predict` pass, and its masks are the predictions for that checkpoint.
 
 ## 6. Verify completion and retain results
 
-Expect exit status `0` and `Completed 40 CPU checkpoint runs across 20 models`. The runner checks the standalone and benchmark masks for both checkpoints of all 20 models and requires four benchmark reports per checkpoint. Keep the complete output directory with the results.
+Expect exit status `0` and `Completed 40 CPU checkpoint runs across 20 models`. The runner checks the masks for both checkpoints of all 20 models and requires four benchmark reports per checkpoint. Keep the complete output directory with the results.
 
 ## Output layout
 
 ```text
 logs/03_prediction_efficiency/
   run_settings.json
-  prediction_times.csv                         # 40 standalone prediction batches
   size<size>/fold<fold>/
-    predict.log
-    predictions_cpu/                           # 147 final masks
-    predict_best.log
-    predictions_best_cpu/                      # 147 best masks
     benchmark.log
     benchmark_best.log
     inference/
       inference_per_image_cpu_fold<fold>.csv    # 147 warmed-up predictor-call timings
       inference_summary_cpu_fold<fold>.csv      # distribution, loading, preprocessing, peak CPU RSS
-      inference_throughput_cpu_fold<fold>.csv   # one 147-image end-to-end batch timing
+      inference_throughput_cpu_fold<fold>.csv   # one 147-image end-to-end batch timing, which is the prediction run
       inference_settings_cpu_fold<fold>.json    # environment and inference options
       batch_cpu_seed42_fold<fold>_repeat1.log
       predictions_cpu_seed42_fold<fold>_repeat1/ # 147 final masks

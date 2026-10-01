@@ -1,4 +1,3 @@
-import os
 import random
 from os.path import join
 
@@ -8,16 +7,13 @@ from nnunetv2.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
 
 
 class nnUNetTrainer_trainingMilestones_Seed42(nnUNetTrainer):
+    NUM_EPOCHS = 1000
     MILESTONE_EPOCHS = {25, 50, 75, 100, 150, 300, 500, 750}
 
     def __init__(self, plans, configuration, fold, dataset_json,
                  device=torch.device('cuda')):
         super().__init__(plans, configuration, fold, dataset_json, device)
-        if os.environ.get('TRAINING_EFFICIENCY_DRYRUN') == '1':
-            self.num_epochs = 2
-            self.MILESTONE_EPOCHS = {1}
-        else:
-            self.num_epochs = 1000
+        self.num_epochs = self.NUM_EPOCHS
 
     def initialize(self):
         first_init = not self.was_initialized
@@ -72,3 +68,10 @@ class nnUNetTrainer_trainingMilestones_Seed42(nnUNetTrainer):
             self._log_gpu_memory(f'Milestone {completed_epoch}')
         if completed_epoch == self.num_epochs:
             self._log_gpu_memory('Training complete')
+
+
+class nnUNetTrainer_trainingMilestonesDryRun_Seed42(nnUNetTrainer_trainingMilestones_Seed42):
+    """Two-epoch rehearsal trainer for the dry run. Its distinct name keeps its
+    checkpoints and model folder separate from the full run's."""
+    NUM_EPOCHS = 2
+    MILESTONE_EPOCHS = {1}
