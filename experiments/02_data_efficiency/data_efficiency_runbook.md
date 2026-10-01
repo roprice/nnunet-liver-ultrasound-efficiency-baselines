@@ -1,6 +1,6 @@
 # Data efficiency: five-fold training-pool sweep
 
-Train folds 0–4 at training-pool sizes 588, 294, 147, and 74 with seed 42 on CUDA. Predict and benchmark both `checkpoint_final.pth` and `checkpoint_best.pth` for all 20 models on the same 147 held-out AUL test cases. Each fold excludes its validation cases from training. Use the same positive `DATA_EFFICIENCY_EPOCHS` budget for all models.
+Train folds 0–4 at training-pool sizes 588, 294, 147, and 74 with seed 42 on GPU. Predict and benchmark both `checkpoint_final.pth` and `checkpoint_best.pth` for all 20 models on the same 147 held-out AUL test cases. Each fold excludes its validation cases from training. Use the same positive `DATA_EFFICIENCY_EPOCHS` budget for all models.
 
 ## Fixed conditions
 
@@ -162,13 +162,13 @@ printf '%s\n' "$RUN_STATUS" > data_efficiency_runner_exit_status.txt.tmp
 mv data_efficiency_runner_exit_status.txt.tmp data_efficiency_runner_exit_status.txt
 ```
 
-The runner requires nonempty final and best checkpoints after each fold, then predicts and calls `experiments/benchmark_inference.py` on CUDA for each checkpoint (40 predictions and 40 benchmarks total). Final outputs remain in `predictions/` and `inference/`; best outputs use `predictions_best/` and `inference_best/` to avoid collisions. Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`. Check `logs/data_efficiency_runner.log` and per-stage logs if it fails.
+The runner requires nonempty final and best checkpoints after each fold, then predicts and calls `experiments/benchmark_inference.py` on GPU for each checkpoint (40 predictions and 40 benchmarks total). Final outputs remain in `predictions/` and `inference/`; best outputs use `predictions_best/` and `inference_best/` to avoid collisions. Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`. Check `logs/data_efficiency_runner.log` and per-stage logs if it fails.
 
 ## 11. Complete the run
 
-Choose **Option A (manual GPU)** to verify and retain outputs on the instance, or **Option B (hosted CPU controller)** to verify, transfer and check a copy, then delete the GPU instance. Do not run both branches.
+Choose **Option A (Manual)** to verify and retain outputs on the instance, or **Option B (Automated)** to verify, transfer and check a copy, then delete the GPU instance. Do not run both branches.
 
-### Option A: Manual GPU completion
+### Option A: Manual completion
 
 From the repository root on the GPU, run the same verifier used by the controller. It requires a successful runner status, four dataset sizes, five folds, 20 final and 20 best checkpoints, 40 prediction sets and CUDA benchmark reports (including masks, settings, throughput, per-image latency, and logs), stage logs/timings/GPU samples, and the saved splits. Keep the instance monitor in `experiment_logs/data_efficiency/` so `logs/02_data_efficiency/` is fresh before the runner starts:
 
@@ -208,7 +208,7 @@ PY
 
 Keep `experiment_logs/data_efficiency/`, `logs/02_data_efficiency/`, `logs/data_efficiency_runner.log`, the runner status, and all three nnU-Net directories. The recorded-window estimate ends before any later usage.
 
-### Option B: Hosted CPU controller completion
+### Option B: Automated completion
 
 The hosted CPU needs the same checkout, Python 3.10+, and non-interactive SSH to the GPU with a trusted host key. Keep the private SSH key and Verda credentials on the CPU. Start the controller after step 10 starts; it polls for `data_efficiency_runner_exit_status.txt` and records `experiment_complete` only after verifying both checkpoints and their prediction and CUDA benchmark artifacts for every fold.
 

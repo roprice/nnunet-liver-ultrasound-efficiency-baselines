@@ -1,6 +1,6 @@
 # Training efficiency: five-fold checkpoint sweep
 
-Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL training pool on CUDA. Predict eight milestone checkpoints and the best checkpoint per fold on the same 147 held-out test cases.
+Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL training pool on GPU (NVIDIA CUDA). Predict eight milestone checkpoints and the best checkpoint per fold on the same 147 held-out test cases.
 
 ## Fixed conditions
 
@@ -187,7 +187,7 @@ printf '%s\n' "$RUN_STATUS" > runner_exit_status.txt.tmp
 mv runner_exit_status.txt.tmp runner_exit_status.txt
 ```
 
-The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's `checkpoint_final.pth` and `checkpoint_best.pth` on CUDA, writing best reports to `inference_best/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks. Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`.
+The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's `checkpoint_final.pth` and `checkpoint_best.pth` on GPU, writing best reports to `inference_best/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks. Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`.
 
 ### Optionally monitor progress
 
@@ -203,9 +203,9 @@ Use `Ctrl+C` to close `tail`.
 
 ## 12. Complete the run
 
-Choose **Option A (manual GPU)** to verify and retain outputs on the instance, or **Option B (hosted CPU controller)** to verify, pull and check a copy, and delete the GPU instance. Do not run both branches.
+Choose **Option A (Manual control)** to verify and retain outputs on the instance, or **Option B (Automated)** to verify, pull and check a copy, and delete the GPU instance. Do not run both branches.
 
-### Option A: Manual GPU completion
+### Option A: Manual completion
 
 #### Verify completion
 
@@ -287,7 +287,7 @@ PY
 
 Keep `experiment_logs/training_efficiency/`, `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance. The instance can remain running; its later usage is outside this recorded window.
 
-### Option B: Hosted CPU controller completion
+### Option B: Automated completion
 
 #### Verify completion
 
