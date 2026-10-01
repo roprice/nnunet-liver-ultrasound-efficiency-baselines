@@ -39,8 +39,8 @@ apt install python3-pip python3-venv git unzip tmux rsync time -y
 
 ```sh
 cd ~
-git clone https://github.com/roprice/liver-us-detection-baselines.git
-cd liver-us-detection-baselines
+git clone https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines.git
+cd nnunet-liver-ultrasound-efficiency-baselines
 ```
 
 ## 3. Start GPU usage and estimated cost recording
@@ -94,7 +94,7 @@ nnU-Net installs PyTorch, NumPy, and Pillow as dependencies. If the CUDA check f
 export nnUNet_raw="$HOME/nnUNet_raw"
 export nnUNet_preprocessed="$HOME/nnUNet_preprocessed"
 export nnUNet_results="$HOME/nnUNet_results"
-export nnUNet_extTrainer="$HOME/liver-us-detection-baselines/experiments/01_training_efficiency/custom_trainers"
+export nnUNet_extTrainer="$HOME/nnunet-liver-ultrasound-efficiency-baselines/experiments/01_training_efficiency/custom_trainers"
 
 mkdir -p "$nnUNet_raw" "$nnUNet_preprocessed" "$nnUNet_results"
 
@@ -102,7 +102,7 @@ cat >> ~/.bashrc << 'ENVEOF'
 export nnUNet_raw="$HOME/nnUNet_raw"
 export nnUNet_preprocessed="$HOME/nnUNet_preprocessed"
 export nnUNet_results="$HOME/nnUNet_results"
-export nnUNet_extTrainer="$HOME/liver-us-detection-baselines/experiments/01_training_efficiency/custom_trainers"
+export nnUNet_extTrainer="$HOME/nnunet-liver-ultrasound-efficiency-baselines/experiments/01_training_efficiency/custom_trainers"
 ENVEOF
 ```
 
@@ -196,7 +196,7 @@ From a separate SSH session:
 ```sh
 nvidia-smi --query-gpu=utilization.gpu,memory.used,power.draw --format=csv,noheader
 
-tail -f ~/liver-us-detection-baselines/training_efficiency.log
+tail -f ~/nnunet-liver-ultrasound-efficiency-baselines/training_efficiency.log
 ```
 
 Use `Ctrl+C` to close `tail`.
@@ -299,7 +299,7 @@ From the repository root **on the hosted CPU**, using the GPU's actual SSH addre
 python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py verify \
   --ssh-target root@<gpu-ip> \
   --remote-home /root \
-  --remote-repo /root/liver-us-detection-baselines \
+  --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
   --poll-max-seconds 604800
 ```
 
@@ -315,7 +315,7 @@ From the repository root **on the hosted CPU**:
 python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py finish \
   --ssh-target root@<gpu-ip> \
   --remote-home /root \
-  --remote-repo /root/liver-us-detection-baselines \
+  --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
   --poll-max-seconds 604800 \
   --instance-id '<gpu-instance-id>' \
   --destination "$HOME/training_efficiency_backup"

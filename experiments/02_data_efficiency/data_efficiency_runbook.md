@@ -30,8 +30,8 @@ apt install python3-pip python3-venv git unzip tmux rsync time -y
 
 ```sh
 cd ~
-git clone https://github.com/roprice/liver-us-detection-baselines.git
-cd liver-us-detection-baselines
+git clone https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines.git
+cd nnunet-liver-ultrasound-efficiency-baselines
 ```
 
 Use a revision containing the data-efficiency runner, custom trainer, and `data_efficiency_runner_remote_control.py`. Set up GPU recording before installing Python dependencies.
@@ -83,14 +83,14 @@ If the CUDA check fails, install a compatible CUDA-enabled PyTorch build before 
 export nnUNet_raw="$HOME/nnUNet_raw"
 export nnUNet_preprocessed="$HOME/nnUNet_preprocessed"
 export nnUNet_results="$HOME/nnUNet_results"
-export nnUNet_extTrainer="$HOME/liver-us-detection-baselines/experiments/02_data_efficiency/custom_trainers"
+export nnUNet_extTrainer="$HOME/nnunet-liver-ultrasound-efficiency-baselines/experiments/02_data_efficiency/custom_trainers"
 mkdir -p "$nnUNet_raw" "$nnUNet_preprocessed" "$nnUNet_results"
 test -f "$nnUNet_extTrainer/nnUNetTrainer_dataSubsets_Seed42.py"
 cat >> ~/.bashrc << 'ENVEOF'
 export nnUNet_raw="$HOME/nnUNet_raw"
 export nnUNet_preprocessed="$HOME/nnUNet_preprocessed"
 export nnUNet_results="$HOME/nnUNet_results"
-export nnUNet_extTrainer="$HOME/liver-us-detection-baselines/experiments/02_data_efficiency/custom_trainers"
+export nnUNet_extTrainer="$HOME/nnunet-liver-ultrasound-efficiency-baselines/experiments/02_data_efficiency/custom_trainers"
 ENVEOF
 ```
 
@@ -218,7 +218,7 @@ From the repository root **on the hosted CPU**, replace the example SSH and GPU 
 python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py verify \
   --ssh-target root@<gpu-ip> \
   --remote-home /root \
-  --remote-repo /root/liver-us-detection-baselines \
+  --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
   --poll-max-seconds 604800
 ```
 
@@ -228,7 +228,7 @@ After `verify` succeeds, install `rsync` and configure the [Verda CLI](https://d
 python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py finish \
   --ssh-target root@<gpu-ip> \
   --remote-home /root \
-  --remote-repo /root/liver-us-detection-baselines \
+  --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
   --poll-max-seconds 604800 \
   --instance-id '<gpu-instance-id>' \
   --destination "$HOME/data_efficiency_backup"
