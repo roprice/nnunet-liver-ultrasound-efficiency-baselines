@@ -50,11 +50,8 @@ cat > logs/01_training_efficiency_dryrun/record_event.sh <<'EVENTEOF'
 printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/01_training_efficiency_dryrun/gpu_events.csv
 EVENTEOF
 sh logs/01_training_efficiency_dryrun/record_event.sh recording_started
-```
 
-Start timestamped GPU sampling in a detached tmux session so it continues through SSH disconnections:
-
-```sh
+# Sample the GPU in a detached tmux session so sampling continues through SSH disconnections
 tmux new-session -d -s gpu_usage_dry_run -c "$PWD" \
   'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > logs/01_training_efficiency_dryrun/gpu_monitor_instance.csv'
 ```
@@ -262,6 +259,9 @@ To run the full experiment on this same instance, first remove the dry run's out
 ```sh
 rm -rf ~/nnUNet_preprocessed/dry_run ~/nnUNet_results/dry_run \
   logs/01_training_efficiency_dryrun logs/training_efficiency_dryrun.log dryrun_exit_status.txt
+
+# Leave this tmux shell: the full run starts its own session, and tmux will not nest
+[ -n "$TMUX" ] && exit
 ```
 
 This leaves the checkout, Python environment, installed dependencies, downloaded AUL data and converted `nnUNet_raw` in place, and they are reused. Then continue with the [full runbook](../training_efficiency_runbook.md): skip its steps 1, 2 and 4 to 8, do its step 3 (a fresh cost record), then the `setup_complete` command at the end of its step 9, then its step 10.

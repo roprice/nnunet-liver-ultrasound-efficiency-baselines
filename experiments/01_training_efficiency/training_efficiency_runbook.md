@@ -67,11 +67,8 @@ cat > logs/01_training_efficiency/record_event.sh <<'EVENTEOF'
 printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/01_training_efficiency/gpu_events.csv
 EVENTEOF
 sh logs/01_training_efficiency/record_event.sh recording_started
-```
 
-Start timestamped GPU sampling in a detached tmux session so it continues through SSH disconnections. This records utilization, memory, and power during setup as well as training:
-
-```sh
+# Sample the GPU in a detached tmux session so sampling continues through SSH disconnections
 tmux new-session -d -s gpu_usage -c "$PWD" \
   'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > logs/01_training_efficiency/gpu_monitor_instance.csv'
 ```
@@ -376,6 +373,9 @@ By default, run [experiment 02](../02_data_efficiency/data_efficiency_runbook.md
 rm -rf ~/nnUNet_preprocessed/Dataset001_AUL \
   ~/nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d \
   ~/nnUNet_results/predictions_training_efficiency_588images_seed42_fold*
+
+# Leave this tmux shell: experiment 02 starts its own session, and tmux will not nest
+[ -n "$TMUX" ] && exit
 ```
 
 Experiment 02's runner refuses to start while `nnUNet_preprocessed/Dataset001_AUL` exists, and its archive would otherwise repeat experiment 01's outputs. The checkout, Python environment, downloaded AUL data, converted `nnUNet_raw` and experiment 01's logs stay in place. Then follow the data-efficiency runbook: skip its steps 1, 2, 4, 5, 7 and 8, do its step 3, run `python -m pip freeze > logs/02_data_efficiency/pip_freeze.txt` from its step 5, then do its steps 6, 9, 10 and 11.

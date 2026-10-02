@@ -50,11 +50,8 @@ cat > logs/02_data_efficiency/record_event.sh <<'EVENTEOF'
 printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/02_data_efficiency/gpu_events.csv
 EVENTEOF
 sh logs/02_data_efficiency/record_event.sh recording_started
-```
 
-Keep GPU sampling active across setup and the entire run, including idle time:
-
-```sh
+# Sample the GPU in a detached tmux session so sampling continues through SSH disconnections
 tmux new-session -d -s gpu_usage -c "$PWD" \
   'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > logs/02_data_efficiency/gpu_monitor_instance.csv'
 ```
