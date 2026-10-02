@@ -54,13 +54,13 @@ cd nnunet-liver-ultrasound-efficiency-baselines
 
 ## 3. Start GPU usage and estimated cost recording
 
-The event log and GPU samples stay on the instance. The preset is an RTX 6000 Ada at **$1.16/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, not time before recording begins or after it ends.
+The event log and GPU samples stay on the instance. The preset is an RTX A6000  at **$0.57/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, not time before recording begins or after it ends.
 
 From the repository root on the GPU server, create the record and a reusable event command. It timestamps each event in UTC, including when called from tmux or a new SSH session:
 
 ```sh
 mkdir -p logs/01_training_efficiency
-printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > logs/01_training_efficiency/gpu_rate.csv
+printf 'gpu_model,hourly_rate_usd\nRTX A6000,0.569\n' > logs/01_training_efficiency/gpu_rate.csv
 printf 'event,utc\n' > logs/01_training_efficiency/gpu_events.csv
 cat > logs/01_training_efficiency/record_event.sh <<'EVENTEOF'
 #!/bin/sh
