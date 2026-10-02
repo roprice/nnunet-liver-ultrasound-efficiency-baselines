@@ -1,12 +1,12 @@
 # Training efficiency: dry run
 
-This runbook sets up a dry run of the training efficiency experiment on a GPU server. It trains fold 0 for two epochs; that's 0.02% of the full run and should come to less than a dollar in rental fees. It saves an epoch-1 milestone plus nnU-Net's final and best checkpoints (almost certainly one and the same) and runs predictions on all. It also verifies results, scores predictions, lets you compare the environment with committed references, archives everything to your computer, and records costs.
+This runbook sets up a dry run of the training efficiency experiment on a GPU server. It trains fold 0 for two epochs; that's about 0.04% of the full run's epochs and should come to less than a dollar in rental fees. It saves an epoch-1 milestone plus nnU-Net's final and best checkpoints (almost certainly one and the same) and runs predictions on all. It also verifies results, scores predictions, archives everything to your computer, and records costs.
 
 To reproduce our study as closely as possible, we recommend a Verda.com GPU. 
 
 Follow steps 1 to 14 in order.  If an attempt fails, keep its outputs and use a new instance for the next one.
 
-Step 15 is optional and explains how to optioonally reuse the same instance for the full training efficiency run.
+Step 15 is optional and explains how to optionally reuse the same instance for the full training efficiency run.
 
 ## 1. Check Python and install system dependencies
 
@@ -96,7 +96,7 @@ export nnUNet_extTrainer="$HOME/nnunet-liver-ultrasound-efficiency-baselines/exp
 ENVEOF
 ```
 
-The dry-run runner sets its own `nnUNet_extTrainer` and writes to `dry_run` subfolders of the preprocessed and results directories.
+The dry-run runner sets its own `nnUNet_extTrainer` and writes to `dry_run` subfolders of the preprocessed and results directories. Run this step in the shell you use for steps 8 and 9. New tmux shells read `~/.bashrc`, so they pick these variables up.
 
 ## 7. Download AUL from Zenodo
 
@@ -123,7 +123,7 @@ mkdir -p data/source
 ```sh
 python experiments/prepare_data/aul_conversion.py \
   --raw-data-dir data/source/AUL \
-  --output-dir "$nnUNet_raw/Dataset001_AUL" \
+  --output-dir "${nnUNet_raw:?Run step 6 first}/Dataset001_AUL" \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
@@ -166,7 +166,7 @@ printf '%s\n' "$RUN_STATUS" > dryrun_exit_status.txt.tmp
 mv dryrun_exit_status.txt.tmp dryrun_exit_status.txt
 ```
 
-Detach without stopping work with `Ctrl+b` then `d`. Reattach with `tmux attach -t training_dryrun`, or inspect `logs/training_efficiency_dryrun.log` from another SSH session. The log ends with `Training efficiency dry run complete`. A nonzero `dryrun_exit_status.txt` means stop here and inspect the log.
+Detach without stopping work with `Ctrl+b` then `d`. Reattach with `tmux attach -t training_dryrun`, or inspect `logs/training_efficiency_dryrun.log` from another SSH session. The log ends with `Training efficiency dry run complete`. A nonzero `dryrun_exit_status.txt` means stop here and inspect the log. If it stopped at once with `Set nnUNet_raw before running`, nothing was created: run step 6, run `source ~/.bashrc` in this shell, and repeat the block.
 
 ## 11. Verify the results
 
@@ -189,7 +189,7 @@ python experiments/01_training_efficiency/dry_run/analyze_predictions.py \
   --output logs/01_training_efficiency_dryrun/dice_summary.json
 ```
 
-`analyze_predictions.py` yields an sample analysis table like this:
+`analyze_predictions.py` yields a sample analysis table like this:
 
 ```text
 ==================================================================
@@ -214,7 +214,7 @@ bash experiments/download_archive.sh 01_training_efficiency/dry_run root@<gpu-ip
 ```
 
 The script copies the following into `archives/01_training_efficiency/dry_run/`:
-- and updated repository (with logs, records and the converted-data reports)
+- the repository (with logs, records and the converted-data reports)
 - `nnUNet_raw`
 - `nnUNet_preprocessed` 
 - `nnUNet_results` 
@@ -251,7 +251,7 @@ Then, on your **local computer**, add the sampler file and the final records to 
 bash experiments/download_archive.sh --refresh 01_training_efficiency/dry_run root@<gpu-ip>
 ```
 
-This gives you the final cost. Once you see `Archive verified` from this second download, you van either delete the instance or move on to step 15.
+This gives you the final cost. Once you see `Archive verified` from this second download, you can either delete the instance or move on to step 15.
 
 ## 15. Optional: clean the server for a full run
 

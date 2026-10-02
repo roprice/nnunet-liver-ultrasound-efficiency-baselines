@@ -54,13 +54,13 @@ cd nnunet-liver-ultrasound-efficiency-baselines
 
 ## 3. Start GPU usage and estimated cost recording
 
-The event log and GPU samples stay on the instance. The preset is an RTX A6000  at **$0.57/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, not time before recording begins or after it ends.
+The event log and GPU samples stay on the instance. The preset is an RTX 6000 Ada at **$1.16/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, not time before recording begins or after it ends.
 
 From the repository root on the GPU server, create the record and a reusable event command. It timestamps each event in UTC, including when called from tmux or a new SSH session:
 
 ```sh
 mkdir -p logs/01_training_efficiency
-printf 'gpu_model,hourly_rate_usd\nRTX A6000,0.569\n' > logs/01_training_efficiency/gpu_rate.csv
+printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > logs/01_training_efficiency/gpu_rate.csv
 printf 'event,utc\n' > logs/01_training_efficiency/gpu_events.csv
 cat > logs/01_training_efficiency/record_event.sh <<'EVENTEOF'
 #!/bin/sh
@@ -142,7 +142,7 @@ From the repository root, run:
 ```sh
 python experiments/prepare_data/aul_conversion.py \
   --raw-data-dir data/source/AUL \
-  --output-dir "$nnUNet_raw/Dataset001_AUL" \
+  --output-dir "${nnUNet_raw:?Run step 6 first}/Dataset001_AUL" \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
@@ -164,7 +164,7 @@ sh logs/01_training_efficiency/record_event.sh setup_complete
 
 Before a full run in step 10, you can do a manual [dry run](dry_run/dry_run_runbook.md). It is separate from the remote controller in step 11b and never uses it. By default, do it on its own instance and start this runbook at step 1 on a fresh one. It keeps its own cost record, sampler, outputs and trainer name, so it can also be followed by this runbook on the same instance; its last step explains how.
 
-The dry run trains one fold for two epochs, so it costs a small fraction of the full run. On an NVIDIA RTX A6000, epoch 2 took 38 s, which puts the full run's training alone (5 folds of 1,000 epochs) near 53 hours, and a dry run of about an hour is roughly 2% of that. Setup, preprocessing, final validation, the predictions, both benchmarks and the archive download are fixed costs that dominate the dry run. Its short experiment took about 8 minutes on that GPU; setup and download add to that. It compares the environment with committed reference files, which helps show whether the compute environment on which you're reproducing the study is sufficiently similar to the one the study's experiments were run on.
+The dry run trains one fold for two epochs, so it costs a small fraction of the full run. On an NVIDIA RTX A6000, epoch 2 took 38 s, which puts the full run's training alone (5 folds of 1,000 epochs) near 53 hours, and a dry run of about an hour is roughly 2% of that. Setup, preprocessing, final validation, the predictions, both benchmarks and the archive download are fixed costs that dominate the dry run. Its short experiment took about 8 minutes on that GPU; setup and download add to that. It records the environment (`environment.json`, `pip_freeze.txt`), so you can see how your compute environment differs from the one the study's experiments were run on.
 
 ## 10. Run the training efficiency experiment
 

@@ -58,9 +58,8 @@ def events(record):
     rows = read_rows(record / 'gpu_events.csv')
     found = {}
     for row in rows:
-        require(row['event'] not in found, f'Duplicate event: {row["event"]}')
         found[row['event']] = datetime.fromisoformat(row['utc'].replace('Z', '+00:00'))
-    return found
+    return found  # a repeated event keeps its latest time, so a rerun after an early failure still verifies
 
 
 def checkpoint_epoch(path):

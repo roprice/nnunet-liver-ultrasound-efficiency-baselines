@@ -43,7 +43,7 @@ Edit the rate and model to match **this** GPU instance. The estimate covers the 
 
 ```sh
 mkdir -p logs/02_data_efficiency
-printf 'gpu_model,hourly_rate_usd\nRTX A6000,0.569\n' > logs/02_data_efficiency/gpu_rate.csv
+printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > logs/02_data_efficiency/gpu_rate.csv
 printf 'event,utc\n' > logs/02_data_efficiency/gpu_events.csv
 cat > logs/02_data_efficiency/record_event.sh <<'EVENTEOF'
 #!/bin/sh
@@ -121,7 +121,7 @@ mkdir -p data/source
 ```sh
 python experiments/prepare_data/aul_conversion.py \
   --raw-data-dir data/source/AUL \
-  --output-dir "$nnUNet_raw/Dataset001_AUL" \
+  --output-dir "${nnUNet_raw:?Run step 6 first}/Dataset001_AUL" \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
