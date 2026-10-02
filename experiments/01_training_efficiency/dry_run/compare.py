@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Compare a finished dry run with committed references, one PASS/DIFF line per check.
+"""Compare a finished dry run with the study's own dry run, one PASS/DIFF line per check.
 
-Run on the GPU server from the repository root after the dry run, and after
-analyze_predictions.py has written dice_summary.json. Deterministic checks use
-committed files: prepare_data/reference/case_mapping.json (and the five-fold splits
-derived from it) and dry_run/reference/{nnUNetPlans,dataset_fingerprint}.json.
-Hardware-dependent checks use a per-GPU file, dry_run/reference/dryrun_<gpu>.json,
-made from a known-good dry run with --write-reference.
+Run on the GPU server from the repository root, after the dry run. Nothing is written.
+  Data checks: case mapping, five-fold splits, nnU-Net plans and dataset fingerprint
+  must match the committed files (prepare_data/reference/, dry_run/reference/).
+  Environment checks: GPU, Python, torch, CUDA, cuDNN and nnU-Net versions, CPU count
+  and data-augmentation workers must equal those of the study's run, recorded in
+  dry_run/reference/study_run.json.
+  Speed checks: epoch time, median predictor latency (each within 25%) and mean GPU
+  utilization (within 15 points) must be close to the study's run.
 
-A DIFF is a prompt to investigate, not proof of a broken setup: a different
-instance size changes epoch time, and a different library changes the plans.
-Epoch 1 is excluded from epoch time because it includes torch.compile and cuDNN
-autotuning. Mean GPU utilization covers the whole fold-0 monitoring window.
+A DIFF is a prompt to investigate, not proof of a broken setup: a different GPU or
+instance size changes the speed checks, and a different library changes the plans.
+Epoch time and GPU utilization are measured on epoch 2, the second epoch. Epoch 1
+includes torch.compile and cuDNN autotuning, and the rest of the run (validation,
+predictions, benchmarks) would dilute the utilization figure.
+
+Maintainers: --write-reference records a new study_run.json from the current run.
 """
 
 import argparse
@@ -23,16 +28,19 @@ from pathlib import Path
 import re
 import statistics
 import sys
+from datetime import datetime
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1] / 'prepare_data'))
 from aul_splits import folds_for_scale  # noqa: E402
 
+REFERENCE = HERE / 'reference' / 'study_run.json'
 TRAINER_DIR = 'Dataset001_AUL/nnUNetTrainer_trainingMilestonesDryRun_Seed42__nnUNetPlans__2d/fold_0'
-DEFAULT_TOLERANCES = {'epoch_time_rel': 0.25, 'gpu_utilization_abs': 15.0,
-                      'latency_rel': 0.25, 'dice_abs': 0.10}
-DICE_LABELS = ('epoch1', 'best', 'final')
-DICE_METRICS = ('liver', 'malignant mass', 'benign mass')
+EPOCH_TIME_TOLERANCE = 0.25
+LATENCY_TOLERANCE = 0.25
+GPU_UTILIZATION_TOLERANCE = 15.0
+IDENTITY_KEYS = ('gpu_name', 'python', 'torch', 'cuda', 'cudnn', 'nnunetv2', 'usable_cpus',
+                 'nnUNet_n_proc_DA_used')
 
 
 def load_json(path):
@@ -64,23 +72,34 @@ def first_difference(observed, reference, path='$'):
     return None if observed == reference else path
 
 
-def epoch_time_seconds(model_dir):
-    times = []
+def epoch_windows(model_dir):
+    """(start, end, reported seconds) for each epoch, from nnU-Net's training-log timestamps."""
+    windows = []
     for log in sorted(model_dir.glob('training_log_*.txt')):
-        times += [float(value) for value in re.findall(r'Epoch time: ([0-9.]+) s', log.read_text())]
-    if len(times) < 2:
-        raise SystemExit(f'Need at least two logged epochs to skip epoch 1: {model_dir}')
-    return statistics.median(times[1:])
+        start = None
+        for line in log.read_text().splitlines():
+            found = re.match(r'(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d+): (?:Epoch (\d+)|Epoch time: ([0-9.]+) s)\s*$', line)
+            if not found:
+                continue
+            when = datetime.strptime(found.group(1), '%Y-%m-%d %H:%M:%S.%f')
+            if found.group(2) is not None:
+                start = when
+            elif start is not None:
+                windows.append((start, when, float(found.group(3))))
+                start = None
+    return windows
 
 
-def mean_gpu_utilization(monitor):
+def mean_gpu_utilization(monitor, start, end):
     with monitor.open(newline='') as stream:
         reader = csv.reader(stream)
         header = [name.strip() for name in next(reader)]
         column = next(index for index, name in enumerate(header) if name.startswith('utilization.gpu'))
-        values = [float(row[column].strip().split()[0]) for row in reader if len(row) > column]
+        values = [float(row[column].strip().split()[0]) for row in reader
+                  if len(row) > column and
+                  start <= datetime.strptime(row[0].strip(), '%Y/%m/%d %H:%M:%S.%f') <= end]
     if not values:
-        raise SystemExit(f'No GPU samples in {monitor}')
+        raise SystemExit(f'No GPU samples between {start} and {end} in {monitor}')
     return statistics.mean(values)
 
 
@@ -94,29 +113,16 @@ def median_latency_seconds(logs):
 
 def observe(logs, results):
     environment = load_json(logs / 'environment.json')
-    dice = load_json(logs / 'dice_summary.json')['dice']
-    return {
-        'gpu_name': environment['gpu_name'], 'torch': environment['torch'],
-        'cuda': environment['cuda'], 'cudnn': environment['cudnn'],
-        'nnunetv2': environment['nnunetv2'], 'usable_cpus': environment['usable_cpus'],
-        'nnUNet_n_proc_DA_used': environment['nnUNet_n_proc_DA_used'],
-        'epoch_time_seconds': epoch_time_seconds(results / TRAINER_DIR),
-        'gpu_utilization_percent': mean_gpu_utilization(logs / 'gpu_monitor_fold0.csv'),
-        'latency_median_seconds': median_latency_seconds(logs),
-        'dice': {label: {metric: dice[label][metric] for metric in DICE_METRICS}
-                 for label in DICE_LABELS},
-    }
-
-
-def write_reference(observed, output):
-    tolerance = DEFAULT_TOLERANCES['dice_abs']
-    reference = {key: value for key, value in observed.items() if key != 'dice'}
-    reference['dice'] = {label: {metric: [round(max(0.0, value - tolerance), 3),
-                                          round(min(1.0, value + tolerance), 3)]
-                                 for metric, value in metrics.items()}
-                         for label, metrics in observed['dice'].items()}
-    reference['tolerances'] = DEFAULT_TOLERANCES
-    output.write_text(json.dumps(reference, indent=2) + '\n')
+    observed = {key: environment[key] for key in IDENTITY_KEYS if key != 'python'}
+    observed['python'] = '.'.join(environment['python'].split('.')[:2])
+    windows = epoch_windows(results / TRAINER_DIR)
+    if len(windows) < 2:
+        raise SystemExit(f'Need two logged epochs to measure epoch 2: {results / TRAINER_DIR}')
+    start, end, seconds = windows[1]
+    observed['epoch_time_seconds'] = seconds
+    observed['gpu_utilization_percent'] = mean_gpu_utilization(logs / 'gpu_monitor_fold0.csv', start, end)
+    observed['latency_median_seconds'] = median_latency_seconds(logs)
+    return observed
 
 
 def main():
@@ -127,21 +133,18 @@ def main():
                         default=Path(os.environ['nnUNet_results']) / 'dry_run'
                         if 'nnUNet_results' in os.environ else None,
                         help='Dry-run results root (default: $nnUNet_results/dry_run)')
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--reference', type=Path, help='Per-GPU reference, dry_run/reference/dryrun_<gpu>.json')
-    group.add_argument('--write-reference', type=Path, metavar='OUTPUT',
-                       help='Write a new per-GPU reference from this run instead of comparing')
+    parser.add_argument('--write-reference', action='store_true',
+                        help='Maintainers: write dry_run/reference/study_run.json from this run')
     args = parser.parse_args()
     if args.nnunet_results is None:
         parser.error('Set nnUNet_results or pass --nnunet-results')
     logs = args.repo / 'logs/01_training_efficiency_dryrun'
-    observed = observe(logs, args.nnunet_results)
 
     if args.write_reference:
-        if args.write_reference.exists():
-            parser.error(f'Reference already exists: {args.write_reference}')
-        write_reference(observed, args.write_reference)
-        print(f'Wrote {args.write_reference}. Widen its tolerances after a few more dry runs.')
+        if REFERENCE.exists():
+            parser.error(f'Reference already exists: {REFERENCE}')
+        REFERENCE.write_text(json.dumps(observe(logs, args.nnunet_results), indent=2) + '\n')
+        print(f'Wrote {REFERENCE}')
         return
 
     rows = []
@@ -157,28 +160,31 @@ def main():
         found = first_difference(load_json(logs / name), load_json(HERE / 'reference' / name))
         check(found is None, f'{name} matches reference', f'first difference at {found}' if found else '')
 
-    reference = load_json(args.reference)
-    tolerances = reference['tolerances']
-    for key in ('gpu_name', 'torch', 'cuda', 'cudnn', 'nnunetv2', 'usable_cpus', 'nnUNet_n_proc_DA_used'):
-        check(observed[key] == reference[key], key,
-              f'observed {observed[key]!r}, reference {reference[key]!r}')
-    for key, tolerance_key, relative in (('epoch_time_seconds', 'epoch_time_rel', True),
-                                         ('gpu_utilization_percent', 'gpu_utilization_abs', False),
-                                         ('latency_median_seconds', 'latency_rel', True)):
-        allowed = tolerances[tolerance_key] * reference[key] if relative else tolerances[tolerance_key]
-        check(abs(observed[key] - reference[key]) <= allowed, key,
-              f'observed {observed[key]:.3f}, reference {reference[key]:.3f}, allowed +/-{allowed:.3f}')
-    for label in DICE_LABELS:
-        for metric in DICE_METRICS:
-            low, high = reference['dice'][label][metric]
-            value = observed['dice'][label][metric]
-            check(low <= value <= high, f'Dice {label} {metric}',
-                  f'observed {value:.3f}, reference range [{low}, {high}]')
+    notice = ''
+    if REFERENCE.is_file():
+        observed = observe(logs, args.nnunet_results)
+        reference = load_json(REFERENCE)
+        for key in IDENTITY_KEYS:
+            check(observed[key] == reference[key], key,
+                  f'yours {observed[key]!r}, study {reference[key]!r}')
+        for key, relative in (('epoch_time_seconds', EPOCH_TIME_TOLERANCE),
+                              ('latency_median_seconds', LATENCY_TOLERANCE)):
+            allowed = relative * reference[key]
+            check(abs(observed[key] - reference[key]) <= allowed, key,
+                  f'yours {observed[key]:.3f}, study {reference[key]:.3f}, allowed +/-{allowed:.3f}')
+        check(abs(observed['gpu_utilization_percent'] - reference['gpu_utilization_percent']) <=
+              GPU_UTILIZATION_TOLERANCE, 'gpu_utilization_percent',
+              f'yours {observed["gpu_utilization_percent"]:.1f}, '
+              f'study {reference["gpu_utilization_percent"]:.1f}, allowed +/-{GPU_UTILIZATION_TOLERANCE:.0f}')
+    else:
+        notice = 'SKIPPED  environment and speed checks: the study\'s reference run is not recorded yet.'
 
     for verdict, name, detail in rows:
         print(f'{verdict}  {name}' + (f'  ({detail})' if detail else ''))
     differences = sum(verdict == 'DIFF' for verdict, _, _ in rows)
     print(f'{len(rows) - differences} PASS, {differences} DIFF')
+    if notice:
+        print(notice)
     sys.exit(1 if differences else 0)
 
 

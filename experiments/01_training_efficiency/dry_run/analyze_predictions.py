@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import sys
 
 import numpy as np
 from PIL import Image
@@ -84,17 +85,20 @@ def main():
     if len(cases) != 147:
         raise SystemExit(f'Expected 147 test cases, found {len(cases)}')
 
-    results = {}
-    for label in args.labels:
-        results[label] = score(prediction_dir(label, args.fold, args.nnunet_results, args.logs_dir),
-                               raw, cases)
-        print(f'{label}:')
-        for name, value in results[label].items():
-            print(f'  {name}: {value:.2f}')
+    results = {label: score(prediction_dir(label, args.fold, args.nnunet_results, args.logs_dir), raw, cases)
+               for label in args.labels}
+    metrics = list(next(iter(results.values())))
+    bold, plain = ('\033[1m', '\033[0m') if sys.stdout.isatty() else ('', '')
+    rule = '=' * 66
+    print(f'\n{rule}\n{bold}Dice by checkpoint: mean per image, fold {args.fold}, {len(cases)} test cases{plain}\n{rule}')
+    print(f'{bold}{"checkpoint":<12}' + ''.join(f'{name:>18}' for name in metrics) + plain)
+    for label, values in results.items():
+        print(f'{label:<12}' + ''.join(f'{values[name]:>18.2f}' for name in metrics))
+    print(rule)
     if args.output:
         args.output.write_text(json.dumps({'fold': args.fold, 'test_cases': len(cases),
                                            'dice': results}, indent=2) + '\n')
-
+        print(f'Saved to {args.output}')
 
 if __name__ == '__main__':
     main()

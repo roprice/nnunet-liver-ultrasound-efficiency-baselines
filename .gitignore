@@ -10,12 +10,12 @@ __pycache__/
 *.tar
 
 # nnU-Net stuff
-nnUNet_results
-nnUNet_raw
-nnUNet_preprocessed
+nnUNet_results/
+nnUNet_raw/
+nnUNet_preprocessed/
 
 # archives
-archives
+archives/
 
 # python environmnet
 .venv311

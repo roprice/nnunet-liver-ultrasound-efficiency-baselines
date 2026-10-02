@@ -27,7 +27,7 @@ import time
 FOLDS = range(5)
 SCALES = ((588, 1, 'Dataset001_AUL'), (294, 2, 'Dataset002_AUL_294'),
           (147, 3, 'Dataset003_AUL_147'), (74, 4, 'Dataset004_AUL_074'))
-RECORD = Path('experiment_logs/data_efficiency')
+RECORD = Path('logs/02_data_efficiency')
 TRAINER = 'nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d'
 SOURCES = ('repo', 'nnUNet_raw', 'nnUNet_preprocessed', 'nnUNet_results')
 

@@ -59,14 +59,14 @@ The event log and GPU samples stay on the instance. The preset is an RTX 6000 Ad
 From the repository root on the GPU server, create the record and a reusable event command. It timestamps each event in UTC, including when called from tmux or a new SSH session:
 
 ```sh
-mkdir -p experiment_logs/training_efficiency logs/01_training_efficiency
-printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > experiment_logs/training_efficiency/gpu_rate.csv
-printf 'event,utc\n' > experiment_logs/training_efficiency/gpu_events.csv
-cat > experiment_logs/training_efficiency/record_event.sh <<'EVENTEOF'
+mkdir -p logs/01_training_efficiency
+printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > logs/01_training_efficiency/gpu_rate.csv
+printf 'event,utc\n' > logs/01_training_efficiency/gpu_events.csv
+cat > logs/01_training_efficiency/record_event.sh <<'EVENTEOF'
 #!/bin/sh
-printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> experiment_logs/training_efficiency/gpu_events.csv
+printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/01_training_efficiency/gpu_events.csv
 EVENTEOF
-sh experiment_logs/training_efficiency/record_event.sh recording_started
+sh logs/01_training_efficiency/record_event.sh recording_started
 ```
 
 Start timestamped GPU sampling in a detached tmux session so it continues through SSH disconnections. This records utilization, memory, and power during setup as well as training:
@@ -159,12 +159,12 @@ Check that `dataset.json` reports 588 training cases and `case_mapping.json` rec
 
 ```sh
 # Silently append a setup-complete event with the current UTC time to gpu_events.csv.
-sh experiment_logs/training_efficiency/record_event.sh setup_complete
+sh logs/01_training_efficiency/record_event.sh setup_complete
 ```
 
 Before a full run in step 10, you can do a manual [dry run](dry_run/dry_run_runbook.md). It is separate from the remote controller in step 11b and never uses it. By default, do it on its own instance and start this runbook at step 1 on a fresh one. It keeps its own cost record, sampler, outputs and trainer name, so it can also be followed by this runbook on the same instance; its last step explains how.
 
-The dry run trains one fold for two epochs, so it costs a small fraction of the full run: about 1-3% if the full run takes 25-30 GPU-hours. Setup, preprocessing, final validation, the predictions, both benchmarks and the archive download are fixed costs that dominate it. Its short experiment takes about 5-10 minutes; setup and download add to that. It compares the environment with committed reference files, which helps show whether the compute environment on which you're reproducing the study is sufficiently similar to the one the study's experiments were run on.
+The dry run trains one fold for two epochs, so it costs a small fraction of the full run. On an NVIDIA RTX A6000, epoch 2 took 38 s, which puts the full run's training alone (5 folds of 1,000 epochs) near 53 hours, and a dry run of about an hour is roughly 2% of that. Setup, preprocessing, final validation, the predictions, both benchmarks and the archive download are fixed costs that dominate the dry run. Its short experiment took about 8 minutes on that GPU; setup and download add to that. It compares the environment with committed reference files, which helps show whether the compute environment on which you're reproducing the study is sufficiently similar to the one the study's experiments were run on.
 
 ## 10. Run the training efficiency experiment
 
@@ -179,7 +179,7 @@ Inside tmux, activate the environment and run from the repository root. Preserve
 ```sh
 . "$HOME/.venv/bin/activate"
 rm -f runner_exit_status.txt
-sh experiment_logs/training_efficiency/record_event.sh experiment_started
+sh logs/01_training_efficiency/record_event.sh experiment_started
 if bash -o pipefail -c 'bash experiments/01_training_efficiency/training_efficiency_runner.sh 2>&1 | tee training_efficiency.log'; then
   RUN_STATUS=0
 else
@@ -282,22 +282,32 @@ done
 Verify that `splits_final.json` assigns each of the 588 training cases to exactly one validation fold and no test case to any fold. After checking the runner's exit status and outputs, run from the repository root on the GPU server:
 
 ```sh
-sh experiment_logs/training_efficiency/record_event.sh experiment_complete
+sh logs/01_training_efficiency/record_event.sh experiment_complete
 ```
 
-#### Finish the GPU usage record
+#### Download everything
 
-From the repository root on the GPU server:
+On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
 
 ```sh
-sh experiment_logs/training_efficiency/record_event.sh recording_ended
+bash experiments/download_archive.sh 01_training_efficiency root@<gpu-ip>
+```
+
+The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/01_training_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `environment.json` and `pip_freeze.txt` under `logs/01_training_efficiency/`; the Python environment itself is not copied. An existing `archives/01_training_efficiency/dry_run/` from the dry run is kept. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. The GPU sampler is still running, so it skips `gpu_monitor_instance.csv` this time; the next step adds it. If the script reports differences, move the incomplete folder aside and run it again.
+
+#### Finish the GPU usage record and update the archive
+
+You are done with the server once the archive is verified, so the recorded window ends now and includes the download. From the repository root on the GPU server:
+
+```sh
+sh logs/01_training_efficiency/record_event.sh recording_ended
 tmux kill-session -t gpu_usage
 python - <<'PY'
 import csv
 from datetime import datetime
 from pathlib import Path
 
-record_dir = Path('experiment_logs/training_efficiency')
+record_dir = Path('logs/01_training_efficiency')
 with (record_dir / 'gpu_rate.csv').open() as rate_file:
     rate = float(next(csv.DictReader(rate_file))['hourly_rate_usd'])
 with (record_dir / 'gpu_events.csv').open() as events_file:
@@ -310,17 +320,13 @@ print(summary, end='')
 PY
 ```
 
-#### Download everything
-
-On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
+Then, on your **local computer**, add the sampler file and the final records to the archive and verify every file:
 
 ```sh
-bash experiments/download_archive.sh 01_training_efficiency root@<gpu-ip>
+bash experiments/download_archive.sh --refresh 01_training_efficiency root@<gpu-ip>
 ```
 
-The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/01_training_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `environment.json` and `pip_freeze.txt` under `logs/01_training_efficiency/`; the Python environment itself is not copied. An existing `archives/01_training_efficiency/dry_run/` from the dry run is kept. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. If it reports differences, move the incomplete folder aside and run it again.
-
-Keep `experiment_logs/training_efficiency/`, `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance until you have `Archive verified`. The instance can remain running; its later usage is outside this recorded window.
+Keep `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance until the second run prints `Archive verified`. The instance can remain running; its later usage is outside this recorded window.
 
 ## 11b. Complete the run
 
@@ -364,7 +370,7 @@ The deletion command has no volume-retention option. If the GPU block volume mus
 
 ## 12. Optional: run experiment 02 on this instance
 
-By default, run [experiment 02](../02_data_efficiency/data_efficiency_runbook.md) on its own instance, from its step 1. To reuse this one instead, you must have completed Option A: Option B deletes the instance. Do it only after `Archive verified`, since this deletes the only server copy of experiment 01's training outputs. On the GPU server:
+By default, run [experiment 02](../02_data_efficiency/data_efficiency_runbook.md) on its own instance, from its step 1. To reuse this one instead, you must have completed Option A: Option B deletes the instance. Do it only after the `--refresh` run printed `Archive verified`, since this deletes the only server copy of experiment 01's training outputs. On the GPU server:
 
 ```sh
 rm -rf ~/nnUNet_preprocessed/Dataset001_AUL \
@@ -372,7 +378,7 @@ rm -rf ~/nnUNet_preprocessed/Dataset001_AUL \
   ~/nnUNet_results/predictions_training_efficiency_588images_seed42_fold*
 ```
 
-Experiment 02's runner refuses to start while `nnUNet_preprocessed/Dataset001_AUL` exists, and its archive would otherwise repeat experiment 01's outputs. The checkout, Python environment, downloaded AUL data, converted `nnUNet_raw` and experiment 01's logs stay in place. Then follow the data-efficiency runbook: skip its steps 1, 2, 4, 5, 7 and 8, do its step 3, run `python -m pip freeze > experiment_logs/data_efficiency/pip_freeze.txt` from its step 5, then do its steps 6, 9, 10 and 11.
+Experiment 02's runner refuses to start while `nnUNet_preprocessed/Dataset001_AUL` exists, and its archive would otherwise repeat experiment 01's outputs. The checkout, Python environment, downloaded AUL data, converted `nnUNet_raw` and experiment 01's logs stay in place. Then follow the data-efficiency runbook: skip its steps 1, 2, 4, 5, 7 and 8, do its step 3, run `python -m pip freeze > logs/02_data_efficiency/pip_freeze.txt` from its step 5, then do its steps 6, 9, 10 and 11.
 
 ## Output layout
 
@@ -393,6 +399,10 @@ logs/
     environment.json
     pip_freeze.txt
     time_preprocess.txt
+    gpu_rate.csv
+    gpu_events.csv
+    record_event.sh
+    gpu_usage_summary.txt
     gpu_monitor_instance.csv
     gpu_monitor_fold{0,1,2,3,4}.csv
     time_train_fold{0,1,2,3,4}.txt
@@ -416,5 +426,3 @@ logs/
 ```
 
 Predictions are written to `$nnUNet_results/predictions_training_efficiency_588images_seed42_fold{FOLD}_{LABEL}/`. Each of the 45 prediction directories has 147 masks (6,615 total); the final and best benchmark directories each hold another 147 masks per fold (1,470 total). `checkpoint_best.pth`, `checkpoint_final.pth`, eight milestone checkpoints, and `training_log_*.txt` files are under `$nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_{FOLD}/`. Training logs record model parameter counts and peak PyTorch GPU memory.
-
-Keep `experiment_logs/training_efficiency/` with its GPU rate, events, event script, and usage summary alongside these outputs.

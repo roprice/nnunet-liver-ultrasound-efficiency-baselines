@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 # Download an experiment's four source trees from the GPU server into archives/ and verify the copy.
-# Run on your local computer: bash experiments/download_archive.sh ARCHIVE_NAME GPU_SSH [REMOTE_HOME] [REMOTE_REPO]
+# Run on your local computer: bash experiments/download_archive.sh [--refresh] ARCHIVE_NAME GPU_SSH [REMOTE_HOME] [REMOTE_REPO]
 #   ARCHIVE_NAME  e.g. 01_training_efficiency, 01_training_efficiency/dry_run, 02_data_efficiency
 #   GPU_SSH       e.g. root@203.0.113.7
 #   REMOTE_HOME   default /root (holds nnUNet_raw, nnUNet_preprocessed, nnUNet_results)
 #   REMOTE_REPO   default $REMOTE_HOME/nnunet-liver-ultrasound-efficiency-baselines
-# Stop any GPU sampler and finish the run first, so no file changes during the copy.
+# The first run skips gpu_monitor_instance.csv, which the GPU sampler is still writing. After you finish
+# the GPU usage record on the server, run again with --refresh: it updates the existing archive,
+# adds the sampler file and the final records, and verifies every file.
 set -euo pipefail
 
 usage() {
-    sed -n '2,8p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//' >&2
+    sed -n '2,10p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//' >&2
     exit 2
 }
+REFRESH=0
+if [[ "${1:-}" == --refresh ]]; then REFRESH=1; shift; fi
 [[ $# -ge 2 && $# -le 4 ]] || usage
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -37,12 +41,18 @@ done
 command -v rsync >/dev/null || { echo 'rsync is required' >&2; exit 1; }
 
 DEST="$(cd "$SCRIPT_DIR/.." && pwd)/archives/$ARCHIVE_NAME"
-if [[ -e "$DEST" ]]; then
-    # Allow a parent archive that so far holds only its dry_run subfolder.
-    [[ -d "$DEST" ]] && [[ -z "$(ls -A "$DEST" | grep -vx dry_run || true)" ]] || {
-        echo "Archive destination already exists: $DEST" >&2
-        exit 1
-    }
+EXCLUDES=(--exclude .DS_Store)
+if [[ "$REFRESH" == 1 ]]; then
+    [[ -d "$DEST/repo" ]] || { echo "Nothing to refresh: run without --refresh first: $DEST" >&2; exit 1; }
+else
+    EXCLUDES+=(--exclude gpu_monitor_instance.csv)
+    if [[ -e "$DEST" ]]; then
+        # Allow a parent archive that so far holds only its dry_run subfolder.
+        [[ -d "$DEST" ]] && [[ -z "$(ls -A "$DEST" | grep -vx dry_run || true)" ]] || {
+            echo "Archive destination already exists: $DEST" >&2
+            exit 1
+        }
+    fi
 fi
 
 TREES=(repo nnUNet_raw nnUNet_preprocessed nnUNet_results)
@@ -53,14 +63,14 @@ remote_path() {
 for name in "${TREES[@]}"; do
     echo "Copying $name..."
     mkdir -p "$DEST/$name"
-    rsync -a --exclude .DS_Store "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/"
+    rsync -a "${EXCLUDES[@]}" "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/"
 done
 
 # Second pass: compare file contents by checksum without changing anything. Any output is a difference.
 echo 'Verifying copy by checksum...'
 DIFFERENCES=0
 for name in "${TREES[@]}"; do
-    CHANGES="$(rsync -ac --delete --dry-run --itemize-changes --exclude .DS_Store \
+    CHANGES="$(rsync -ac --delete --dry-run --itemize-changes "${EXCLUDES[@]}" \
         "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/")"
     if [[ -n "$CHANGES" ]]; then
         echo "Differences in $name:" >&2
@@ -70,3 +80,7 @@ for name in "${TREES[@]}"; do
 done
 [[ "$DIFFERENCES" == 0 ]] || { echo "Archive NOT verified: $DEST" >&2; exit 1; }
 echo "Archive verified: $DEST"
+if [[ "$REFRESH" == 0 ]]; then
+    echo 'Skipped gpu_monitor_instance.csv, which is still being written. After you finish the GPU usage'
+    echo "record on the server, run this command again with --refresh to add it and the final records."
+fi

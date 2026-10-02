@@ -9,8 +9,7 @@ REPO_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 DRYRUN_PREPROCESSED="${nnUNet_preprocessed%/}/dry_run"
 DRYRUN_RESULTS="${nnUNet_results%/}/dry_run"
-DRYRUN_LOGS="$REPO_DIR/logs/01_training_efficiency_dryrun"
-for path in "$DRYRUN_PREPROCESSED" "$DRYRUN_RESULTS" "$DRYRUN_LOGS"; do
+for path in "$DRYRUN_PREPROCESSED" "$DRYRUN_RESULTS"; do
     [[ ! -e "$path" && ! -L "$path" ]] || {
         echo "Dry-run output already exists: $path" >&2
         exit 1

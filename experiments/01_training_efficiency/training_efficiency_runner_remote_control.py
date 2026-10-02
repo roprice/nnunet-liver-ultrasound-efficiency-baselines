@@ -25,7 +25,7 @@ import time
 
 FOLDS = range(5)
 EPOCHS = (25, 50, 75, 100, 150, 300, 500, 750)
-RECORD = Path('experiment_logs/training_efficiency')
+RECORD = Path('logs/01_training_efficiency')
 TRAINER = 'nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d'
 SOURCES = ('repo', 'nnUNet_raw', 'nnUNet_preprocessed', 'nnUNet_results')
 

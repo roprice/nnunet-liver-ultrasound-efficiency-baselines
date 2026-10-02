@@ -42,21 +42,21 @@ Use a revision containing the data-efficiency runner, custom trainer, and `data_
 Edit the rate and model to match **this** GPU instance. The estimate covers the recorded window, not time before or after it.
 
 ```sh
-mkdir -p experiment_logs/data_efficiency logs/02_data_efficiency
-printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > experiment_logs/data_efficiency/gpu_rate.csv
-printf 'event,utc\n' > experiment_logs/data_efficiency/gpu_events.csv
-cat > experiment_logs/data_efficiency/record_event.sh <<'EVENTEOF'
+mkdir -p logs/02_data_efficiency
+printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.16\n' > logs/02_data_efficiency/gpu_rate.csv
+printf 'event,utc\n' > logs/02_data_efficiency/gpu_events.csv
+cat > logs/02_data_efficiency/record_event.sh <<'EVENTEOF'
 #!/bin/sh
-printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> experiment_logs/data_efficiency/gpu_events.csv
+printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/02_data_efficiency/gpu_events.csv
 EVENTEOF
-sh experiment_logs/data_efficiency/record_event.sh recording_started
+sh logs/02_data_efficiency/record_event.sh recording_started
 ```
 
 Keep GPU sampling active across setup and the entire run, including idle time:
 
 ```sh
 tmux new-session -d -s gpu_usage -c "$PWD" \
-  'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > experiment_logs/data_efficiency/gpu_monitor_instance.csv'
+  'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > logs/02_data_efficiency/gpu_monitor_instance.csv'
 ```
 
 ## 4. Create a Python environment
@@ -74,10 +74,10 @@ Keep `.venv` outside the checkout: the remote controller copies the entire repos
 python -m pip install --upgrade pip
 python -m pip install 'nnunetv2==2.8.1' 'torch==2.14.1' zenodo-get
 python -c 'import torch, numpy, PIL; assert torch.cuda.is_available()'
-python -m pip freeze > experiment_logs/data_efficiency/pip_freeze.txt
+python -m pip freeze > logs/02_data_efficiency/pip_freeze.txt
 ```
 
-PyTorch is pinned to 2.14.1, the version an unpinned `nnunetv2==2.8.1` install resolved to on 2026-10-01. If the CUDA check fails, install a CUDA-enabled build of that same version before proceeding. The `pip freeze` goes in `experiment_logs/data_efficiency/` because `logs/02_data_efficiency/` must be empty when the runner starts.
+PyTorch is pinned to 2.14.1, the version an unpinned `nnunetv2==2.8.1` install resolved to on 2026-10-01. If the CUDA check fails, install a CUDA-enabled build of that same version before proceeding. The `pip freeze` goes in `logs/02_data_efficiency/`, next to the cost record from step 3.
 
 ## 6. Configure nnU-Net directories
 
@@ -140,7 +140,7 @@ Check that `dataset.json` reports 588 training cases and `case_mapping.json` rec
 # Set the training length
 export DATA_EFFICIENCY_EPOCHS='<chosen_positive_integer>'
 # Silently append a setup-complete event with the current UTC time to gpu_events.csv.
-sh experiment_logs/data_efficiency/record_event.sh setup_complete
+sh logs/02_data_efficiency/record_event.sh setup_complete
 ```
 
 ## 10. Run the data-efficiency experiment
@@ -157,7 +157,7 @@ Inside tmux, run from the repository root with the same positive epoch budget. T
 . "$HOME/.venv/bin/activate"
 export DATA_EFFICIENCY_EPOCHS='<chosen_positive_integer>'
 rm -f data_efficiency_runner_exit_status.txt
-sh experiment_logs/data_efficiency/record_event.sh experiment_started
+sh logs/02_data_efficiency/record_event.sh experiment_started
 if bash -o pipefail -c 'bash experiments/02_data_efficiency/data_efficiency_runner.sh 2>&1 | tee logs/data_efficiency_runner.log'; then
   RUN_STATUS=0
 else
@@ -177,7 +177,7 @@ Choose **Option A (Manual)** to verify and retain outputs on the instance, or **
 
 ### Option A: Manual completion
 
-From the repository root on the GPU, run the same verifier used by the controller. It requires a successful runner status, four dataset sizes, five folds, 20 final and 20 best checkpoints, 40 prediction sets and CUDA benchmark reports (including masks, settings, throughput, per-image latency, and logs), stage logs/timings/GPU samples, and the saved splits. Keep the instance monitor in `experiment_logs/data_efficiency/` so `logs/02_data_efficiency/` is fresh before the runner starts:
+From the repository root on the GPU, run the same verifier used by the controller. It requires a successful runner status, four dataset sizes, five folds, 20 final and 20 best checkpoints, 40 prediction sets and CUDA benchmark reports (including masks, settings, throughput, per-image latency, and logs), stage logs/timings/GPU samples, and the saved splits.:
 
 ```sh
 python3 - <<'PY'
@@ -190,17 +190,34 @@ print('Verified data-efficiency run.')
 PY
 ```
 
-After verification succeeds, record completion and finish the GPU usage record:
+After verification succeeds, record completion:
 
 ```sh
-sh experiment_logs/data_efficiency/record_event.sh experiment_complete
-sh experiment_logs/data_efficiency/record_event.sh recording_ended
+sh logs/02_data_efficiency/record_event.sh experiment_complete
+```
+
+#### Download everything
+
+On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
+
+```sh
+bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
+```
+
+The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `logs/02_data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. The GPU sampler is still running, so it skips `gpu_monitor_instance.csv` this time; the next step adds it. If the script reports differences, move the incomplete folder aside and run it again.
+
+#### Finish the GPU usage record and update the archive
+
+You are done with the server once the archive is verified, so the recorded window ends now and includes the download. On the GPU server:
+
+```sh
+sh logs/02_data_efficiency/record_event.sh recording_ended
 tmux kill-session -t gpu_usage
 python3 - <<'PY'
 import csv
 from datetime import datetime
 from pathlib import Path
-record = Path('experiment_logs/data_efficiency')
+record = Path('logs/02_data_efficiency')
 with (record / 'gpu_rate.csv').open() as stream:
     rate = float(next(csv.DictReader(stream))['hourly_rate_usd'])
 with (record / 'gpu_events.csv').open() as stream:
@@ -213,17 +230,13 @@ print(summary, end='')
 PY
 ```
 
-#### Download everything
-
-On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
+Then, on your **local computer**, add the sampler file and the final records to the archive and verify every file:
 
 ```sh
-bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
+bash experiments/download_archive.sh --refresh 02_data_efficiency root@<gpu-ip>
 ```
 
-The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `experiment_logs/data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. If it reports differences, move the incomplete folder aside and run it again.
-
-Keep `experiment_logs/data_efficiency/`, `logs/02_data_efficiency/`, `logs/data_efficiency_runner.log`, the runner status, and all three nnU-Net directories on the instance until you have `Archive verified`. The recorded-window estimate ends before any later usage.
+Keep `logs/02_data_efficiency/`, `logs/data_efficiency_runner.log`, the runner status, and all three nnU-Net directories on the instance until the second run prints `Archive verified`. The recorded window ends before any later usage.
 
 ### Option B: Automated completion
 
@@ -281,6 +294,7 @@ Project-relative artifacts (`<size>` is 588, 294, 147, or 74; `<fold>` is 0–4)
 data_efficiency_runner_exit_status.txt
 logs/data_efficiency_runner.log
 logs/02_data_efficiency/
+  gpu_rate.csv, gpu_events.csv, record_event.sh, gpu_monitor_instance.csv, gpu_usage_summary.txt, pip_freeze.txt
   case_mapping.json
   run_settings.txt
   preprocessing_times.csv
@@ -310,13 +324,6 @@ logs/02_data_efficiency/
     inference_settings_cuda_fold<fold>.json
     batch_cuda_seed42_fold<fold>_repeat1.log
     predictions_cuda_seed42_fold<fold>_repeat1/<case_name>.png
-experiment_logs/data_efficiency/
-  gpu_rate.csv
-  gpu_events.csv
-  gpu_monitor_instance.csv
-  pip_freeze.txt
-  record_event.sh
-  gpu_usage_summary.txt
 ```
 
 Expect 4 preprocessing timing rows, 20 training timing rows, 40 prediction and 40 benchmark timing rows (one final and one best per fold), 147 masks per prediction directory, and 147 per-image, 2 summary, and 1 throughput row per CUDA benchmark.

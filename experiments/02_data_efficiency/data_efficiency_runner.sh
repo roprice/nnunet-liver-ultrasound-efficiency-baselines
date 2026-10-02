@@ -33,10 +33,12 @@ done
     exit 1
 }
 nvidia-smi -L >/dev/null
-if [[ -e "$LOGS_DIR" ]] && [[ -n "$(ls -A "$LOGS_DIR")" ]]; then
-    echo "Run output must be fresh: $LOGS_DIR is not empty" >&2
-    exit 1
-fi
+for output in run_settings.txt preprocessing_times.csv training_times.csv prediction_times.csv benchmark_times.csv; do
+    if [[ -e "$LOGS_DIR/$output" ]]; then
+        echo "Run output must be fresh: $LOGS_DIR/$output already exists" >&2
+        exit 1
+    fi
+done
 for index in "${!SIZES[@]}"; do
     name="${NAMES[$index]}"
     prepared="$nnUNet_preprocessed/$name"

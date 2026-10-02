@@ -29,7 +29,6 @@ elif [[ $# -eq 1 && "$1" == --dry-run ]]; then
     PREDICTION_LABELS=(epoch1 best)
     TOTAL_EPOCHS=2
     LOGS_DIR="$REPO_DIR/logs/01_training_efficiency_dryrun"
-    [[ ! -e "$LOGS_DIR" ]] || { echo "Dry-run logs already exist: $LOGS_DIR" >&2; exit 1; }
 else
     echo 'Usage: training_efficiency_runner.sh [--dry-run]'
     exit 2

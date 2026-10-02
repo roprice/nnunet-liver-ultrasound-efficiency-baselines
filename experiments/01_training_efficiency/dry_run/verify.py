@@ -23,8 +23,8 @@ from aul_splits import folds_for_scale  # noqa: E402
 TRAINER = 'nnUNetTrainer_trainingMilestonesDryRun_Seed42'
 LABELS = ('epoch1', 'best')
 PREDICTION_METADATA = ('dataset.json', 'plans.json', 'predict_from_raw_data_args.json')
-RECORD = Path('experiment_logs/training_efficiency_dry_run')
 LOGS = Path('logs/01_training_efficiency_dryrun')
+RECORD = LOGS
 
 
 def require(condition, message):
