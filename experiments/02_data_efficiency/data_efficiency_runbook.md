@@ -204,7 +204,7 @@ On your **local computer**, from your checkout of this repository, download the 
 bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
 ```
 
-The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `logs/02_data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server. The GPU sampler is still running, so it skips `gpu_monitor_instance.csv` this time; the next step adds it. If the script reports differences, move the incomplete folder aside and run it again.
+The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `logs/02_data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server (ignoring git's `.git/index` cache, which any git command rewrites). The GPU sampler is still running, so it skips `gpu_monitor_instance.csv` this time; the next step adds it. If the script reports differences, move the incomplete folder aside and run it again.
 
 #### Finish the GPU usage record and update the archive
 

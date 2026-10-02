@@ -219,7 +219,7 @@ The script copies the following into `archives/01_training_efficiency/dry_run/`:
 - `nnUNet_preprocessed` 
 - `nnUNet_results` 
 
-It then re-runs `rsync` as a checksum comparison and prints `Archive verified` if every file matches the server. If the script reports differences, move the incomplete folder aside and run it again.
+It then re-runs `rsync` as a checksum comparison and prints `Archive verified` if every file matches the server (ignoring git's `.git/index` cache, which any git command rewrites). If the script reports differences, move the incomplete folder aside and run it again.
 
 ## 14. Finish the GPU usage record and update the archive
 

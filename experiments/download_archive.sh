@@ -67,10 +67,12 @@ for name in "${TREES[@]}"; do
 done
 
 # Second pass: compare file contents by checksum without changing anything. Any output is a difference.
+# .git/index is skipped: git rewrites it on any status or pull, on either side, so it can change after the copy.
+VERIFY_EXCLUDES=("${EXCLUDES[@]}" --exclude /.git/index)
 echo 'Verifying copy by checksum...'
 DIFFERENCES=0
 for name in "${TREES[@]}"; do
-    CHANGES="$(rsync -ac --delete --dry-run --itemize-changes "${EXCLUDES[@]}" \
+    CHANGES="$(rsync -ac --delete --dry-run --itemize-changes "${VERIFY_EXCLUDES[@]}" \
         "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/")"
     if [[ -n "$CHANGES" ]]; then
         echo "Differences in $name:" >&2
