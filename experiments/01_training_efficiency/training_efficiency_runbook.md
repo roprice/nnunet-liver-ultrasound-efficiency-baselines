@@ -11,7 +11,8 @@ Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL train
 | Held-out test cases | 147 |
 | Folds | 0–4 |
 | Initialization seed | 42 |
-| Split seed | 42 |
+| Test set | UltraBench AUL test set (Tupper & Gagné, 2025) |
+| Fold-assignment seed | 42 |
 | Epoch budget | 1,000 per fold |
 | Architecture | PlainConvUNet 2D |
 | Milestone epochs | 25, 50, 75, 100, 150, 300, 500, 750 |
@@ -19,7 +20,7 @@ Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL train
 Each fold trains on 470 or 471 cases and validates on 118 or 117; the 147 held-out test cases are excluded from both. The runner archives `case_mapping.json` and `splits_final.json`, produces 40 milestone and five best prediction directories with 147 masks each, and benchmarks inference using both `checkpoint_final.pth` and `checkpoint_best.pth` after 1,000 epochs.
 
 
-`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints. To rehearse setup, training, predictions, verification and analysis without running all five folds, use the manual [dry-run runbook](dry_run/dry_run_runbook.md).
+`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. The 147 test cases are UltraBench's AUL test set, vendored in `experiments/prepare_data/reference/` with its source commit and checksum, so the held-out cases match Tupper & Gagné's. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints. To rehearse setup, training, predictions, verification and analysis without running all five folds, use the manual [dry-run runbook](dry_run/dry_run_runbook.md).
 
 **What the seed fixes.** Seed 42 fixes network initialization and the main-process random generators. Training is still not exactly repeatable run to run: nnU-Net's data-augmentation workers are unseeded, and training runs with `cudnn.benchmark=True` and `deterministic=False`. With 87 malignant test cases, one case moves a detection rate by 0.0115, so the study log's 0.03 selection margin is about 2.6 cases. Ordinary run-to-run variation from a single seed may be of that size.
 
@@ -143,7 +144,7 @@ python experiments/prepare_data/aul_conversion.py \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
-Expect 588 training and 147 test image/label pairs. The converter saves the seed-42 assignments in `case_mapping.json` and stops if they differ from the committed reference. It also stops on missing or unexpected annotation files, and writes `conversion_report.json` with per-category label pixel counts. Three Malignant images (229, 306 and 374) have no liver polygon in AUL; their labels contain the mass only, and the report lists them.
+Expect 588 training and 147 test image/label pairs. The converter saves the case assignments in `case_mapping.json` and stops if they differ from the committed reference. It also stops on missing or unexpected annotation files, and writes `conversion_report.json` with per-category label pixel counts. For Malignant images 229 and 306, AUL files the liver polygon under `segmentation/outline/`, so the converter uses it as the liver. Malignant image 374 has no liver polygon; its label contains the mass only. The report lists all three.
 
 ## 9. Verify input data and mark setup complete
 

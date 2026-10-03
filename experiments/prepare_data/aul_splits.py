@@ -1,6 +1,15 @@
-"""Shared AUL train/test, nested training subsets, and five-fold assignments."""
+"""Shared AUL train/test, nested training subsets, and five-fold assignments.
+
+The 147 test cases are UltraBench's AUL test set (Tupper & Gagne, "Revisiting
+Data Augmentation for Ultrasound Images", TMLR 2025), vendored verbatim from
+https://github.com/adamtupper/ultrabench at commit
+36baadd22d1fcd54f89926d6a9a51992e93ac620 (data/splits/aul_mass/test.json, MIT
+license in reference/ultrabench_LICENSE.txt). Seed 42 orders each category and
+assigns the remaining 588 training cases to nested subsets and five folds.
+"""
 
 import argparse
+import hashlib
 import json
 import random
 from pathlib import Path
@@ -12,6 +21,8 @@ SEED = 42
 TRAINING_SIZES = (588, 294, 147, 74)
 TEST_SIZE = 147
 FOLDS = range(5)
+TEST_SET = Path(__file__).resolve().parent / "reference" / "ultrabench_aul_mass_test.json"
+TEST_SET_SHA256 = "3e379a6960a61500955ea7f69e4dcb16521f347111f064c2516cd0e81cb673f4"
 
 
 def proportional_counts(counts, total):
@@ -26,25 +37,46 @@ def proportional_counts(counts, total):
     return allocations
 
 
+def load_test_set():
+    """Return the vendored UltraBench test cases as {category: set of filenames}."""
+    data = TEST_SET.read_bytes()
+    if hashlib.sha256(data).hexdigest() != TEST_SET_SHA256:
+        raise ValueError(f"Checksum mismatch: {TEST_SET}")
+    test_set = {category: set() for category in CATEGORIES}
+    for entry in json.loads(data):
+        prefix, _, filename = entry["image"].removeprefix("images/").partition("_")
+        category = entry["pathology"]
+        if category not in test_set or prefix != category.lower() or not filename:
+            raise ValueError(f"Unexpected UltraBench test entry: {entry}")
+        if filename in test_set[category]:
+            raise ValueError(f"Duplicate UltraBench test entry: {entry}")
+        test_set[category].add(filename)
+    counts = {category: len(names) for category, names in test_set.items()}
+    if counts != proportional_counts(EXPECTED_COUNTS, TEST_SIZE):
+        raise ValueError(f"Unexpected UltraBench test counts: {counts}")
+    return test_set
+
+
 def build_mapping(files_by_category):
     if {category: len(files_by_category.get(category, ())) for category in CATEGORIES} != EXPECTED_COUNTS:
         raise ValueError(f"Expected AUL category counts {EXPECTED_COUNTS}")
     if set(files_by_category) != set(CATEGORIES):
         raise ValueError("Unexpected AUL category")
 
+    test_set = load_test_set()
     generator = random.Random(SEED)
     training, testing = [], []
-    test_counts = proportional_counts(EXPECTED_COUNTS, TEST_SIZE)
     for category in sorted(CATEGORIES):
         filenames = sorted(files_by_category[category])
         if len(set(filenames)) != len(filenames):
             raise ValueError(f"Duplicate filenames in {category}")
+        if not test_set[category] <= set(filenames):
+            raise ValueError(f"UltraBench test cases missing from {category} source images")
         generator.shuffle(filenames)
-        test_count = test_counts[category]
-        testing.extend((category, name) for name in filenames[:test_count])
-        training.extend((category, name) for name in filenames[test_count:])
+        testing.extend((category, name) for name in filenames if name in test_set[category])
+        training.extend((category, name) for name in filenames if name not in test_set[category])
 
-    train_counts = {category: EXPECTED_COUNTS[category] - test_counts[category]
+    train_counts = {category: EXPECTED_COUNTS[category] - len(test_set[category])
                     for category in CATEGORIES}
     scales = {size: proportional_counts(train_counts, size) for size in TRAINING_SIZES}
     seen = {category: 0 for category in CATEGORIES}

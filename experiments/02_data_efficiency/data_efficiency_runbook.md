@@ -10,7 +10,8 @@ Train folds 0–4 at training-pool sizes 588, 294, 147, and 74 with seed 42 on G
 | Training-pool sizes | 588, 294, 147, 74 |
 | Held-out test cases | 147 |
 | Folds | 0–4 for each size |
-| Initialization and split seed | 42 |
+| Test set | UltraBench AUL test set (Tupper & Gagné, 2025) |
+| Initialization and fold-assignment seed | 42 |
 | Epoch budget | One chosen positive integer for all 20 models |
 | Checkpoints | `checkpoint_final.pth` and `checkpoint_best.pth` |
 
@@ -122,7 +123,7 @@ python experiments/prepare_data/aul_conversion.py \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
-Expect 588 training and 147 test image/label pairs. The converter stops if the seed-42 assignments differ from the committed reference or if annotation files are missing or unexpected, and writes `conversion_report.json`. Three Malignant images (229, 306 and 374) have no liver polygon in AUL; their labels contain the mass only. The runner validates `case_mapping.json`, creates the three nested subsets, and preprocesses all four datasets with five folds each.
+Expect 588 training and 147 test image/label pairs. The converter stops if the case assignments differ from the committed reference or if annotation files are missing or unexpected, and writes `conversion_report.json`. For Malignant images 229 and 306, AUL files the liver polygon under `segmentation/outline/`, so the converter uses it as the liver. Malignant image 374 has no liver polygon; its label contains the mass only. The runner validates `case_mapping.json`, creates the three nested subsets, and preprocesses all four datasets with five folds each.
 
 ## 9. Verify input data and mark setup complete
 
@@ -269,10 +270,10 @@ nnU-Net's planner caps the batch size so that one batch covers at most 5% of the
 
 | Training pool | Batch size | Patch size | Median image size |
 |---:|---:|---|---|
-| 588 | 7 | 640 × 768 | 542 × 736 |
-| 294 | 5 | 768 × 896 | 667 × 792 |
-| 147 | 5 | 768 × 896 | 671 × 815 |
-| 74 | 4 | 512 × 768 | 512 × 732 |
+| 588 | 7 | 640 × 768 | 533 × 741 |
+| 294 | 7 | 640 × 768 | 600 × 767.5 |
+| 147 | 7 | 512 × 768 | 512 × 741 |
+| 74 | 3 | 640 × 768 | 516 × 723 |
 
 Every epoch runs a fixed 250 iterations, so samples seen per epoch (250 × batch size) and per-iteration compute differ across pools. This is default nnU-Net behavior, consistent with adhering to defaults. Report it with the data-efficiency results. The runner archives each pool's plan as `logs/02_data_efficiency/size<size>/nnUNetPlans.json`; check those against this table.
 

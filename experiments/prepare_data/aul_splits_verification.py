@@ -1,11 +1,12 @@
 import unittest
 
-from aul_splits import CATEGORIES, EXPECTED_COUNTS, TRAINING_SIZES, build_mapping, folds_for_scale
+from aul_splits import (CATEGORIES, EXPECTED_COUNTS, TRAINING_SIZES, build_mapping, folds_for_scale,
+                        load_test_set)
 
 
 class AulSplitsTest(unittest.TestCase):
     def setUp(self):
-        self.files = {category: [f'{category}_{index:04d}.jpg' for index in range(count)]
+        self.files = {category: [f'{index}.jpg' for index in range(1, count + 1)]
                       for category, count in EXPECTED_COUNTS.items()}
         self.mapping = build_mapping(self.files)
 
@@ -17,6 +18,9 @@ class AulSplitsTest(unittest.TestCase):
         self.assertEqual({category: sum(entry['split'] == 'test' and entry['category'] == category
                                         for entry in self.mapping) for category in CATEGORIES},
                          {'Benign': 40, 'Malignant': 87, 'Normal': 20})
+        self.assertEqual({category: {entry['original_file'] for entry in self.mapping
+                                     if entry['split'] == 'test' and entry['category'] == category}
+                          for category in CATEGORIES}, load_test_set())
         self.assertEqual([entry['case_name'] for entry in self.mapping],
                          [f'liver_{index:04d}' for index in range(1, 736)])
 

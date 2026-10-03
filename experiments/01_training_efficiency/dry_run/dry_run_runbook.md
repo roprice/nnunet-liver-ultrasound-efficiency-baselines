@@ -124,7 +124,7 @@ python experiments/prepare_data/aul_conversion.py \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
-Expect 588 training and 147 test image/label pairs. The converter stops if the seed-42 assignments differ from the committed reference, or if annotation files are missing or unexpected. It writes `conversion_report.json` with per-category label pixel counts. Three Malignant images (229, 306 and 374) have no liver polygon in AUL; their labels contain the mass only, and the report lists them.
+Expect 588 training and 147 test image/label pairs. The converter stops if the case assignments differ from the committed reference, or if annotation files are missing or unexpected. It writes `conversion_report.json` with per-category label pixel counts. For Malignant images 229 and 306, AUL files the liver polygon under `segmentation/outline/`, so the converter uses it as the liver. Malignant image 374 has no liver polygon; its label contains the mass only. The report lists all three.
 
 ## 9. Verify input data and mark setup complete
 

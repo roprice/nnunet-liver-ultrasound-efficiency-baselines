@@ -7,9 +7,11 @@ cropped or rescaled. Segmentation labels are rendered from expert-annotated
 polygons as pixel masks with three classes: background (0), liver (1), mass (2).
 Every polygon file must hold exactly one polygon, every Benign and Malignant
 image must have a mass polygon, no Normal image may have one, and every image
-must have a liver polygon except the three listed in
-KNOWN_MISSING_LIVER_POLYGONS. A conversion_report.json of per-category label
-pixel counts is written beside the dataset.
+must have a liver polygon except those listed in
+KNOWN_MISSING_LIVER_POLYGONS. For the images in LIVER_POLYGON_IN_OUTLINE, AUL
+files the liver polygon as the scan outline (segmentation/outline/), so that
+file is used as the liver. A conversion_report.json of per-category label pixel
+counts is written beside the dataset.
 
 Dataset: Annotated Ultrasound Liver (AUL) images
 DOI: 10.5281/zenodo.7272660 (https://doi.org/10.5281/zenodo.7272660)
@@ -27,12 +29,13 @@ concept DOI. File checksums as of this record:
 
 Expected input structure:
     AUL/
-        Benign/image/*.jpg, Benign/segmentation/{liver,mass}/*.json
-        Malignant/image/*.jpg, Malignant/segmentation/{liver,mass}/*.json
-        Normal/image/*.jpg, Normal/segmentation/{liver}/*.json
+        Benign/image/*.jpg, Benign/segmentation/{liver,mass,outline}/*.json
+        Malignant/image/*.jpg, Malignant/segmentation/{liver,mass,outline}/*.json
+        Normal/image/*.jpg, Normal/segmentation/{liver,outline}/*.json
 
-Outputs a stratified 588/147 train/test split (seed 42) with nested training
-subsets and five-fold assignments into the nnU-Net raw dataset directory.
+Outputs a 588/147 train/test split, with UltraBench's AUL test set as the 147
+test cases (see aul_splits.py), nested training subsets and five-fold
+assignments into the nnU-Net raw dataset directory.
 """
 
 import os
@@ -48,11 +51,14 @@ from aul_splits import build_mapping
 
 CATEGORIES = ["Benign", "Malignant", "Normal"]
 
-# AUL record 7272660 has no liver polygon for these three Malignant images, so
-# their labels hold the mass only (case_mapping.json places 229 and 306 in the
-# training pool and 374 in the test set).
-KNOWN_MISSING_LIVER_POLYGONS = {("Malignant", "229.jpg"), ("Malignant", "306.jpg"),
-                                ("Malignant", "374.jpg")}
+# AUL record 7272660 has no liver polygon for this Malignant image, so its label
+# holds the mass only (case_mapping.json places it in the training pool).
+KNOWN_MISSING_LIVER_POLYGONS = {("Malignant", "374.jpg")}
+
+# For these Malignant images, AUL has no file in segmentation/liver/ and the
+# polygon in segmentation/outline/ traces the liver rather than the scan region
+# (as also corrected in UltraBench). Both are in the test set.
+LIVER_POLYGON_IN_OUTLINE = {("Malignant", "229.jpg"), ("Malignant", "306.jpg")}
 
 
 def load_polygon(json_path):
@@ -86,15 +92,19 @@ def gather_cases(raw_data_dir):
         img_dir = raw_data_dir / category / "image"
         liver_dir = raw_data_dir / category / "segmentation" / "liver"
         mass_dir = raw_data_dir / category / "segmentation" / "mass"
+        outline_dir = raw_data_dir / category / "segmentation" / "outline"
         for img_file in sorted(os.listdir(img_dir)):
             if not img_file.lower().endswith((".png", ".jpg", ".jpeg")):
                 continue
             stem = Path(img_file).stem
+            liver_source = (outline_dir if (category, img_file) in LIVER_POLYGON_IN_OUTLINE
+                            else liver_dir)
             cases.append({
                 "category": category,
                 "original_file": img_file,
                 "image": img_dir / img_file,
-                "liver_json": liver_dir / f"{stem}.json",
+                "liver_json": liver_source / f"{stem}.json",
+                "liver_dir_json": liver_dir / f"{stem}.json",
                 "mass_json": mass_dir / f"{stem}.json",
             })
     return cases
@@ -105,10 +115,12 @@ def check_annotations(cases, raw_data_dir):
     problems = []
     for case in cases:
         key = (case["category"], case["original_file"])
-        has_liver = case["liver_json"].exists()
-        if key in KNOWN_MISSING_LIVER_POLYGONS:
+        has_liver = case["liver_dir_json"].exists()
+        if key in KNOWN_MISSING_LIVER_POLYGONS or key in LIVER_POLYGON_IN_OUTLINE:
             if has_liver:
                 problems.append(f"{key[0]}/{key[1]}: liver polygon present but expected missing")
+            if key in LIVER_POLYGON_IN_OUTLINE and not case["liver_json"].exists():
+                problems.append(f"{key[0]}/{key[1]}: no outline polygon to use as liver")
         elif not has_liver:
             problems.append(f"{key[0]}/{key[1]}: no liver polygon")
         has_mass = case["mass_json"].exists()
@@ -212,6 +224,7 @@ def main():
 
     with open(args.output_dir / "conversion_report.json", "w") as f:
         json.dump({"known_missing_liver_polygons": sorted(f"{c}/{n}" for c, n in KNOWN_MISSING_LIVER_POLYGONS),
+                   "liver_polygons_from_outline": sorted(f"{c}/{n}" for c, n in LIVER_POLYGON_IN_OUTLINE),
                    "categories": report}, f, indent=2)
     for category, stats in report.items():
         print(f"{category}: {stats['cases']} cases, {stats['liver_pixels']} liver pixels, "
