@@ -39,11 +39,11 @@ Run every later command from the repository root on the GPU server unless noted 
 
 ## 3. Start GPU usage and estimated cost recording
 
-The event log and GPU samples stay on the instance. The preset is an RTX A6000 at **$0.57/hour**; edit the model and rate below if they change. The estimate covers only the recorded window.
+The event log and GPU samples stay on the instance. The preset is an RTX A6000 at **$0.67/hour**; edit the model and rate below if they change. The estimate covers only the recorded window.
 
 ```sh
 mkdir -p logs/01_training_efficiency_dryrun
-printf 'gpu_model,hourly_rate_usd\nRTX A6000,0.569\n' > logs/01_training_efficiency_dryrun/gpu_rate.csv
+printf 'gpu_model,hourly_rate_usd\nRTX A6000,0.666\n' > logs/01_training_efficiency_dryrun/gpu_rate.csv
 printf 'event,utc\n' > logs/01_training_efficiency_dryrun/gpu_events.csv
 cat > logs/01_training_efficiency_dryrun/record_event.sh <<'EVENTEOF'
 #!/bin/sh

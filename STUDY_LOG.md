@@ -1,12 +1,36 @@
-## Study log
+# Study log
+
+## 2026-10-02
+_Estimated development effort: 3 today, 106 total_
+
+After simplifying the training efficiency runbooks and bringing the others in line, we ran a number of tests of the dry run, each costing about 0.20 cents on spot instances.
+
+On the fourth try once we were satisfied with the runbook, we decided to keep using the same instance for the full run of the training efficiency experiment.
+
+At the same time, we noticed a couple of things about Verda. Firstly, fairly significant price hikes accross the board. Not surprising given their ongoing high demand - most instance types are unavailable most of the time. Secondly we noticed a new model on the lower end, the RTX A6000, the predecessor to the RTX A6000 we had thought we would use for the study. The RTX A6000 is quite a bit slower but is very competitively priced and the preliminary dry run studies we did indicated that it would be more cost efficient overall, so we have decided to standardize on it for the duration of the study.
+
+The price changes prompted us to re-review competing options, again with these criteria:
+- Entirely EU based (headquarted in EU, fully owned by EU interests, no datacenters outside the EU)
+- Flexible and well supported API
+- Mission-driven
+- Low-cost options
+- Good user experience
+
+Based on the above we chose to continue using Verda.
+
+A small snafu though - we were kicked off of the instance mid-run. The data however is preseverved so that when we create a new instance to resume the training run, we can pick up where we left off. Mending the logs will require some custom work not detailed in the runbooks.
+
+Making an idempotent bootstrap script for setup is on our list of todo's for the second experiment - the runbook becomes a reference and troubleshooting tool. We'll make that for the subsequents experiments and backport it to this one for this wanting to reproduce the study. This will have the added advantage of cost efficiency.
+
 
 ## 2026-10-01
+_Estimated development effort: 8 today, 103 total_
 
 Refining the runbooks for usability since reproducibility is a key component of cognitive effiency related to the study's baselines.
 
 
 ## 2026-09-30
-
+_Estimated development effort: 7 today, 95 total_
 
 Working on scripting the initial experiment today and mapping out what gets logged, how data is prepared and converted, how training is conducted and how predictions are run.
 
@@ -56,7 +80,7 @@ logs/
 
 
 ## 2026-09-28
-
+_Estimated development effort: 8 today, 88 total_
 
 ### Morning
 
@@ -129,7 +153,7 @@ Because the AUL dataset has exactly one patient per image, all false positive ra
 
 To elimate speckle-driven small predictions, we will use the training budget experiment to set a noise floor that is as high as possible without causing malignant-mass detection misses across all 7 metrics against the 147-image held out test set. 
 
-Because AUL has no physical calibration, and because its images vary greatly in size and composition, we'll use a relative metric (against the total image size). We'll test the following noise-floor sizes: 0.0, 0.005, 0.01,  0.015, 0.02,  0.025, 0.03,  0.035, 0.04, 0.045, and 0.05.
+Because AUL has no physical calibration, and because its images vary greatly in size and composition, we'll use a relative metric (against the total_ image size). We'll test the following noise-floor sizes: 0.0, 0.005, 0.01,  0.015, 0.02,  0.025, 0.03,  0.035, 0.04, 0.045, and 0.05.
 
 #### External validation
 
@@ -145,9 +169,10 @@ Because we don't have annotations in SMC-LUD, the only detection view we can ass
 
 We will run the study on PlainConvUNet 2D, as opposed to the new nnUNet architecture Resenc. Most literature and published benchmarks about Resenc concern 3D. Resenc M 3D, the lowest-cost tier of Resenc in terms of compute, appears to have a small performance edge over PlainConv in large sizes. There's no evidence one way or the other of a performance benefit with either 2D or with smaller training size models. Meanwhile, there's direct evidence that Resenc incurs greater inference cost (https://github.com/MIC-DKFZ/nnUNet/blob/master/documentation/resenc_presets.md); thus it is off the table for this study.
 
-Estimated development effort: 8
+
 
 ## 2026-09-27
+_Estimated development effort: 8 today, 88 total_
 
 The larger interest motivating the study is affordable, accessible cancer screening and monitoring. This study focuses that interest on liver cancer, a major and growing concern in many regions of the world. 
 
@@ -170,4 +195,4 @@ The study will evaluate the performance of trained models across a broad range o
 
 To address the common concern of the limited availability of labelled data, the study will report and evaluate results across a sweep of training-dataset sizes. Other analysis will include determining optimal training length (epoch budget), investigating ideal noise floors for ultrasound speckle, detailing model footprints, and wall-clock measuring GPU and CPU performance on training and especially on inference. These may call for separate experiments within the study.
 
-Estimated development effort: 80, including health, clinical, and technical research and experimentation preceding and inclusive of this log entry
+_Estimated development effort: 80, including health, clinical, and technical research and experimentation preceding and inclusive of this log entry

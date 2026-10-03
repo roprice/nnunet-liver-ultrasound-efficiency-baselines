@@ -14,8 +14,9 @@ nnUNet_results/
 nnUNet_raw/
 nnUNet_preprocessed/
 
-# archives
+# data and archives
 archives/
+data/
 
 # python environmnet
 .venv311
