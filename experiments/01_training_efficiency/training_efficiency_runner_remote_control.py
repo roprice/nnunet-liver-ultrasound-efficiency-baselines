@@ -279,7 +279,7 @@ def finish_remote(config):
     require(0 < rate < float('inf'), 'Invalid GPU rate')
     hours = (events['recording_ended'] - events['recording_started']).total_seconds() / 3600
     require(hours >= 0, 'Negative recording duration')
-    summary = f'Observed hours: {hours:.3f}\nEstimated cost at ${rate:.2f}/hour: ${hours * rate:.2f}\n'
+    summary = f'Observed hours: {hours:.3f}\nEstimated cost at ${rate:.3f}/hour: ${hours * rate:.2f}\n'
     (repo / RECORD / 'gpu_usage_summary.txt').write_text(summary)
     return summary
 

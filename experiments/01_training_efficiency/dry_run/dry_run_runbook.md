@@ -207,16 +207,16 @@ final                     0.34              0.17              0.06
 On your **local computer**, from your checkout of this repository, download the dry run's results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
 
 ```sh
-bash experiments/download_archive.sh 01_training_efficiency/dry_run root@<gpu-ip>
+bash experiments/download_archive.sh --live 01_training_efficiency_dry_run root@<gpu-ip>
 ```
 
-The script copies the following into `archives/01_training_efficiency/dry_run/`:
+The script copies the following into `archives/01_training_efficiency_dry_run/`:
 - the repository (with logs, records and the converted-data reports)
 - `nnUNet_raw`
 - `nnUNet_preprocessed` 
 - `nnUNet_results` 
 
-It then re-runs `rsync` as a checksum comparison and prints `Archive verified` if every file matches the server (ignoring git's `.git/index` cache, which any git command rewrites). If the script reports differences, move the incomplete folder aside and run it again.
+It then re-runs `rsync` as a checksum comparison, excluding the entire `.git/` directory but still copying it, and records and compares Git HEAD in the archive's `git_commit.txt`. `--live` omits the still-running sampler file; step 14 adds it. It prints `Archive verified` if these checks pass. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
 
 ## 14. Finish the GPU usage record and update the archive
 
@@ -245,7 +245,7 @@ PY
 Then, on your **local computer**, add the sampler file and the final records to the archive and verify every file:
 
 ```sh
-bash experiments/download_archive.sh --refresh 01_training_efficiency/dry_run root@<gpu-ip>
+bash experiments/download_archive.sh --refresh 01_training_efficiency_dry_run root@<gpu-ip>
 ```
 
 This gives you the final cost. Once you see `Archive verified` from this second download, you can either delete the instance or move on to step 15.

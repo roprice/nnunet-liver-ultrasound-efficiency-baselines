@@ -3,6 +3,22 @@
 ## 2026-10-02
 _Estimated development effort: 3 today, 106 total_
 
+As the efficiency training came to a close, it gave us a chance to polish the runbooks and reproducability and lets us get started on analysis.
+
+The first order of business with respect to analysis will be to create some kind of data layer in between the actual predictions results and checkpoints, archived in `archives/*` and the analysis code. This should make analysis scripts run more efficiently and also create a single point of data transformation.
+
+Over the weekend, we also put some thought into an abalation experiment after looking more closely at a prior study evaluating the effect of augmentation techniques on mass segmentation for the AUL dataset (Tupper & Gagné 2024). Specifically, they found that increasing brightness increased mass segmentation Dice by 0.02. They also found that Gaussian blur actually worsened segmentation. Therefore we think it would suit our interest in efficiency to evaluate whether such adjustments would benefit an nnU-Net pipeline with the same data set.
+
+In fact, before running the training efficiency experiment, we tried to align our study design where possible. We're already using the same 588 split, but we also chose to firstly set aside the very Ultrabench-based test set that Tupper & Gagné used. This will not allow 1:1 comparisons (nor is that a desired outcome necesarily) because there remain a broad number of differences in methods.
+
+In any case, we believe there are specific findings that we could repurpose in an ablation studying asking: "Can adjusting nnU-Net augmentation defaults such as brightness results increase triage-level detection rates and lower corresponding false positive rates?".
+
+
+
+
+## 2026-10-02
+_Estimated development effort: 3 today, 106 total_
+
 After simplifying the training efficiency runbooks and bringing the others in line, we ran a number of tests of the dry run, each costing about 0.20 cents on spot instances.
 
 On the fourth try once we were satisfied with the runbook, we decided to keep using the same instance for the full run of the training efficiency experiment.

@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 # Download an experiment's four source trees from the GPU server into archives/ and verify the copy.
-# Run on your local computer: bash experiments/download_archive.sh [--refresh] ARCHIVE_NAME GPU_SSH [REMOTE_HOME] [REMOTE_REPO]
-#   ARCHIVE_NAME  e.g. 01_training_efficiency, 01_training_efficiency/dry_run, 02_data_efficiency
+# Run locally: bash experiments/download_archive.sh [--live | --refresh] ARCHIVE_NAME GPU_SSH [REMOTE_HOME] [REMOTE_REPO]
+#   ARCHIVE_NAME  e.g. 01_training_efficiency, 01_training_efficiency_dry_run, 02_data_efficiency
 #   GPU_SSH       e.g. root@203.0.113.7
 #   REMOTE_HOME   default /root (holds nnUNet_raw, nnUNet_preprocessed, nnUNet_results)
 #   REMOTE_REPO   default $REMOTE_HOME/nnunet-liver-ultrasound-efficiency-baselines
-# The first run skips gpu_monitor_instance.csv, which the GPU sampler is still writing. After you finish
-# the GPU usage record on the server, run again with --refresh: it updates the existing archive,
-# adds the sampler file and the final records, and verifies every file.
+# Stop recording before downloading. Existing destinations can be updated by repeating the command.
+# --live skips the running sampler; --refresh is a compatibility alias for the default final download.
+# Git storage is copied but not checksum-compared; Git HEAD is checked and saved in git_commit.txt.
 set -euo pipefail
 
 usage() {
     sed -n '2,10p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//' >&2
     exit 2
 }
-REFRESH=0
-if [[ "${1:-}" == --refresh ]]; then REFRESH=1; shift; fi
+LIVE=0
+case "${1:-}" in
+    --live) LIVE=1; shift ;;
+    --refresh) shift ;;
+esac
 [[ $# -ge 2 && $# -le 4 ]] || usage
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -38,22 +41,18 @@ for path in "$REMOTE_HOME" "$REMOTE_REPO"; do
         exit 2
     }
 done
-command -v rsync >/dev/null || { echo 'rsync is required' >&2; exit 1; }
+for program in rsync ssh git; do
+    command -v "$program" >/dev/null || { echo "$program is required" >&2; exit 1; }
+done
 
 DEST="$(cd "$SCRIPT_DIR/.." && pwd)/archives/$ARCHIVE_NAME"
+[[ ! -e "$DEST" || -d "$DEST" ]] || { echo "Archive destination is not a directory: $DEST" >&2; exit 1; }
 EXCLUDES=(--exclude .DS_Store)
-if [[ "$REFRESH" == 1 ]]; then
-    [[ -d "$DEST/repo" ]] || { echo "Nothing to refresh: run without --refresh first: $DEST" >&2; exit 1; }
-else
+if [[ "$LIVE" == 1 ]]; then
     EXCLUDES+=(--exclude gpu_monitor_instance.csv)
-    if [[ -e "$DEST" ]]; then
-        # Allow a parent archive that so far holds only its dry_run subfolder.
-        [[ -d "$DEST" ]] && [[ -z "$(ls -A "$DEST" | grep -vx dry_run || true)" ]] || {
-            echo "Archive destination already exists: $DEST" >&2
-            exit 1
-        }
-    fi
 fi
+REMOTE_COMMIT="$(ssh "$GPU_SSH" "git -C '$REMOTE_REPO' rev-parse --verify HEAD")"
+[[ "$REMOTE_COMMIT" =~ ^[0-9a-f]{40}([0-9a-f]{24})?$ ]] || { echo 'Invalid remote Git commit' >&2; exit 1; }
 
 TREES=(repo nnUNet_raw nnUNet_preprocessed nnUNet_results)
 remote_path() {
@@ -63,12 +62,11 @@ remote_path() {
 for name in "${TREES[@]}"; do
     echo "Copying $name..."
     mkdir -p "$DEST/$name"
-    rsync -a "${EXCLUDES[@]}" "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/"
+    rsync -ac "${EXCLUDES[@]}" "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/"
 done
 
-# Second pass: compare file contents by checksum without changing anything. Any output is a difference.
-# .git/index is skipped: git rewrites it on any status or pull, on either side, so it can change after the copy.
-VERIFY_EXCLUDES=("${EXCLUDES[@]}" --exclude /.git/index)
+# Git may repack objects without changing the recorded commit.
+VERIFY_EXCLUDES=("${EXCLUDES[@]}" --exclude /.git/)
 echo 'Verifying copy by checksum...'
 DIFFERENCES=0
 for name in "${TREES[@]}"; do
@@ -76,13 +74,19 @@ for name in "${TREES[@]}"; do
         "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/")"
     if [[ -n "$CHANGES" ]]; then
         echo "Differences in $name:" >&2
-        echo "$CHANGES" | head -20 >&2
+        printf '%s\n' "$CHANGES" >&2
         DIFFERENCES=1
     fi
 done
+LOCAL_COMMIT="$(git --no-optional-locks --git-dir="$DEST/repo/.git" rev-parse --verify HEAD)"
+FINAL_REMOTE_COMMIT="$(ssh "$GPU_SSH" "git -C '$REMOTE_REPO' rev-parse --verify HEAD")"
+if [[ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" || "$FINAL_REMOTE_COMMIT" != "$REMOTE_COMMIT" ]]; then
+    echo 'Git HEAD differs or changed during the download' >&2
+    DIFFERENCES=1
+fi
 [[ "$DIFFERENCES" == 0 ]] || { echo "Archive NOT verified: $DEST" >&2; exit 1; }
+printf '%s\n' "$REMOTE_COMMIT" > "$DEST/git_commit.txt"
 echo "Archive verified: $DEST"
-if [[ "$REFRESH" == 0 ]]; then
-    echo 'Skipped gpu_monitor_instance.csv, which is still being written. After you finish the GPU usage'
-    echo "record on the server, run this command again with --refresh to add it and the final records."
+if [[ "$LIVE" == 1 ]]; then
+    echo 'Skipped the live sampler. Stop recording, then repeat without --live to include the final records.'
 fi

@@ -199,10 +199,10 @@ sh logs/02_data_efficiency/record_event.sh experiment_complete
 On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
 
 ```sh
-bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
+bash experiments/download_archive.sh --live 02_data_efficiency root@<gpu-ip>
 ```
 
-The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `logs/02_data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server (ignoring git's `.git/index` cache, which any git command rewrites). The GPU sampler is still running, so it skips `gpu_monitor_instance.csv` this time; the next step adds it. If the script reports differences, move the incomplete folder aside and run it again.
+The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/02_data_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `logs/02_data_efficiency/pip_freeze.txt`; the Python environment itself is not copied. The script then re-runs `rsync` as a checksum comparison that changes nothing, excluding the entire `.git/` directory but still copying it, and records and compares Git HEAD in the archive's `git_commit.txt`. It prints `Archive verified` only if these checks pass. `--live` skips the still-running `gpu_monitor_instance.csv` this time; the next step adds it. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
 
 #### Finish the GPU usage record and update the archive
 

@@ -55,13 +55,13 @@ cd nnunet-liver-ultrasound-efficiency-baselines
 
 ## 3. Start GPU usage and estimated cost recording
 
-The event log and GPU samples stay on the instance. The preset is an RTX A6000 at **$0.67/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, not time before recording begins or after it ends.
+The event log and GPU samples stay on the instance. The preset is an RTX A6000 at **$0.666/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, excluding the archive download and time before recording begins or after it ends.
 
 From the repository root on the GPU server, create the record and a reusable event command. It timestamps each event in UTC, including when called from tmux or a new SSH session:
 
 ```sh
 mkdir -p logs/01_training_efficiency
-printf 'gpu_model,hourly_rate_usd\nRTX A6000,1.16\n' > logs/01_training_efficiency/gpu_rate.csv
+printf 'gpu_model,hourly_rate_usd\nRTX A6000,0.666\n' > logs/01_training_efficiency/gpu_rate.csv
 printf 'event,utc\n' > logs/01_training_efficiency/gpu_events.csv
 cat > logs/01_training_efficiency/record_event.sh <<'EVENTEOF'
 #!/bin/sh
@@ -221,136 +221,59 @@ tail -f ~/nnunet-liver-ultrasound-efficiency-baselines/training_efficiency.log
 
 Use `Ctrl+C` to close `tail`.
 
-## 11a. Complete the run manually
+The training will be complete when the final messages are as follows:
 
-Either perform 11a manually, or choose 11b and automate the completion of the run. Do not run both branches.
+```
+Fold 4 complete
+Training efficiency complete: 5 fold(s), 8 milestone and one best prediction per fold, and two inference benchmarks per fold.
+End time: YYYY-MM-DDTXX:XX:XXZ
+Total wall clock: XXXXXXs
+```
+
+## 11. Complete the run
+
+Option A takes you through manually completion (verifying, finishing, downloading). Option B  automatically completes the run and also automatically deletes the GPU instance on Verda.
 
 ### Option A: Manual completion
 
 #### Verify completion
 
-```sh
-# Reattach to tmux, or inspect the runner log after it exits
-tmux attach -t training
-# or, if detached:
-tail -20 training_efficiency.log
+On the **GPU**, from the repository root, require exit status `0` and successful separate verification:
 
+```sh
 cat runner_exit_status.txt  # must be 0
-
-# Check final, best, and eight milestone checkpoints for each fold
-for FOLD in 0 1 2 3 4; do
-  test -s "$nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_${FOLD}/checkpoint_final.pth" || echo "Missing final checkpoint for fold ${FOLD}"
-  test -s "$nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_${FOLD}/checkpoint_best.pth" || echo "Missing best checkpoint for fold ${FOLD}"
-  for EPOCH in 25 50 75 100 150 300 500 750; do
-    test -s "$nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_${FOLD}/checkpoint_epoch${EPOCH}.pth" || echo "Missing fold ${FOLD}, epoch ${EPOCH}"
-  done
-done
-
-# 45 prediction directories (8 milestones + best, across 5 folds)
-for FOLD in 0 1 2 3 4; do
-  ls -d "$nnUNet_results"/predictions_training_efficiency_588images_seed42_fold${FOLD}_* | wc -l  # expect 9
-done
-
-# Each prediction directory has 147 PNG masks
-for DIR in "$nnUNet_results"/predictions_training_efficiency_588images_seed42_fold*_*; do
-  COUNT=$(ls "$DIR"/*.png 2>/dev/null | wc -l)
-  echo "$DIR: $COUNT files"  # expect 147 each
-done
-
-for NAME in environment.json pip_freeze.txt; do
-  test -s "logs/01_training_efficiency/$NAME" || echo "Missing $NAME"
-done
-cat logs/01_training_efficiency/training_times.csv  # header + 5 folds
-cat logs/01_training_efficiency/prediction_times.csv  # header + 45 predictions (including best for each fold)
-for FOLD in 0 1 2 3 4; do
-  test -s "logs/01_training_efficiency/time_predict_fold${FOLD}_best.txt" || echo "Missing best prediction time for fold ${FOLD}"
-  test -s "logs/01_training_efficiency/time_inference_best_fold${FOLD}.txt" || echo "Missing best benchmark time for fold ${FOLD}"
-  for KIND in inference inference_best; do
-    DIR="logs/01_training_efficiency/${KIND}/fold${FOLD}"
-    for REPORT in per_image summary throughput; do
-      test -s "$DIR/inference_${REPORT}_cuda_fold${FOLD}.csv" || echo "Missing ${KIND} ${REPORT} for fold ${FOLD}"
-    done
-    test -s "$DIR/inference_settings_cuda_fold${FOLD}.json" || echo "Missing ${KIND} settings for fold ${FOLD}"
-    test -s "$DIR/batch_cuda_seed42_fold${FOLD}_repeat1.log" || echo "Missing ${KIND} batch log for fold ${FOLD}"
-    test "$(find "$DIR/predictions_cuda_seed42_fold${FOLD}_repeat1" -maxdepth 1 -name '*.png' -type f | wc -l)" -eq 147 || echo "Wrong ${KIND} benchmark mask count for fold ${FOLD}"
-  done
-done
 ```
 
-Verify that `splits_final.json` assigns each of the 588 training cases to exactly one validation fold and no test case to any fold. After checking the runner's exit status and outputs, run from the repository root on the GPU server:
+#### Finish the GPU usage record
+
+On the **GPU**, from the repository root:
 
 ```sh
-sh logs/01_training_efficiency/record_event.sh experiment_complete
+python3 experiments/01_training_efficiency/finish_recording.py
 ```
+
+Records missing completion events, stops the sampler, and writes the cost summary. Safe to rerun; download time is excluded.
 
 #### Download everything
 
-On your **local computer**, from your checkout of this repository, download the results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
+On your **local computer**, from the repository root (replace `<gpu-ip>`):
 
 ```sh
 bash experiments/download_archive.sh 01_training_efficiency root@<gpu-ip>
 ```
 
-The script copies the repository (with all logs and records), `nnUNet_raw`, `nnUNet_preprocessed` and `nnUNet_results` into `archives/01_training_efficiency/` (the `archives/` folder is git-ignored). The environment is recorded in `environment.json` and `pip_freeze.txt` under `logs/01_training_efficiency/`; the Python environment itself is not copied. An existing `archives/01_training_efficiency/dry_run/` from the dry run is kept. The script then re-runs `rsync` as a checksum comparison that changes nothing, and prints `Archive verified` only if every file matches the server (ignoring git's `.git/index` cache, which any git command rewrites). The GPU sampler is still running, so it skips `gpu_monitor_instance.csv` this time; the next step adds it. If the script reports differences, move the incomplete folder aside and run it again.
+Copies the repository and three nnU-Net directories into `archives/01_training_efficiency/`, including final logs but not the Python environment. Checks file contents outside `.git/` and saves the matching Git commit in `git_commit.txt`. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
 
-#### Finish the GPU usage record and update the archive
+#### Delete the GPU
 
-You are done with the server once the archive is verified, so the recorded window ends now and includes the download. From the repository root on the GPU server:
+After `Archive verified`, delete the instance in Verda. You can delete the block volume simultaneously. Deleted block volums are recoverable for up to 96 hours.
 
-```sh
-sh logs/01_training_efficiency/record_event.sh recording_ended
-tmux kill-session -t gpu_usage
-python - <<'PY'
-import csv
-from datetime import datetime
-from pathlib import Path
-
-record_dir = Path('logs/01_training_efficiency')
-with (record_dir / 'gpu_rate.csv').open() as rate_file:
-    rate = float(next(csv.DictReader(rate_file))['hourly_rate_usd'])
-with (record_dir / 'gpu_events.csv').open() as events_file:
-    events = {row['event']: datetime.fromisoformat(row['utc'].replace('Z', '+00:00'))
-              for row in csv.DictReader(events_file)}
-hours = (events['recording_ended'] - events['recording_started']).total_seconds() / 3600
-summary = f'Observed hours: {hours:.3f}\nEstimated cost at ${rate:.2f}/hour: ${hours * rate:.2f}\n'
-(record_dir / 'gpu_usage_summary.txt').write_text(summary)
-print(summary, end='')
-PY
-```
-
-Then, on your **local computer**, add the sampler file and the final records to the archive and verify every file:
-
-```sh
-bash experiments/download_archive.sh --refresh 01_training_efficiency root@<gpu-ip>
-```
-
-Keep `logs/01_training_efficiency/`, the runner log, and all three nnU-Net directories on the instance until the second run prints `Archive verified`. The instance can remain running; its later usage is outside this recorded window.
-
-## 11b. Complete the run
 
 ### Option B: Automated completion
 
-#### Verify completion
+On the **CPU**, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. Choose the GPU instance ID and an archive destination with sufficient space that does not yet exist.
 
-The CPU that executes the automated completion needs this checkout, Python 3.10+, and non-interactive SSH access to the GPU with a trusted host key. Keep the SSH private key on the CPU. After the experiment starts, the controller waits for runner exit status `0`, verifies the splits, checkpoints, predictions, benchmarks, and logs, then records `experiment_complete`.
-
-From the repository root **on the CPU**, using the GPU's actual SSH address and absolute home and checkout paths:
-
-```sh
-python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py verify \
-  --ssh-target root@<gpu-ip> \
-  --remote-home /root \
-  --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
-  --poll-max-seconds 604800
-```
-
-This command fails without deleting the instance if the runner exits unsuccessfully, files are incomplete, or the polling deadline expires. The paths above are examples for a GPU login as `root`; use the actual paths if different.
-
-#### Finish recording, copy results, and delete the GPU
-
-After the controller's `verify` command succeeds, install `rsync` and configure the [Verda CLI](https://docs.verda.com/cli/getting-started/) with Cloud API credentials **on the CPU only**. Check the instance ID with `verda vm describe <gpu-instance-id>`; its ID, hostname, and IP must match the SSH-connected GPU. Choose `archives/01_training_efficiency` on the CPU, with space for the repository and all three nnU-Net directories. It must not exist, or hold only the `dry_run/` archive from the dry run.
-
-From the repository root **on the CPU** running `training_efficiency_runner_remote_control.py`:
+After training starts, launch this once from the repository root **on the CPU**. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
 
 ```sh
 python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py finish \
@@ -362,68 +285,6 @@ python3 experiments/01_training_efficiency/training_efficiency_runner_remote_con
   --destination archives/01_training_efficiency
 ```
 
-The controller finishes recording, copies the repository and all three nnU-Net directories with `rsync` into `repo/`, `nnUNet_raw/`, `nnUNet_preprocessed/` and `nnUNet_results/` under the destination, checks SHA-256 inventories, and saves a completion manifest before deleting the GPU instance. Any failed check prevents deletion. The cost estimate excludes transfer and deletion time.
+The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies and SHA-256-verifies the archive, confirms the GPU's identity, saves a completion manifest, and deletes the instance. No manual completion approval is required. Any failed check prevents deletion. The cost estimate excludes transfer and deletion time.
 
-The deletion command has no volume-retention option. If the GPU block volume must be retained, confirm the CLI's deletion behavior before running `finish`.
-
-## 12. Optional: run experiment 02 on this instance
-
-By default, run [experiment 02](../02_data_efficiency/data_efficiency_runbook.md) on its own instance, from its step 1. To reuse this one instead, you must have completed Option A: Option B deletes the instance. Do it only after the `--refresh` run printed `Archive verified`, since this deletes the only server copy of experiment 01's training outputs. On the GPU server:
-
-```sh
-rm -rf ~/nnUNet_preprocessed/Dataset001_AUL \
-  ~/nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d \
-  ~/nnUNet_results/predictions_training_efficiency_588images_seed42_fold*
-
-# Leave this tmux shell: experiment 02 starts its own session, and tmux will not nest
-[ -n "$TMUX" ] && exit
-```
-
-Experiment 02's runner refuses to start while `nnUNet_preprocessed/Dataset001_AUL` exists, and its archive would otherwise repeat experiment 01's outputs. The checkout, Python environment, downloaded AUL data, converted `nnUNet_raw` and experiment 01's logs stay in place. Then follow the data-efficiency runbook: skip its steps 1, 2, 4, 5, 7 and 8, do its step 3, run `python -m pip freeze > logs/02_data_efficiency/pip_freeze.txt` from its step 5, then do its steps 6, 9, 10 and 11.
-
-## Output layout
-
-Project-relative outputs (`FOLD` is 0–4; `LABEL` is `epoch<N>` for each milestone or `best`):
-
-```text
-training_efficiency.log
-runner_exit_status.txt
-logs/
-  01_training_efficiency/
-    training_times.csv
-    prediction_times.csv
-    nnUNetPlans.json
-    dataset_fingerprint.json
-    splits_final.json
-    case_mapping.json
-    predict_defaults.txt
-    environment.json
-    pip_freeze.txt
-    time_preprocess.txt
-    gpu_rate.csv
-    gpu_events.csv
-    record_event.sh
-    gpu_usage_summary.txt
-    gpu_monitor_instance.csv
-    gpu_monitor_fold{0,1,2,3,4}.csv
-    time_train_fold{0,1,2,3,4}.txt
-    time_predict_fold{FOLD}_{LABEL}.txt
-    time_inference_fold{0,1,2,3,4}.txt
-    time_inference_best_fold{0,1,2,3,4}.txt
-    inference/fold{FOLD}/
-      inference_per_image_cuda_fold{FOLD}.csv
-      inference_summary_cuda_fold{FOLD}.csv
-      inference_throughput_cuda_fold{FOLD}.csv
-      inference_settings_cuda_fold{FOLD}.json
-      batch_cuda_seed42_fold{FOLD}_repeat1.log
-      predictions_cuda_seed42_fold{FOLD}_repeat1/
-    inference_best/fold{FOLD}/
-      inference_per_image_cuda_fold{FOLD}.csv
-      inference_summary_cuda_fold{FOLD}.csv
-      inference_throughput_cuda_fold{FOLD}.csv
-      inference_settings_cuda_fold{FOLD}.json
-      batch_cuda_seed42_fold{FOLD}_repeat1.log
-      predictions_cuda_seed42_fold{FOLD}_repeat1/
-```
-
-Predictions are written to `$nnUNet_results/predictions_training_efficiency_588images_seed42_fold{FOLD}_{LABEL}/`. Each of the 45 prediction directories has 147 masks (6,615 total); the final and best benchmark directories each hold another 147 masks per fold (1,470 total). `checkpoint_best.pth`, `checkpoint_final.pth`, eight milestone checkpoints, and `training_log_*.txt` files are under `$nnUNet_results/Dataset001_AUL/nnUNetTrainer_trainingMilestones_Seed42__nnUNetPlans__2d/fold_{FOLD}/`. Training logs record model parameter counts and peak PyTorch GPU memory.
+The deletion command has no volume-retention option. However, deleted volumnes on Verda can be "recovered from the trash" with 96 hours.
