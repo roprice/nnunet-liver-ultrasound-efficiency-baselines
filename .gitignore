@@ -9,11 +9,6 @@ __pycache__/
 *.zip
 *.tar
 
-# nnU-Net stuff
-nnUNet_results/
-nnUNet_raw/
-nnUNet_preprocessed/
-
 # data and archives
 archives/
 data/
