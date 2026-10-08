@@ -5,6 +5,7 @@ Run from the repository root (as a module):
 
 Output:
     analysis/predictions_dataset/predictions_dataset.csv
+    analysis/predictions_dataset/predictions_dataset_manifest.json
 
 The CSV records direct image-level facts for segmentation, overlap-based
 detection, and triage, for every evaluated prediction run. It intentionally
@@ -12,27 +13,36 @@ contains no aggregate statistics, confidence intervals, quartiles, or
 interpretation; those live in downstream analyses.
 
 This builder discovers prediction directories under each experiment archive in
-``archives/`` so that new experiments, folds, seeds, and encoders are picked up
-without editing this file. Each prediction directory contributes one row per
-evaluated image.
+``archives/`` and each amendment archive in ``archives_amendments/`` so that
+new experiments, folds, seeds, and encoders are picked up without editing
+this file. Each prediction directory contributes one row per evaluated image.
 """
 
 import csv
+import hashlib
 import json
 import re
+import subprocess
+from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 from skimage.measure import label
 
-from analysis.predictions_dataset.constants import MIN_PRED_AREA_FRACTION
+from analysis.predictions_dataset.constants import (
+    MIN_PRED_AREA_FRACTION,
+    SCHEMA_VERSION,
+)
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 ARCHIVES_DIR = PROJECT_ROOT / "archives"
+AMENDMENTS_DIR = PROJECT_ROOT / "archives_amendments"
 OUTPUT_PATH = SCRIPT_DIR / "predictions_dataset.csv"
+MANIFEST_PATH = SCRIPT_DIR / "predictions_dataset_manifest.json"
 
 MASS_VALUE = 2
 # Relative noise floor: retain predicted mass components >= 0.03% of image area.
@@ -48,13 +58,11 @@ ARCHIVE_NAME_PATTERN = re.compile(r"[0-9]{2}_(?P<experiment_name>[a-z0-9_]+)")
 
 # Prediction-directory convention, relative to each experiment archive:
 #   nnUNet_results/predictions_{experiment}_{N}images_seed{S}_fold{F}_{checkpoint}
-# ``checkpoint`` is ``best`` or ``epoch{N}`` and may contain underscores. The
-# optional ``val_`` token after the experiment marks predictions made on fold-0
-# validation cases; without it, predictions are on the held-out test set. The
-# ``fold`` token is omitted by experiments that do not use cross-validation.
+# ``checkpoint`` is ``best``, ``final``, or ``epoch{N}`` and may contain
+# underscores. The ``fold`` token is omitted by experiments that do not use
+# cross-validation. Predictions are always made on the held-out test set.
 PREDICTION_DIR_PATTERN = re.compile(
     r"predictions_(?P<experiment>[a-z0-9_]+?)_"
-    r"(?P<validation>val_)?"
     r"(?P<training_set_size>[0-9]+)images"
     r"_seed(?P<seed>[0-9]+)"
     r"(?:_fold(?P<fold>[0-9]+))?"
@@ -165,8 +173,9 @@ def iou_score(prediction, reference):
     return int(np.logical_and(prediction, reference).sum()) / union
 
 
-def max_component_iou(prediction, reference):
-    """Return the largest IoU between a retained component and the reference."""
+def component_ious(prediction, reference):
+    """Return the IoU of each connected component of ``prediction`` against
+    the full reference mask, in component order."""
     components = label(prediction, connectivity=CONNECTIVITY)
     ious = []
     for component in range(1, components.max() + 1):
@@ -174,7 +183,7 @@ def max_component_iou(prediction, reference):
         intersection = int(np.logical_and(component_mask, reference).sum())
         union = int(np.logical_or(component_mask, reference).sum())
         ious.append(intersection / union if union else 0.0)
-    return max(ious, default=0.0)
+    return ious
 
 
 def retained_component_counts(retained_prediction, reference):
@@ -189,30 +198,31 @@ def retained_component_counts(retained_prediction, reference):
     return total, unmatched
 
 
-def centroid_detection(reference, retained_prediction, diameter_factor):
-    """Return whether any GT mass component has a retained predicted centroid
-    within ``diameter_factor`` of its equivalent circular diameter
-    (LUNA16-style 2D centroid criterion)."""
+def component_centroid_matches(reference, retained_prediction, diameter_factor):
+    """Return whether each retained predicted component's centroid lies within
+    ``diameter_factor`` of any GT mass component's equivalent circular diameter
+    (LUNA16-style 2D centroid criterion), in component order."""
     labeled_reference = label(reference, connectivity=CONNECTIVITY)
     labeled_prediction = label(retained_prediction, connectivity=CONNECTIVITY)
-    predicted_centroids = []
-    for component in range(1, labeled_prediction.max() + 1):
-        coordinates = np.argwhere(labeled_prediction == component)
-        predicted_centroids.append(coordinates.mean(axis=0))
 
-    if not predicted_centroids:
-        return False
-
-    predicted_centroids = np.asarray(predicted_centroids)
+    gt_centroids = []
+    gt_diameters = []
     for component in range(1, labeled_reference.max() + 1):
         coordinates = np.argwhere(labeled_reference == component)
-        gt_centroid = coordinates.mean(axis=0)
-        equivalent_diameter = 2 * np.sqrt(len(coordinates) / np.pi)
-        closest_distance = np.linalg.norm(
-            predicted_centroids - gt_centroid, axis=1).min()
-        if closest_distance <= diameter_factor * equivalent_diameter:
-            return True
-    return False
+        gt_centroids.append(coordinates.mean(axis=0))
+        gt_diameters.append(2 * np.sqrt(len(coordinates) / np.pi))
+
+    matches = []
+    for component in range(1, labeled_prediction.max() + 1):
+        coordinates = np.argwhere(labeled_prediction == component)
+        centroid = coordinates.mean(axis=0)
+        matched = any(
+            np.linalg.norm(centroid - gt_centroid)
+            <= diameter_factor * gt_diameter
+            for gt_centroid, gt_diameter in zip(gt_centroids, gt_diameters)
+        )
+        matches.append(bool(matched))
+    return matches
 
 
 def dataset_directory(experiment_archive):
@@ -315,33 +325,9 @@ def load_test_cases(experiment_archive):
     )
 
 
-def load_validation_fold_0_cases(experiment_archive):
-    """Load fold-0 validation cases from the training labels."""
-    splits_final = (
-        experiment_archive / "nnUNet_preprocessed"
-        / dataset_directory(experiment_archive).name / "splits_final.json"
-    )
-    if not splits_final.is_file():
-        raise InputValidationError(
-            f"Missing nnU-Net split manifest: {relative_path(splits_final)}"
-        )
-    with open(splits_final) as file:
-        splits = json.load(file)
-    if not splits or "val" not in splits[0]:
-        raise InputValidationError("splits_final.json has no fold-0 validation split")
-    return load_cases(
-        experiment_archive,
-        splits[0]["val"],
-        dataset_directory(experiment_archive) / "labelsTr",
-        "validation fold 0",
-        require_exact_label_coverage=False,
-    )
-
-
-def recover_best_epoch(experiment_archive, fold, seed):
-    """Recover the epoch of the last ``checkpoint_best`` update for one fold by
-    parsing its nnU-Net training logs (each ``Yayy! New best EMA pseudo Dice``
-    line marks a best-checkpoint save within the current epoch)."""
+def fold_training_logs(experiment_archive, fold, seed):
+    """Return the training-log files of one (seed, fold) run, requiring a
+    single unambiguous trainer directory."""
     results_root = experiment_archive / "nnUNet_results"
     trainer_directories = sorted({
         path.parent
@@ -359,11 +345,17 @@ def recover_best_epoch(experiment_archive, fold, seed):
             f"Ambiguous trainer directories for seed {seed} fold {fold}: "
             f"{[relative_path(path) for path in trainer_directories]}"
         )
+    return sorted(trainer_directories[0].glob(f"fold_{fold}/training_log_*.txt"))
 
+
+def recover_best_epoch(experiment_archive, fold, seed):
+    """Recover the epoch stored in ``checkpoint_best`` for one fold by parsing
+    its nnU-Net training logs: each ``Yayy! New best EMA pseudo Dice`` line
+    marks a best-checkpoint save within the current (0-based) epoch, and the
+    checkpoint records the 1-based count of completed epochs, so the value is
+    the log epoch plus one."""
     best_epoch = None
-    for log_path in sorted(
-        trainer_directories[0].glob(f"fold_{fold}/training_log_*.txt")
-    ):
+    for log_path in fold_training_logs(experiment_archive, fold, seed):
         current_epoch = None
         for line in log_path.open():
             epoch_match = re.search(r": Epoch ([0-9]+)\s*$", line.rstrip("\n"))
@@ -380,7 +372,24 @@ def recover_best_epoch(experiment_archive, fold, seed):
         raise InputValidationError(
             f"No best-checkpoint update in training logs for seed {seed} fold {fold}"
         )
-    return best_epoch
+    return best_epoch + 1
+
+
+def recover_final_epoch(experiment_archive, fold, seed):
+    """Recover the epoch recorded by ``checkpoint_final`` for one fold: nnU-Net
+    saves the final checkpoint after the last logged (0-based) epoch and stores
+    its epoch 1-based, so the value is the last logged epoch plus one."""
+    last_epoch = None
+    for log_path in fold_training_logs(experiment_archive, fold, seed):
+        for line in log_path.open():
+            epoch_match = re.search(r": Epoch ([0-9]+)\s*$", line.rstrip("\n"))
+            if epoch_match:
+                last_epoch = int(epoch_match.group(1))
+    if last_epoch is None:
+        raise InputValidationError(
+            f"No epoch headers in training logs for seed {seed} fold {fold}"
+        )
+    return last_epoch + 1
 
 
 def read_encoder(prediction_directory):
@@ -416,14 +425,7 @@ def parse_prediction_directory(directory, experiment_archive, archive_experiment
     fold = None if match.group("fold") is None else int(match.group("fold"))
     checkpoint = match.group("checkpoint")
 
-    if match.group("validation") is not None:
-        evaluation_split = "validation_fold_0"
-        if fold not in (None, 0):
-            raise InputValidationError(
-                f"Validation predictions require fold 0: {directory.name}"
-            )
-    else:
-        evaluation_split = "test"
+    evaluation_split = "test"
 
     epoch_match = EPOCH_CHECKPOINT_PATTERN.fullmatch(checkpoint)
     if epoch_match:
@@ -434,6 +436,12 @@ def parse_prediction_directory(directory, experiment_archive, archive_experiment
                 f"Best checkpoint requires a fold: {directory.name}"
             )
         epoch = recover_best_epoch(experiment_archive, fold, seed)
+    elif checkpoint == "final":
+        if fold is None:
+            raise InputValidationError(
+                f"Final checkpoint requires a fold: {directory.name}"
+            )
+        epoch = recover_final_epoch(experiment_archive, fold, seed)
     else:
         raise InputValidationError(
             f"Unrecognized checkpoint '{checkpoint}' in {directory.name}"
@@ -454,23 +462,80 @@ def parse_prediction_directory(directory, experiment_archive, archive_experiment
     }
 
 
-def discover_configurations():
-    """Discover every top-level prediction directory across all experiment
-    archives (dry-run archives and archives without results are skipped)."""
+def discover_main_archives():
+    """Return the numbered experiment archives under archives/, excluding
+    dry-run archives."""
     if not ARCHIVES_DIR.is_dir():
         raise InputValidationError(
             f"Missing archives root: {relative_path(ARCHIVES_DIR)}"
         )
-    configurations = []
+    main_archives = []
     for experiment_archive in sorted(ARCHIVES_DIR.iterdir()):
         if not experiment_archive.is_dir() or experiment_archive.name.endswith("_dry_run"):
             continue
-        archive_match = ARCHIVE_NAME_PATTERN.fullmatch(experiment_archive.name)
-        if not archive_match:
+        if not ARCHIVE_NAME_PATTERN.fullmatch(experiment_archive.name):
             raise InputValidationError(
                 f"Unrecognized experiment archive name: {experiment_archive.name}"
             )
-        archive_experiment_name = archive_match.group("experiment_name")
+        main_archives.append(experiment_archive)
+    return main_archives
+
+
+def discover_amendment_configurations(main_archives):
+    """Discover prediction runs added after the fact under
+    ``archives_amendments/``.
+
+    Each amendment archive is named after the main archive it amends plus a
+    descriptive suffix, e.g. ``01_training_efficiency_final_predictions``
+    amends ``01_training_efficiency``. Prediction directories live at the
+    amendment archive root; references, cohorts, and training logs still come
+    from the amended main archive, so rows remain directly comparable.
+    """
+    if not AMENDMENTS_DIR.is_dir():
+        return []
+    configurations = []
+    for amendment_archive in sorted(AMENDMENTS_DIR.iterdir()):
+        if not amendment_archive.is_dir():
+            continue
+        matches = [
+            archive for archive in main_archives
+            if amendment_archive.name.startswith(archive.name + "_")
+        ]
+        if not matches:
+            raise InputValidationError(
+                f"Amendment archive '{amendment_archive.name}' matches no "
+                f"experiment archive"
+            )
+        if len(matches) > 1:
+            raise InputValidationError(
+                f"Ambiguous amendment archive '{amendment_archive.name}': "
+                f"{[archive.name for archive in matches]}"
+            )
+        main_archive = matches[0]
+        archive_experiment_name = ARCHIVE_NAME_PATTERN.fullmatch(
+            main_archive.name
+        ).group("experiment_name")
+        for directory in sorted(amendment_archive.glob("predictions_*")):
+            if not directory.is_dir():
+                continue
+            configurations.append(
+                parse_prediction_directory(
+                    directory, main_archive, archive_experiment_name
+                )
+            )
+    return configurations
+
+
+def discover_configurations():
+    """Discover every top-level prediction directory across all experiment
+    archives and amendment archives (dry-run archives and archives without
+    results are skipped)."""
+    main_archives = discover_main_archives()
+    configurations = []
+    for experiment_archive in main_archives:
+        archive_experiment_name = ARCHIVE_NAME_PATTERN.fullmatch(
+            experiment_archive.name
+        ).group("experiment_name")
         results_root = experiment_archive / "nnUNet_results"
         if not results_root.is_dir():
             continue
@@ -482,6 +547,7 @@ def discover_configurations():
                     directory, experiment_archive, archive_experiment_name
                 )
             )
+    configurations.extend(discover_amendment_configurations(main_archives))
     if not configurations:
         raise InputValidationError("No prediction directories discovered")
     return configurations
@@ -534,15 +600,28 @@ def evaluate_case(config, case):
     )
 
     if case["mass_present"]:
-        overlap_iou_00 = bool(retained_intersection > 0)
-        max_retained_component_iou = max_component_iou(
-            retained_prediction, ground_truth
-        )
+        # Credit every retained component that satisfies each criterion's
+        # component-level rule against the mass; only uncredited components
+        # count as false positives, so fragmentation of a detected mass is
+        # not penalized.
+        component_iou_values = component_ious(retained_prediction, ground_truth)
+        credited_overlap_00 = [iou > 0.0 for iou in component_iou_values]
+        credited_overlap_02 = [iou > 0.2 for iou in component_iou_values]
+        credited_overlap_05 = [iou > 0.5 for iou in component_iou_values]
+        credited_centroid_025 = component_centroid_matches(
+            ground_truth, retained_prediction, 0.25)
+        credited_centroid_050 = component_centroid_matches(
+            ground_truth, retained_prediction, 0.5)
+        credited_centroid_100 = component_centroid_matches(
+            ground_truth, retained_prediction, 1.0)
+
+        max_retained_component_iou = max(component_iou_values, default=0.0)
+        overlap_iou_00 = any(credited_overlap_00)
         overlap_iou_02 = max_retained_component_iou > 0.2
         overlap_iou_05 = max_retained_component_iou > 0.5
-        centroid_deq_025 = centroid_detection(ground_truth, retained_prediction, 0.25)
-        centroid_deq_050 = centroid_detection(ground_truth, retained_prediction, 0.5)
-        centroid_deq_100 = centroid_detection(ground_truth, retained_prediction, 1.0)
+        centroid_deq_025 = any(credited_centroid_025)
+        centroid_deq_050 = any(credited_centroid_050)
+        centroid_deq_100 = any(credited_centroid_100)
         if overlap_iou_00 and not triage:
             raise AssertionError(
                 f"Detection without triage for {case['image_id']} in {config['configuration_id']}"
@@ -558,6 +637,12 @@ def evaluate_case(config, case):
         mass_iou = iou_score(retained_prediction, ground_truth)
         normal_false_positive = None
     else:
+        credited_overlap_00 = []
+        credited_overlap_02 = []
+        credited_overlap_05 = []
+        credited_centroid_025 = []
+        credited_centroid_050 = []
+        credited_centroid_100 = []
         overlap_iou_00 = None
         overlap_iou_02 = None
         overlap_iou_05 = None
@@ -571,12 +656,15 @@ def evaluate_case(config, case):
         max_retained_component_iou = None
         normal_false_positive = triage
 
-    overlap_iou_00_fp = retained_components - int(bool(overlap_iou_00))
-    overlap_iou_02_fp = retained_components - int(bool(overlap_iou_02))
-    overlap_iou_05_fp = retained_components - int(bool(overlap_iou_05))
-    centroid_deq_025_fp = retained_components - int(bool(centroid_deq_025))
-    centroid_deq_050_fp = retained_components - int(bool(centroid_deq_050))
-    centroid_deq_100_fp = retained_components - int(bool(centroid_deq_100))
+    # A criterion with no credited component (a missed mass, or a normal image
+    # where nothing can be credited) counts every retained component as a
+    # false positive.
+    overlap_iou_00_fp = retained_components - sum(credited_overlap_00)
+    overlap_iou_02_fp = retained_components - sum(credited_overlap_02)
+    overlap_iou_05_fp = retained_components - sum(credited_overlap_05)
+    centroid_deq_025_fp = retained_components - sum(credited_centroid_025)
+    centroid_deq_050_fp = retained_components - sum(credited_centroid_050)
+    centroid_deq_100_fp = retained_components - sum(credited_centroid_100)
 
     return {
         "experiment_name": config["experiment_name"],
@@ -640,6 +728,37 @@ def write_rows(rows):
             })
 
 
+def git_sha():
+    """Return the current commit SHA of the repository."""
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=PROJECT_ROOT, capture_output=True, text=True, check=True,
+    )
+    return result.stdout.strip()
+
+
+def write_manifest(rows):
+    """Write the build manifest next to the CSV: schema version, snapshot ID
+    of the written CSV, UTC build time, repository git SHA, and the row count
+    of every configuration."""
+    snapshot_id = hashlib.sha256(OUTPUT_PATH.read_bytes()).hexdigest()[:12]
+    row_counts = Counter(row["configuration_id"] for row in rows)
+    manifest = {
+        "schema_version": SCHEMA_VERSION,
+        "snapshot_id": snapshot_id,
+        "built_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "git_sha": git_sha(),
+        "configurations": [
+            {"configuration_id": configuration_id, "row_count": row_count}
+            for configuration_id, row_count in sorted(row_counts.items())
+        ],
+    }
+    with open(MANIFEST_PATH, "w") as file:
+        json.dump(manifest, file, indent=2)
+        file.write("\n")
+    print(f"Wrote {relative_path(MANIFEST_PATH)}")
+
+
 def main():
     configurations = discover_configurations()
 
@@ -647,21 +766,16 @@ def main():
     if len(configuration_ids) != len(set(configuration_ids)):
         raise InputValidationError("Configuration IDs are not unique")
 
-    cases_by_cohort = {}
+    cases_by_archive = {}
     rows = []
     for config in configurations:
         print(f"Evaluating {config['configuration_id']}...")
-        cohort_key = (config["experiment_archive"], config["evaluation_split"])
-        if cohort_key not in cases_by_cohort:
-            if config["evaluation_split"] == "test":
-                cases_by_cohort[cohort_key] = load_test_cases(
-                    config["experiment_archive"]
-                )
-            else:
-                cases_by_cohort[cohort_key] = load_validation_fold_0_cases(
-                    config["experiment_archive"]
-                )
-        cases = cases_by_cohort[cohort_key]
+        experiment_archive = config["experiment_archive"]
+        if experiment_archive not in cases_by_archive:
+            cases_by_archive[experiment_archive] = load_test_cases(
+                experiment_archive
+            )
+        cases = cases_by_archive[experiment_archive]
 
         expected_filenames = {f"{case['image_id']}.png" for case in cases}
         validate_configuration(config, expected_filenames)
@@ -670,6 +784,7 @@ def main():
         )
 
     write_rows(rows)
+    write_manifest(rows)
     print(f"Wrote {relative_path(OUTPUT_PATH)} ({len(rows)} rows)")
 
 

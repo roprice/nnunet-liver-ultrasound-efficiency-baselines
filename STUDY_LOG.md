@@ -1,7 +1,21 @@
 # Study log
 
-## 2026-10-02
-_Estimated development effort: 3 today, 106 total_
+
+## 2026-10-05
+_Estimated development effort: 2 today, 111 total_
+
+Having completed the training efficiency experiment and evaluated the results according the to criteria registed in this study, on September 28, we have found 150 epochs to be the most cost-efficient training budget for triage-level detection of cancerous masses on AUL data.
+
+At 150 epochs, notwithstanding the disadvantage of learning rate, models across the 5 folds had the 2nd highest malignant-mass detection rate for the overlap-based detection metric, where IoU>0.
+
+The epoch budget with the highest malignant-mass detection rate was, interestingly, not 1000 but 300.
+
+In addition to performing analysis, we implemented the predictions dataset data layer, as planned. It holds a custom calculated false positive rate for each detection metric used in the study.
+
+
+
+## 2026-10-05
+_Estimated development effort: 3 today, 109 total_
 
 As the efficiency training came to a close, it gave us a chance to polish the runbooks and reproducability and lets us get started on analysis.
 
