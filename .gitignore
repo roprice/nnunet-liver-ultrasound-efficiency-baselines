@@ -9,12 +9,11 @@ __pycache__/
 *.zip
 *.tar
 
-# data and archives
+# data and archives of training and predictions
 archives/
-data/
 
 # python environmnet
-.venv311
+.venv
 
 # private
 private/

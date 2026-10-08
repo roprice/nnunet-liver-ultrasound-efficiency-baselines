@@ -12,6 +12,8 @@ The epoch budget with the highest malignant-mass detection rate was, interesting
 
 In addition to performing analysis, we implemented the predictions dataset data layer, as planned. It holds a custom calculated false positive rate for each detection metric used in the study.
 
+We conducted a noise floor analysis across 6350 prediction in the training efficiency experiment that confirmed 0.03 as the ideal relative noise floor - it's the largest two-digit fraction to cause 0 predictions to be missed across all 7 detection metrics tracked in the study.
+
 
 
 ## 2026-10-05
