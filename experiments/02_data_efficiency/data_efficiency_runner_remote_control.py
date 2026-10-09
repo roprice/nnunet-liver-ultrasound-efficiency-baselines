@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CPU-side data-efficiency controller. Run with --help for verify and finish."""
+"""Data-efficiency verification and completion. Run with --help for commands."""
 
 import sys
 
@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 import hashlib
 import ipaddress
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -25,10 +26,15 @@ import time
 
 
 FOLDS = range(5)
+EPOCHS = 150
+MILESTONE_EPOCHS = (5, 25, 75, 100, 125)
 SCALES = ((588, 1, 'Dataset001_AUL'), (294, 2, 'Dataset002_AUL_294'),
           (147, 3, 'Dataset003_AUL_147'), (74, 4, 'Dataset004_AUL_074'))
 RECORD = Path('logs/02_data_efficiency')
 TRAINER = 'nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d'
+TRAINER_NAME = TRAINER.split('__')[0]
+CHECKPOINT_EPOCHS = {f'checkpoint_epoch{epoch}.pth': epoch for epoch in MILESTONE_EPOCHS}
+CHECKPOINT_EPOCHS.update({'checkpoint_final.pth': EPOCHS, 'checkpoint_best.pth': None})
 SOURCES = ('repo', 'nnUNet_raw', 'nnUNet_preprocessed', 'nnUNet_results')
 
 
@@ -39,6 +45,73 @@ def require(condition, message):
 
 def required_file(path):
     require(path.is_file() and path.stat().st_size > 0, f'Missing or empty file: {path}')
+
+
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def check_checkpoint_metadata(filename, metadata, fold):
+    require(metadata.get('trainer_name') == TRAINER_NAME,
+            f'Wrong trainer in {filename}')
+    require(type(metadata.get('fold')) is int and metadata['fold'] == fold,
+            f'Wrong fold in {filename}')
+    epoch = metadata.get('current_epoch')
+    expected_epoch = CHECKPOINT_EPOCHS[filename]
+    require(type(epoch) is int and
+            (1 <= epoch <= EPOCHS if expected_epoch is None else epoch == expected_epoch),
+            f'{filename}: expected current_epoch={expected_epoch if expected_epoch is not None else "1..150"}')
+
+
+def check_checkpoints(directory, fold):
+    path = directory / 'checkpoint_metadata.json'
+    required_file(path)
+    metadata = json.loads(path.read_text())
+    require(metadata.get('epochs') == EPOCHS and
+            metadata.get('milestones') == list(MILESTONE_EPOCHS),
+            f'Wrong checkpoint budget or milestones: {path}')
+    checkpoints = metadata['checkpoints']
+    require(set(checkpoints) == set(CHECKPOINT_EPOCHS), f'Incomplete checkpoint metadata: {path}')
+    for filename, saved in checkpoints.items():
+        checkpoint = directory / filename
+        required_file(checkpoint)
+        check_checkpoint_metadata(filename, saved, fold)
+        require(saved.get('size_bytes') == checkpoint.stat().st_size and
+                saved.get('sha256') == file_sha256(checkpoint),
+                f'Checkpoint changed since validation: {checkpoint}')
+    times = directory / 'milestone_times.csv'
+    required_file(times)
+    require(metadata.get('milestone_times_sha256') == file_sha256(times),
+            f'Milestone timing changed since validation: {times}')
+
+
+def check_run_settings(logs):
+    path = logs / 'run_settings.txt'
+    required_file(path)
+    settings = dict(line.split('=', 1) for line in path.read_text().splitlines())
+    require(settings.get('seed') == '42' and settings.get('trainer') == TRAINER_NAME and
+            settings.get('test_dataset') == 'Dataset001_AUL' and settings.get('epochs') == str(EPOCHS) and
+            settings.get('milestones') == ','.join(map(str, MILESTONE_EPOCHS)),
+            'Invalid run settings')
+
+
+def check_environment(logs):
+    required_file(logs / 'pip_freeze.txt')
+    path = logs / 'environment.json'
+    required_file(path)
+    environment = json.loads(path.read_text())
+    for field in ('python', 'nnunetv2', 'torch', 'cuda', 'cudnn', 'gpu_name'):
+        require(environment.get(field), f'Missing environment field: {field}')
+    for field in ('cpu_count', 'usable_cpus', 'nnUNet_n_proc_DA_used', 'gpu_count'):
+        require(type(environment.get(field)) is int and environment[field] > 0,
+                f'Invalid environment field: {field}')
+    require(isinstance(environment.get('git_sha'), str) and
+            re.fullmatch(r'[0-9a-f]{40,64}', environment['git_sha']) and
+            isinstance(environment.get('git_status'), str), 'Missing Git provenance')
 
 
 def status(repo):
@@ -76,6 +149,23 @@ def csv_rows(path, fields, count, allow_blank=()):
                 for field, value in row.items()) for row in rows),
             f'Expected {count} valid rows in {path}')
     return rows
+
+
+def check_milestone_times(directory, training_seconds=None):
+    path = directory / 'milestone_times.csv'
+    rows = csv_rows(path, ('epoch', 'elapsed_training_seconds', 'learning_rate'), len(MILESTONE_EPOCHS))
+    require([int(row['epoch']) for row in rows] == list(MILESTONE_EPOCHS),
+            f'Wrong milestone epochs: {path}')
+    previous = 0.0
+    for row in rows:
+        elapsed = float(row['elapsed_training_seconds'])
+        learning_rate = float(row['learning_rate'])
+        require(math.isfinite(elapsed) and elapsed > previous and
+                math.isfinite(learning_rate) and learning_rate > 0,
+                f'Invalid milestone timing or learning rate: {path}')
+        if training_seconds is not None:
+            require(elapsed <= training_seconds + 1, f'Milestone timing exceeds training stage: {path}')
+        previous = elapsed
 
 
 def check_times(logs, filename, folds, epochs):
@@ -163,14 +253,11 @@ def verify(config):
             events['experiment_started'], 'GPU events out of order')
     require((repo / 'data_efficiency_runner_exit_status.txt').stat().st_mtime >=
             events['experiment_started'].timestamp(), 'Runner status predates experiment_started')
-    settings = dict(line.split('=', 1) for line in (logs / 'run_settings.txt').read_text().splitlines())
-    require(settings.get('seed') == '42' and settings.get('trainer') ==
-            'nnUNetTrainer_dataSubsets_Seed42' and settings.get('test_dataset') == 'Dataset001_AUL'
-            and int(settings['epochs']) > 0, 'Invalid run settings')
-    epochs = int(settings['epochs'])
+    check_run_settings(logs)
+    check_environment(logs)
     for filename in ('preprocessing_times.csv', 'training_times.csv',
                      'prediction_times.csv', 'benchmark_times.csv'):
-        check_times(logs, filename, filename != 'preprocessing_times.csv', epochs)
+        check_times(logs, filename, filename != 'preprocessing_times.csv', EPOCHS)
 
     raw_root = home / 'nnUNet_raw'
     full = raw_root / 'Dataset001_AUL'
@@ -234,14 +321,16 @@ def verify(config):
         results = home / 'nnUNet_results' / name / TRAINER
         for fold in FOLDS:
             checkpoint_dir = results / f'fold_{fold}'
-            required_file(checkpoint_dir / 'checkpoint_final.pth')
-            required_file(checkpoint_dir / 'checkpoint_best.pth')
+            check_checkpoints(checkpoint_dir, fold)
             training_logs = list(checkpoint_dir.glob('training_log_*.txt'))
             require(training_logs, f'Missing training logs: {checkpoint_dir}')
             for log in training_logs:
                 required_file(log)
             for stage in ('train', 'predict', 'benchmark', 'predict_best', 'benchmark_best'):
                 check_stage(logs, f'{stage}_size{size}_fold{fold}')
+            training_time = dict(line.split('=', 1) for line in
+                                 (logs / f'time_train_size{size}_fold{fold}.txt').read_text().splitlines())
+            check_milestone_times(checkpoint_dir, float(training_time['wall_clock_seconds']))
             for checkpoint, prediction_root, inference_root in (
                     ('checkpoint_final.pth', 'predictions', 'inference'),
                     ('checkpoint_best.pth', 'predictions_best', 'inference_best')):
@@ -499,6 +588,13 @@ def save_json(path, value):
     temporary.replace(path)
 
 
+def check_destination(destination):
+    require(not destination.is_symlink(), f'Destination must not be a symlink: {destination}')
+    require(not destination.exists() or
+            (destination.is_dir() and not any(destination.iterdir())),
+            f'Destination must be new or empty: {destination}')
+
+
 def run(args):
     require(re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9._-]*@[A-Za-z0-9][A-Za-z0-9._-]*', args.ssh_target),
             'SSH target must be user@host without shell metacharacters')
@@ -517,8 +613,8 @@ def run(args):
     if args.command == 'finish':
         require(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', args.instance_id),
                 'Invalid Verda instance ID')
+        check_destination(args.destination)
         destination = args.destination.resolve()
-        require(not destination.exists(), f'Destination already exists: {destination}')
         require(not any(destination.is_relative_to(root) for root in source_paths(config).values()),
                 'Destination overlaps source')
     wait_for_runner(args, config)
@@ -529,7 +625,8 @@ def run(args):
         return
     summary = remote(args, config, 'finish', args.operation_timeout)
     print(summary, end='', flush=True)
-    destination.mkdir(parents=True)
+    check_destination(destination)
+    destination.mkdir(parents=True, exist_ok=True)
     sources = source_paths(config)
     for name, root in sources.items():
         print(f'Copying {name}...', flush=True)
@@ -567,6 +664,9 @@ def run(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     subcommands = parser.add_subparsers(dest='command', required=True)
+    local = subcommands.add_parser('verify-local', help='Verify outputs on the GPU without SSH')
+    local.add_argument('--repo', type=Path, default=Path.cwd())
+    local.add_argument('--home', type=Path, default=Path.home())
     for name in ('verify', 'finish'):
         sub = subcommands.add_parser(name)
         sub.add_argument('--ssh-target', required=True, help='GPU SSH user@host (host key must be trusted)')
@@ -578,10 +678,14 @@ def main():
         sub.add_argument('--operation-timeout', type=int, default=21600, help='Maximum seconds for each verify, hash, copy or delete')
         if name == 'finish':
             sub.add_argument('--instance-id', required=True, help='Exact Verda VM ID; JSON id, hostname and IP must match SSH')
-            sub.add_argument('--destination', type=Path, required=True, help='New, nonexistent CPU backup directory')
+            sub.add_argument('--destination', type=Path, required=True, help='New or empty CPU backup directory')
     args = parser.parse_args()
     try:
-        run(args)
+        if args.command == 'verify-local':
+            verify({'repo': str(args.repo), 'home': str(args.home)})
+            print('Verified data-efficiency run.')
+        else:
+            run(args)
     except (RuntimeError, OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         parser.exit(1, f'ERROR: {error}\nGPU instance was not deleted by this invocation.\n')
 

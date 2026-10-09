@@ -8,16 +8,16 @@ cd "$REPO_DIR"
 : "${nnUNet_raw:?Set nnUNet_raw before running}"
 : "${nnUNet_preprocessed:?Set nnUNet_preprocessed before running}"
 : "${nnUNet_results:?Set nnUNet_results before running}"
-: "${DATA_EFFICIENCY_EPOCHS:?Set DATA_EFFICIENCY_EPOCHS to a positive integer before running}"
-if [[ ! "$DATA_EFFICIENCY_EPOCHS" =~ ^[0-9]+$ ]] || [[ "$DATA_EFFICIENCY_EPOCHS" =~ ^0+$ ]]; then
-    echo 'DATA_EFFICIENCY_EPOCHS must be a positive integer.' >&2
+: "${DATA_EFFICIENCY_EPOCHS:?Set DATA_EFFICIENCY_EPOCHS=150 before running}"
+if [[ "$DATA_EFFICIENCY_EPOCHS" != 150 ]]; then
+    echo 'DATA_EFFICIENCY_EPOCHS must be 150 for this experiment.' >&2
     exit 1
 fi
-DATA_EFFICIENCY_EPOCHS=$(python -c 'import sys; print(int(sys.argv[1]))' "$DATA_EFFICIENCY_EPOCHS")
 export DATA_EFFICIENCY_EPOCHS
 
 TRAINER=nnUNetTrainer_dataSubsets_Seed42
 SEED=42
+MILESTONE_EPOCHS=(5 25 75 100 125)
 SIZES=(588 294 147 74)
 IDS=(1 2 3 4)
 NAMES=(Dataset001_AUL Dataset002_AUL_294 Dataset003_AUL_147 Dataset004_AUL_074)
@@ -48,6 +48,9 @@ for index in "${!SIZES[@]}"; do
         exit 1
     fi
 done
+
+RUN_START=$(date +%s)
+echo "Start time: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 python - "$RAW_FULL" "$nnUNet_raw" "${NAMES[@]:1}" <<'PY'
 import filecmp
@@ -134,12 +137,51 @@ PY
 
 mkdir -p "$LOGS_DIR"
 cp "$RAW_FULL/case_mapping.json" "$LOGS_DIR/case_mapping.json"
-printf 'seed=%s\nepochs=%s\ntrainer=%s\ntest_dataset=%s\n' \
+printf 'seed=%s\nepochs=%s\ntrainer=%s\ntest_dataset=%s\nmilestones=5,25,75,100,125\n' \
     "$SEED" "$DATA_EFFICIENCY_EPOCHS" "$TRAINER" Dataset001_AUL > "$LOGS_DIR/run_settings.txt"
 printf 'size,dataset_id,dataset_name,wall_clock_seconds\n' > "$LOGS_DIR/preprocessing_times.csv"
 printf 'size,dataset_id,fold,seed,epochs,checkpoint_current_epoch,wall_clock_seconds,gpu_samples\n' > "$LOGS_DIR/training_times.csv"
 printf 'size,dataset_id,fold,seed,checkpoint,wall_clock_seconds,case_count,gpu_samples\n' > "$LOGS_DIR/prediction_times.csv"
 printf 'size,dataset_id,fold,seed,checkpoint,wall_clock_seconds,gpu_samples,benchmark_output\n' > "$LOGS_DIR/benchmark_times.csv"
+
+python -m pip freeze > "$LOGS_DIR/pip_freeze.txt"
+python - "$LOGS_DIR" <<'PY'
+from importlib.metadata import version
+import json
+import os
+from pathlib import Path
+import platform
+import subprocess
+import sys
+
+import torch
+from nnunetv2.utilities.default_n_proc_DA import get_allowed_n_proc_DA
+
+if not torch.cuda.is_available():
+    raise SystemExit('CUDA-enabled PyTorch is required')
+environment = {
+    'python': platform.python_version(),
+    'nnunetv2': version('nnunetv2'),
+    'torch': torch.__version__,
+    'cuda': torch.version.cuda,
+    'cudnn': torch.backends.cudnn.version(),
+    'gpu_count': torch.cuda.device_count(),
+    'gpu_name': torch.cuda.get_device_name(0),
+    'cpu_count': os.cpu_count(),
+    'usable_cpus': len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count(),
+    'nnUNet_n_proc_DA_set': os.environ.get('nnUNet_n_proc_DA'),
+    'nnUNet_n_proc_DA_used': get_allowed_n_proc_DA(),
+    'nnUNet_compile_set': os.environ.get('nnUNet_compile'),
+    'git_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+    'git_status': subprocess.check_output(['git', '--no-optional-locks', 'status', '--porcelain'], text=True),
+}
+(Path(sys.argv[1]) / 'environment.json').write_text(json.dumps(environment, indent=2) + '\n')
+print(f'nnU-Net: {environment["nnunetv2"]}; PyTorch: {environment["torch"]}; '
+      f'CUDA: {environment["cuda"]}; cuDNN: {environment["cudnn"]}')
+print(f'Usable CPUs: {environment["usable_cpus"]}; '
+      f'data-augmentation workers: {environment["nnUNet_n_proc_DA_used"]}')
+print(f'Repo SHA: {environment["git_sha"]}\nRepo status:\n{environment["git_status"]}')
+PY
 
 GPU_MONITOR_PID=''
 stop_gpu_monitor() {
@@ -213,16 +255,11 @@ for index in "${!SIZES[@]}"; do
             nnUNetv2_train "$id" 2d "$fold" --npz -tr "$TRAINER"
         test -s "$checkpoint" || { echo "Missing checkpoint: $checkpoint" >&2; exit 1; }
         test -s "$best_checkpoint" || { echo "Missing checkpoint: $best_checkpoint" >&2; exit 1; }
-        actual_epochs=$(python - "$checkpoint" <<'PY'
-import sys
-import torch
-checkpoint = torch.load(sys.argv[1], map_location='cpu', weights_only=False)
-epochs = checkpoint.get('current_epoch')
-if not isinstance(epochs, int):
-    raise SystemExit('Final checkpoint does not record current_epoch')
-print(epochs)
-PY
-)
+        for epoch in "${MILESTONE_EPOCHS[@]}"; do
+            milestone_checkpoint="$results/fold_${fold}/checkpoint_epoch${epoch}.pth"
+            test -s "$milestone_checkpoint" || { echo "Missing checkpoint: $milestone_checkpoint" >&2; exit 1; }
+        done
+        actual_epochs=$(python "$SCRIPT_DIR/record_checkpoints.py" "$results/fold_${fold}" "$fold")
         printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
             "$DATA_EFFICIENCY_EPOCHS" "$actual_epochs" "$MEASURED_SECONDS" "$MEASURED_GPU_PATH" >> "$LOGS_DIR/training_times.csv"
 
@@ -291,3 +328,5 @@ PY
 done
 
 echo "Data efficiency run complete: $LOGS_DIR"
+echo "End time: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+echo "Total wall clock: $(( $(date +%s) - RUN_START ))s"

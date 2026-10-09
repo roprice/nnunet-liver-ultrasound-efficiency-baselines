@@ -138,7 +138,7 @@ ls "$nnUNet_raw/Dataset001_AUL/imagesTr" | wc -l  # expect 588
 ls "$nnUNet_raw/Dataset001_AUL/imagesTs" | wc -l  # expect 147
 ```
 
-Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases. Choose the positive epoch budget before launching the runner; replace the placeholder below. Then mark setup complete:
+Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases. Set the fixed 150-epoch budget, then mark setup complete:
 
 ```sh
 # Set the training length
@@ -153,7 +153,7 @@ sh logs/02_data_efficiency/record_event.sh setup_complete
 tmux new -s training
 ```
 
-Inside tmux, run from the repository root with the same positive epoch budget. The launcher log stays outside `logs/02_data_efficiency/`, and the exit-status file is written only after the runner exits:
+Inside tmux, run from the repository root with the fixed 150-epoch budget. The runner requires fresh outputs and does not resume. The launcher log stays outside `logs/02_data_efficiency/`, and the exit-status file is written only after the runner exits:
 
 ```sh
 . "$HOME/.venv/bin/activate"
@@ -171,9 +171,11 @@ mv data_efficiency_runner_exit_status.txt.tmp data_efficiency_runner_exit_status
 
 Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`. Check `logs/data_efficiency_runner.log` and per-stage logs if it fails.
 
-The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's saved checkpoints on GPU, writing best reports to `inference_best/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks. 
+The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's final and best checkpoints on GPU, writing best reports to `inference_best/size{SIZE}/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks.
 
 Each timed training step includes more than epochs: `nnUNetv2_train` finishes with a full validation of the held-out fold cases, and `--npz` adds exporting their softmax probabilities. Training wall-clock in `training_times.csv` therefore includes validation inference and file writing.
+
+Each model fold's `milestone_times.csv` records cumulative training time and learning rate at the five milestones, including initialization and checkpoint writing but excluding the later full validation. The runner validates all seven checkpoints and saves their metadata and hashes for completion verification.
 
 
 ### Optionally monitor progress
@@ -183,7 +185,7 @@ From a separate SSH session:
 ```sh
 nvidia-smi --query-gpu=utilization.gpu,memory.used,power.draw --format=csv,noheader
 
-tail -f ~/nnunet-liver-ultrasound-efficiency-baselines/training_efficiency.log
+tail -f ~/nnunet-liver-ultrasound-efficiency-baselines/logs/data_efficiency_runner.log
 ```
 
 Use `Ctrl+C` to close `tail`.
@@ -206,7 +208,8 @@ Option A takes you through manually completion (verifying, finishing, downloadin
 On the **GPU**, from the repository root, require exit status `0` and successful separate verification:
 
 ```sh
-cat runner_exit_status.txt  # must be 0
+cat data_efficiency_runner_exit_status.txt  # must be 0
+python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py verify-local
 ```
 
 #### Finish the GPU usage record
@@ -236,12 +239,12 @@ After `Archive verified`, delete the instance in Verda. You can delete the block
 
 ### Option B: Automated completion
 
-On the **CPU**, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. Choose the GPU instance ID and an archive destination with sufficient space that does not yet exist.
+On the **CPU**, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. Choose the GPU instance ID and a new or empty archive destination with sufficient space.
 
 After training starts, launch this once from the repository root **on the CPU**. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
 
 ```sh
-python3 experiments/02_data_efficiency/training_efficiency_runner_remote_control.py finish \
+python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py finish \
   --ssh-target root@<gpu-ip> \
   --remote-home /root \
   --remote-repo /root/nnunet-liver-ultrasound-efficiency-baselines \
@@ -252,4 +255,4 @@ python3 experiments/02_data_efficiency/training_efficiency_runner_remote_control
 
 The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies and SHA-256-verifies the archive, confirms the GPU's identity, saves a completion manifest, and deletes the instance. No manual completion approval is required. Any failed check prevents deletion. 
 
-The deletion command has no volume-retention option. However, deleted volumes on Verda can be "recovered from the trash" with 96 hours.
+The deletion command has no volume-retention option. However, as of October 2026 deleted volumes on Verda can be "recovered from the trash" within 96 hours.
