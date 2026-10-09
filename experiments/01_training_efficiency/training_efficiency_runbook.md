@@ -1,6 +1,6 @@
 # Training efficiency: five-fold checkpoint sweep
 
-Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL training pool on GPU (NVIDIA CUDA). Predict eight milestone checkpoints and the best checkpoint per fold on the same 147 held-out test cases.
+Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL training pool on GPU (NVIDIA CUDA). Predict eight milestone checkpoints and the best checkpoint per fold on the same 147 held-out test cases. 
 
 ## Fixed conditions
 
@@ -12,33 +12,25 @@ Train folds 0–4 for 1,000 epochs each with seed 42 from the 588-case AUL train
 | Folds | 0–4 |
 | Initialization seed | 42 |
 | Test set | UltraBench AUL test set (Tupper & Gagné, 2025) |
-| Fold-assignment seed | 42 |
+| Initialization seed | 42 |
 | Epoch budget | 1,000 per fold |
-| Architecture | PlainConvUNet 2D |
 | Milestone epochs | 25, 50, 75, 100, 150, 300, 500, 750 |
+| Saved checkpoints | all milestone epochs, plus `checkpoint_final.pth` and `checkpoint_best.pth` |
 
-Each fold trains on 470 or 471 cases and validates on 118 or 117; the 147 held-out test cases are excluded from both. The runner archives `case_mapping.json` and `splits_final.json`, produces 40 milestone and five best prediction directories with 147 masks each, and benchmarks inference using both `checkpoint_final.pth` and `checkpoint_best.pth` after 1,000 epochs.
+A file shared across eperiments, `experiments/prepare_data/aul_splits.py`, defines the common train/test split, nested training subsets, and folds. The held-out cases match Tupper & Gagné's as defined in Ultrabench..
 
-
-`experiments/prepare_data/aul_splits.py` defines the fixed 588/147 split and five-fold assignments. The 147 test cases are UltraBench's AUL test set, vendored in `experiments/prepare_data/reference/` with its source commit and checksum, so the held-out cases match Tupper & Gagné's. `experiments/01_training_efficiency/custom_trainers/nnUNetTrainer_trainingMilestones_Seed42.py` saves the eight milestone checkpoints. To rehearse setup, training, predictions, verification and analysis without running all five folds, use the manual [dry-run runbook](dry_run/dry_run_runbook.md).
-
-**What the seed fixes.** Seed 42 fixes network initialization and the main-process random generators. Training is still not exactly repeatable run to run: nnU-Net's data-augmentation workers are unseeded, and training runs with `cudnn.benchmark=True` and `deterministic=False`. With 87 malignant test cases, one case moves a detection rate by 0.0115, so the study log's 0.03 selection margin is about 2.6 cases. Ordinary run-to-run variation from a single seed may be of that size.
-
-**Continuing on the instance where you did the dry run?** Its optional last step removes the dry run's outputs. Then skip steps 1, 2 and 4 to 8 below, do step 3 (a fresh cost record), then the `setup_complete` command at the end of step 9, then step 10. On a fresh instance, start at step 1.
+To rehearse setup, training, predictions, verification and analysis use the  [dry-run runbook](dry_run/dry_run_runbook.md).
 
 ## 1. Check Python and install system dependencies
 
-Use a fresh Ubuntu GPU instance with Python 3.10+, working NVIDIA drivers/`nvidia-smi`, and enough storage for the source data, all three nnU-Net directories, and logs. Run setup in one Bash shell; the system-package commands below assume root access.
+Use a fresh Ubuntu GPU instance with Python 3.10+, working NVIDIA drivers/`nvidia-smi`, and enough storage for the source data, all three nnU-Net directories, and logs. 
 
 ```sh
 python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ required"'
 apt update
 apt install python3-pip python3-venv python3-dev git unzip tmux rsync time -y
-```
 
-### Optional: color the shell prompt
-
-```sh
+# Optional: color the shell prompt
 cat >> ~/.bashrc << 'PROMPTEOF'
 PS1='\[\e[38;5;208m\]\u@\h:\w \t \[\e[0m\]\$ '
 PROMPTEOF
@@ -55,9 +47,7 @@ cd nnunet-liver-ultrasound-efficiency-baselines
 
 ## 3. Start GPU usage and estimated cost recording
 
-The event log and GPU samples stay on the instance. The preset is an RTX A6000 at **$0.666/hour**; edit the model and rate below if they change. The resulting cost estimate covers only the recorded window, excluding the archive download and time before recording begins or after it ends.
-
-From the repository root on the GPU server, create the record and a reusable event command. It timestamps each event in UTC, including when called from tmux or a new SSH session:
+Edit the rate and model to match this GPU instance. The estimate covers the recorded window, not time before or after it.
 
 ```sh
 mkdir -p logs/01_training_efficiency
@@ -83,7 +73,7 @@ python3 -m venv "$HOME/.venv"
 . "$HOME/.venv/bin/activate"
 ```
 
-Keep `.venv` outside the checkout: the remote controller copies the entire repository and rejects symlinks, including those in a virtual environment.
+Keep `.venv` outside the checkout: the remote controller copies the entire repository and rejects symlinks in its backup trees.
 
 ## 5. Install Python dependencies
 
@@ -93,7 +83,7 @@ python -m pip install 'nnunetv2==2.8.1' 'torch==2.14.1' zenodo-get
 python -c 'import torch, numpy, PIL; assert torch.cuda.is_available()'
 ```
 
-nnU-Net installs NumPy and Pillow as dependencies. PyTorch is pinned to 2.14.1, the version an unpinned `nnunetv2==2.8.1` install resolved to on 2026-10-01, so later releases cannot change the environment. If the CUDA check fails, install a CUDA-enabled build of that same version from the PyTorch package index matching the server's driver before proceeding. The runner records the installed nnU-Net, PyTorch, CUDA and cuDNN versions, CPU and data-augmentation worker counts, the repository git SHA and working-tree status, and saves `pip freeze` to `logs/01_training_efficiency/pip_freeze.txt`.
+PyTorch is pinned to 2.14.1, the version an unpinned `nnunetv2==2.8.1` install resolved to on 2026-10-01. If the CUDA check fails, install a CUDA-enabled build of that same version before proceeding. The runner records the installed nnU-Net, PyTorch, CUDA and cuDNN versions, CPU and data-augmentation worker counts, the repository git SHA and working-tree status, and saves `pip freeze` to `logs/01_training_efficiency/pip_freeze.txt`.
 
 ## 6. Configure nnU-Net directories
 
@@ -160,19 +150,13 @@ Check that `dataset.json` reports 588 training cases and `case_mapping.json` rec
 sh logs/01_training_efficiency/record_event.sh setup_complete
 ```
 
-Before a full run in step 10, you can do a manual [dry run](dry_run/dry_run_runbook.md). It is separate from the remote controller in step 11b and never uses it. By default, do it on its own instance and start this runbook at step 1 on a fresh one. It keeps its own cost record, sampler, outputs and trainer name, so it can also be followed by this runbook on the same instance; its last step explains how.
-
-The dry run trains one fold for two epochs, so it costs a small fraction of the full run. On an NVIDIA RTX A6000, epoch 2 took 38 s, which puts the full run's training alone (5 folds of 1,000 epochs) near 53 hours, and a dry run of about an hour is roughly 2% of that. Setup, preprocessing, final validation, the predictions, both benchmarks and the archive download are fixed costs that dominate the dry run. Its short experiment took about 8 minutes on that GPU; setup and download add to that. It records the environment (`environment.json`, `pip_freeze.txt`), so you can see how your compute environment differs from the one the study's experiments were run on.
-
 ## 10. Run the training efficiency experiment
 
 ```sh
 tmux new -s training
 ```
 
-Use a fresh run checkout and nnU-Net output directories; archive prior outputs rather than overwrite them. The runner refuses existing timing CSVs but does not protect every output from reuse.
-
-Inside tmux, activate the environment and run from the repository root. Preserve the runner's exit status when saving output with `tee`:
+Inside tmux, run from the repository root with the same positive epoch budget. The launcher log stays outside `logs/01_training_efficiency/`, and the exit-status file is written only after the runner exits:
 
 ```sh
 . "$HOME/.venv/bin/activate"
@@ -187,27 +171,11 @@ printf '%s\n' "$RUN_STATUS" > runner_exit_status.txt.tmp
 mv runner_exit_status.txt.tmp runner_exit_status.txt
 ```
 
-The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's `checkpoint_final.pth` and `checkpoint_best.pth` on GPU, writing best reports to `inference_best/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks. Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`.
+Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`. Check `logs/data_efficiency_runner.log` and per-stage logs if it fails.
 
-The timed training step includes more than epochs. `nnUNetv2_train` finishes with a full validation of the 117 or 118 held-out fold cases, and `--npz` adds exporting their softmax probabilities. Training wall-clock in `training_times.csv` therefore includes validation inference and file writing; state this when reporting training cost. The per-epoch times in each `training_log_*.txt` do not include it.
+The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's saved checkpoints on GPU, writing best reports to `inference_best/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks. 
 
-### If the run stops partway
-
-The runner has no resume path, and its timing-file guard refuses to start again in the same logs directory. Do not delete anything. To recover:
-
-1. Keep the partial outputs and the runner log. Note the time of the stop in the study log.
-2. Continue the interrupted fold from its `checkpoint_latest.pth`, which nnU-Net writes every 50 epochs. Use the same trainer and settings, and time it:
-
-   ```sh
-   FOLD=3   # the interrupted fold
-   /usr/bin/time -v -o logs/01_training_efficiency/time_train_fold${FOLD}_resume.txt \
-     nnUNetv2_train 1 2d $FOLD --npz -tr nnUNetTrainer_trainingMilestones_Seed42 --c
-   ```
-
-   Resuming restores weights and optimizer state, but not the random generators, so the continued fold is not bit-for-bit what an uninterrupted run would produce. Record this in the study log.
-3. Append that fold's row to `logs/01_training_efficiency/training_times.csv` (`fold,seed,epochs,wall_clock_seconds`). The seconds are the sum of the segments before and after the stop; the logged `Epoch time:` lines give the first segment.
-4. For that fold and each later fold, run the per-fold commands in `training_efficiency_runner.sh` by hand: the training command (without `--c` for untouched folds), the nine `nnUNetv2_predict` calls, and the two `benchmark_inference.py` calls. Use the same output paths and timing-file names, append each prediction to `prediction_times.csv`, and start `gpu_monitor_fold${FOLD}.csv` as the runner does.
-5. Write `runner_exit_status.txt` (`0`) yourself only after every fold's outputs exist. The checks in step 11 then apply unchanged.
+Each timed training step includes more than epochs: `nnUNetv2_train` finishes with a full validation of the held-out fold cases, and `--npz` adds exporting their softmax probabilities. Training wall-clock in `training_times.csv` therefore includes validation inference and file writing.
 
 ### Optionally monitor progress
 
@@ -224,8 +192,6 @@ Use `Ctrl+C` to close `tail`.
 The training will be complete when the final messages are as follows:
 
 ```
-Fold 4 complete
-Training efficiency complete: 5 fold(s), 8 milestone and one best prediction per fold, and two inference benchmarks per fold.
 End time: YYYY-MM-DDTXX:XX:XXZ
 Total wall clock: XXXXXXs
 ```
@@ -285,6 +251,6 @@ python3 experiments/01_training_efficiency/training_efficiency_runner_remote_con
   --destination archives/01_training_efficiency
 ```
 
-The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies and SHA-256-verifies the archive, confirms the GPU's identity, saves a completion manifest, and deletes the instance. No manual completion approval is required. Any failed check prevents deletion. The cost estimate excludes transfer and deletion time.
+The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies and SHA-256-verifies the archive, confirms the GPU's identity, saves a completion manifest, and deletes the instance. No manual completion approval is required. Any failed check prevents deletion. 
 
-The deletion command has no volume-retention option. However, deleted volumnes on Verda can be "recovered from the trash" with 96 hours.
+The deletion command has no volume-retention option. However, deleted volumes on Verda can be "recovered from the trash" with 96 hours.

@@ -1,8 +1,12 @@
 # Study log
 
 
-## 2026-10-05
-_Estimated development effort: 2 today, 111 total_
+
+
+
+
+## 2026-10-06
+_Estimated development effort: 11 through today, 120 total_
 
 Having completed the training efficiency experiment and evaluated the results according the to criteria registed in this study, on September 28, we have found 150 epochs to be the most cost-efficient training budget for triage-level detection of cancerous masses on AUL data.
 
