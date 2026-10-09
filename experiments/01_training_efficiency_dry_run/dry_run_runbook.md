@@ -210,15 +210,15 @@ On your **local computer**, from your checkout of this repository, download the 
 bash experiments/download_archive.sh --live 01_training_efficiency_dry_run root@<gpu-ip>
 ```
 
-The script copies the following into `archives/01_training_efficiency_dry_run/`:
+The script stages the following in `archives_staging/01_training_efficiency_dry_run/`:
 - the repository (with logs, records and the converted-data reports)
 - `nnUNet_raw`
 - `nnUNet_preprocessed` 
 - `nnUNet_results` 
 
-It then re-runs `rsync` as a checksum comparison, excluding the entire `.git/` directory but still copying it, and records and compares Git HEAD in the archive's `git_commit.txt`. `--live` omits the still-running sampler file; step 14 adds it. It prints `Archive verified` if these checks pass. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
+It then re-runs `rsync` as a checksum comparison, excluding the entire `.git/` directory but still copying it, and records and compares Git HEAD in the staged copy's `git_commit.txt`. `--live` omits the still-running sampler file; step 14 adds it. It prints `Live copy verified in staging` if these checks pass. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
 
-## 14. Finish the GPU usage record and update the archive
+## 14. Finish the GPU usage record and publish the archive
 
 On the **GPU**, stop recording and calculate the instance-level cost estimate:
 
@@ -242,7 +242,7 @@ print(summary, end='')
 PY
 ```
 
-Then, on your **local computer**, add the sampler file and the final records to the archive and verify every file:
+Then, on your **local computer**, add the sampler file and final records to the staged copy, verify every file, and publish the immutable archive:
 
 ```sh
 bash experiments/download_archive.sh --refresh 01_training_efficiency_dry_run root@<gpu-ip>

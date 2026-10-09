@@ -18,6 +18,7 @@ export DATA_EFFICIENCY_EPOCHS
 TRAINER=nnUNetTrainer_dataSubsets_Seed42
 SEED=42
 MILESTONE_EPOCHS=(5 25 75 100 125)
+PREDICTION_LABELS=("${MILESTONE_EPOCHS[@]/#/epoch}" final best)
 SIZES=(588 294 147 74)
 IDS=(1 2 3 4)
 NAMES=(Dataset001_AUL Dataset002_AUL_294 Dataset003_AUL_147 Dataset004_AUL_074)
@@ -248,8 +249,6 @@ for index in "${!SIZES[@]}"; do
         label="size${size}_fold${fold}"
         checkpoint="$results/fold_${fold}/checkpoint_final.pth"
         best_checkpoint="$results/fold_${fold}/checkpoint_best.pth"
-        predictions="$LOGS_DIR/predictions/size${size}/fold${fold}"
-        inference="$LOGS_DIR/inference/size${size}/fold${fold}"
         echo "Training size=$size fold=$fold seed=$SEED epochs=$DATA_EFFICIENCY_EPOCHS"
         run_measured "train_${label}" \
             nnUNetv2_train "$id" 2d "$fold" --npz -tr "$TRAINER"
@@ -263,11 +262,16 @@ for index in "${!SIZES[@]}"; do
         printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
             "$DATA_EFFICIENCY_EPOCHS" "$actual_epochs" "$MEASURED_SECONDS" "$MEASURED_GPU_PATH" >> "$LOGS_DIR/training_times.csv"
 
-        echo "Predicting size=$size fold=$fold on 147 held-out cases"
-        run_measured "predict_${label}" \
-            nnUNetv2_predict -i "$RAW_FULL/imagesTs" -o "$predictions" \
-                -d "$id" -c 2d -f "$fold" -tr "$TRAINER" -chk checkpoint_final.pth
-        python - "$RAW_FULL/imagesTs" "$predictions" <<'PY'
+        for checkpoint_label in "${PREDICTION_LABELS[@]}"; do
+            checkpoint_name="checkpoint_${checkpoint_label}.pth"
+            suffix="_${checkpoint_label}"
+            if [[ "$checkpoint_label" == final ]]; then suffix=''; fi
+            predictions="$LOGS_DIR/predictions${suffix}/size${size}/fold${fold}"
+            echo "Predicting size=$size fold=$fold checkpoint=$checkpoint_name on 147 held-out cases"
+            run_measured "predict${suffix}_${label}" \
+                nnUNetv2_predict -i "$RAW_FULL/imagesTs" -o "$predictions" \
+                    -d "$id" -c 2d -f "$fold" -tr "$TRAINER" -chk "$checkpoint_name"
+            python - "$RAW_FULL/imagesTs" "$predictions" <<'PY'
 from pathlib import Path
 import sys
 source, predictions = map(Path, sys.argv[1:])
@@ -279,51 +283,26 @@ if len(expected) != 147 or actual != expected or any(
         not path.is_file() or path.name not in allowed for path in entries):
     raise SystemExit(f'Expected masks for exactly 147 held-out cases in {predictions}')
 PY
-        printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
-            checkpoint_final.pth "$MEASURED_SECONDS" 147 "$MEASURED_GPU_PATH" >> "$LOGS_DIR/prediction_times.csv"
+            printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
+                "$checkpoint_name" "$MEASURED_SECONDS" 147 "$MEASURED_GPU_PATH" >> "$LOGS_DIR/prediction_times.csv"
+        done
 
-        echo "Benchmarking size=$size fold=$fold on 147 held-out cases"
-        run_measured "benchmark_${label}" \
-            python "$REPO_DIR/experiments/benchmark_inference.py" \
-                --nnunet-raw "$nnUNet_raw" --dataset-name "$name" \
-                --test-dataset-name Dataset001_AUL --dataset-id "$id" \
-                --seeds "$SEED" --trainer-prefix nnUNetTrainer_dataSubsets_Seed \
-                --fold "$fold" --checkpoint checkpoint_final.pth \
-                --device cuda --output-dir "$inference"
-        printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
-            checkpoint_final.pth "$MEASURED_SECONDS" "$MEASURED_GPU_PATH" "$inference" >> "$LOGS_DIR/benchmark_times.csv"
-
-        best_predictions="$LOGS_DIR/predictions_best/size${size}/fold${fold}"
-        best_inference="$LOGS_DIR/inference_best/size${size}/fold${fold}"
-        echo "Predicting best size=$size fold=$fold on 147 held-out cases"
-        run_measured "predict_best_${label}" \
-            nnUNetv2_predict -i "$RAW_FULL/imagesTs" -o "$best_predictions" \
-                -d "$id" -c 2d -f "$fold" -tr "$TRAINER" -chk checkpoint_best.pth
-        python - "$RAW_FULL/imagesTs" "$best_predictions" <<'PY'
-from pathlib import Path
-import sys
-source, predictions = map(Path, sys.argv[1:])
-expected = {path.name.removesuffix('_0000.png') + '.png' for path in source.glob('*_0000.png')}
-entries = list(predictions.iterdir())
-actual = {path.name for path in entries if path.is_file() and path.suffix == '.png'}
-allowed = expected | {'dataset.json', 'plans.json', 'predict_from_raw_data_args.json'}
-if len(expected) != 147 or actual != expected or any(
-        not path.is_file() or path.name not in allowed for path in entries):
-    raise SystemExit(f'Expected masks for exactly 147 held-out cases in {predictions}')
-PY
-        printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
-            checkpoint_best.pth "$MEASURED_SECONDS" 147 "$MEASURED_GPU_PATH" >> "$LOGS_DIR/prediction_times.csv"
-
-        echo "Benchmarking best size=$size fold=$fold on 147 held-out cases"
-        run_measured "benchmark_best_${label}" \
-            python "$REPO_DIR/experiments/benchmark_inference.py" \
-                --nnunet-raw "$nnUNet_raw" --dataset-name "$name" \
-                --test-dataset-name Dataset001_AUL --dataset-id "$id" \
-                --seeds "$SEED" --trainer-prefix nnUNetTrainer_dataSubsets_Seed \
-                --fold "$fold" --checkpoint checkpoint_best.pth \
-                --device cuda --output-dir "$best_inference"
-        printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
-            checkpoint_best.pth "$MEASURED_SECONDS" "$MEASURED_GPU_PATH" "$best_inference" >> "$LOGS_DIR/benchmark_times.csv"
+        for checkpoint_label in final best; do
+            checkpoint_name="checkpoint_${checkpoint_label}.pth"
+            suffix="_${checkpoint_label}"
+            if [[ "$checkpoint_label" == final ]]; then suffix=''; fi
+            inference="$LOGS_DIR/inference${suffix}/size${size}/fold${fold}"
+            echo "Benchmarking size=$size fold=$fold checkpoint=$checkpoint_name on 147 held-out cases"
+            run_measured "benchmark${suffix}_${label}" \
+                python "$REPO_DIR/experiments/benchmark_inference.py" \
+                    --nnunet-raw "$nnUNet_raw" --dataset-name "$name" \
+                    --test-dataset-name Dataset001_AUL --dataset-id "$id" \
+                    --seeds "$SEED" --trainer-prefix nnUNetTrainer_dataSubsets_Seed \
+                    --fold "$fold" --checkpoint "$checkpoint_name" \
+                    --device cuda --output-dir "$inference"
+            printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$size" "$id" "$fold" "$SEED" \
+                "$checkpoint_name" "$MEASURED_SECONDS" "$MEASURED_GPU_PATH" "$inference" >> "$LOGS_DIR/benchmark_times.csv"
+        done
     done
 done
 

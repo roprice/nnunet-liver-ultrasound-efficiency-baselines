@@ -1,6 +1,6 @@
 # Data efficiency: five-fold training-pool sweep
 
-Train folds 0–4 at training-pool sizes 588, 294, 147, and 74 with seed 42 on GPU. Predict and benchmark both `checkpoint_final.pth` and `checkpoint_best.pth` for all 20 models on the same 147 held-out AUL test cases. Save internal milestones `5, 25, 75, 100, 125` for secondary budget analysis.
+Train folds 0–4 at training-pool sizes 588, 294, 147, and 74 with seed 42 on GPU. Save and predict internal milestones `5, 25, 75, 100, 125`, plus `checkpoint_final.pth` and `checkpoint_best.pth`, for all 20 models on the same 147 held-out AUL test cases. Benchmark final and best only.
 
 ## Fixed conditions
 
@@ -171,7 +171,7 @@ mv data_efficiency_runner_exit_status.txt.tmp data_efficiency_runner_exit_status
 
 Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training`. Check `logs/data_efficiency_runner.log` and per-stage logs if it fails.
 
-The runner preprocesses, trains, predicts, and calls `experiments/benchmark_inference.py` for each fold's final and best checkpoints on GPU, writing best reports to `inference_best/size{SIZE}/fold{FOLD}/` to avoid filename collisions. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks.
+The runner preprocesses, trains, and predicts all seven checkpoints per fold on GPU (140 prediction sets). Milestone masks go to `predictions_epoch{EPOCH}/size{SIZE}/fold{FOLD}/`; final and best paths are unchanged. It calls `experiments/benchmark_inference.py` for final and best only (40 benchmarks), writing best reports to `inference_best/size{SIZE}/fold{FOLD}/`. Both benchmarks record warmed-up predictor-call latency and end-to-end batch throughput, saving separate sets of masks.
 
 Each timed training step includes more than epochs: `nnUNetv2_train` finishes with a full validation of the held-out fold cases, and `--npz` adds exporting their softmax probabilities. Training wall-clock in `training_times.csv` therefore includes validation inference and file writing.
 
@@ -230,7 +230,7 @@ On your **local computer**, from the repository root (replace `<gpu-ip>`):
 bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
 ```
 
-Copies the repository and three nnU-Net directories into `archives/02_data_efficiency/`, including final logs but not the Python environment. Checks file contents outside `.git/` and saves the matching Git commit in `git_commit.txt`. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
+Copies the repository and three nnU-Net directories into `archives_staging/02_data_efficiency/`, including final logs but not the Python environment. Checks file contents outside `.git/` and saves the matching Git commit in `git_commit.txt`, then publishes the verified copy to `archives/02_data_efficiency/`. Retry interrupted staging downloads with the same command. Published archives are immutable; later additions belong in `archives_amendments/`.
 
 #### Delete the GPU
 
@@ -253,6 +253,6 @@ python3 experiments/02_data_efficiency/data_efficiency_runner_remote_control.py 
   --destination archives/02_data_efficiency
 ```
 
-The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies and SHA-256-verifies the archive, confirms the GPU's identity, saves a completion manifest, and deletes the instance. No manual completion approval is required. Any failed check prevents deletion. 
+The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies into `archives_staging/`, SHA-256-verifies the copy, confirms the GPU's identity, saves a completion manifest, publishes the immutable archive, and deletes the instance. No manual completion approval is required. Any failed check prevents publication and deletion.
 
 The deletion command has no volume-retention option. However, as of October 2026 deleted volumes on Verda can be "recovered from the trash" within 96 hours.

@@ -5,8 +5,8 @@
 #   GPU_SSH       e.g. root@203.0.113.7
 #   REMOTE_HOME   default /root (holds nnUNet_raw, nnUNet_preprocessed, nnUNet_results)
 #   REMOTE_REPO   default $REMOTE_HOME/nnunet-liver-ultrasound-efficiency-baselines
-# Stop recording before downloading. Existing destinations can be updated by repeating the command.
-# --live skips the running sampler; --refresh is a compatibility alias for the default final download.
+# Stop recording before the final download. Published archives are never updated; interrupted staging copies can be retried.
+# --live stages a copy without the running sampler; --refresh publishes the verified final copy.
 # Git storage is copied but not checksum-compared; Git HEAD is checked and saved in git_commit.txt.
 set -euo pipefail
 
@@ -27,7 +27,7 @@ GPU_SSH="$2"
 REMOTE_HOME="${3:-/root}"
 REMOTE_REPO="${4:-$REMOTE_HOME/nnunet-liver-ultrasound-efficiency-baselines}"
 
-[[ "$ARCHIVE_NAME" =~ ^[A-Za-z0-9_][A-Za-z0-9_./-]*$ && "$ARCHIVE_NAME" != *..* ]] || {
+[[ "$ARCHIVE_NAME" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]*$ && "$ARCHIVE_NAME" != *..* ]] || {
     echo "Invalid archive name: $ARCHIVE_NAME" >&2
     exit 2
 }
@@ -41,12 +41,24 @@ for path in "$REMOTE_HOME" "$REMOTE_REPO"; do
         exit 2
     }
 done
-for program in rsync ssh git; do
+for program in rsync ssh git python3; do
     command -v "$program" >/dev/null || { echo "$program is required" >&2; exit 1; }
 done
 
 DEST="$(cd "$SCRIPT_DIR/.." && pwd)/archives/$ARCHIVE_NAME"
-[[ ! -e "$DEST" || -d "$DEST" ]] || { echo "Archive destination is not a directory: $DEST" >&2; exit 1; }
+STAGING="$(cd "$SCRIPT_DIR/.." && pwd)/archives_staging/$ARCHIVE_NAME"
+python3 - "$DEST" "$STAGING" <<'PY'
+from pathlib import Path
+import sys
+
+destination, staging = map(Path, sys.argv[1:])
+if destination.is_symlink() or (destination.exists() and
+        (not destination.is_dir() or any(destination.iterdir()))):
+    raise SystemExit(f'Archive is immutable; destination must be new or empty: {destination}')
+if staging.parent.is_symlink() or staging.is_symlink() or (staging.exists() and not staging.is_dir()):
+    raise SystemExit(f'Staging must be an unlinked directory: {staging}')
+staging.mkdir(parents=True, exist_ok=True)
+PY
 EXCLUDES=(--exclude .DS_Store)
 if [[ "$LIVE" == 1 ]]; then
     EXCLUDES+=(--exclude gpu_monitor_instance.csv)
@@ -61,8 +73,9 @@ remote_path() {
 
 for name in "${TREES[@]}"; do
     echo "Copying $name..."
-    mkdir -p "$DEST/$name"
-    rsync -ac "${EXCLUDES[@]}" "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/"
+    [[ ! -L "$STAGING/$name" ]] || { echo "Linked staging tree: $STAGING/$name" >&2; exit 1; }
+    mkdir -p "$STAGING/$name"
+    rsync -ac "${EXCLUDES[@]}" "$GPU_SSH:$(remote_path "$name")/" "$STAGING/$name/"
 done
 
 # Git may repack objects without changing the recorded commit.
@@ -71,22 +84,35 @@ echo 'Verifying copy by checksum...'
 DIFFERENCES=0
 for name in "${TREES[@]}"; do
     CHANGES="$(rsync -ac --delete --dry-run --itemize-changes "${VERIFY_EXCLUDES[@]}" \
-        "$GPU_SSH:$(remote_path "$name")/" "$DEST/$name/")"
+        "$GPU_SSH:$(remote_path "$name")/" "$STAGING/$name/")"
     if [[ -n "$CHANGES" ]]; then
         echo "Differences in $name:" >&2
         printf '%s\n' "$CHANGES" >&2
         DIFFERENCES=1
     fi
 done
-LOCAL_COMMIT="$(git --no-optional-locks --git-dir="$DEST/repo/.git" rev-parse --verify HEAD)"
+LOCAL_COMMIT="$(git --no-optional-locks --git-dir="$STAGING/repo/.git" rev-parse --verify HEAD)"
 FINAL_REMOTE_COMMIT="$(ssh "$GPU_SSH" "git -C '$REMOTE_REPO' rev-parse --verify HEAD")"
 if [[ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" || "$FINAL_REMOTE_COMMIT" != "$REMOTE_COMMIT" ]]; then
     echo 'Git HEAD differs or changed during the download' >&2
     DIFFERENCES=1
 fi
-[[ "$DIFFERENCES" == 0 ]] || { echo "Archive NOT verified: $DEST" >&2; exit 1; }
-printf '%s\n' "$REMOTE_COMMIT" > "$DEST/git_commit.txt"
-echo "Archive verified: $DEST"
+[[ "$DIFFERENCES" == 0 ]] || { echo "Staging copy NOT verified: $STAGING" >&2; exit 1; }
+printf '%s\n' "$REMOTE_COMMIT" > "$STAGING/git_commit.txt"
 if [[ "$LIVE" == 1 ]]; then
-    echo 'Skipped the live sampler. Stop recording, then repeat without --live to include the final records.'
+    echo "Live copy verified in staging: $STAGING"
+    echo 'Stop recording, then repeat without --live to publish the final immutable archive.'
+    exit 0
 fi
+python3 - "$STAGING" "$DEST" <<'PY'
+from pathlib import Path
+import sys
+
+staging, destination = map(Path, sys.argv[1:])
+if destination.is_symlink() or (destination.exists() and
+        (not destination.is_dir() or any(destination.iterdir()))):
+    raise SystemExit(f'Archive is immutable; destination must be new or empty: {destination}')
+destination.parent.mkdir(parents=True, exist_ok=True)
+staging.rename(destination)
+PY
+echo "Archive verified: $DEST"

@@ -338,8 +338,8 @@ class MilestoneTests(unittest.TestCase):
 
         for matching in (True, False):
             with self.subTest(matching_backup=matching):
-                destination = self.directory / f'archive_{matching}'
-                destination.mkdir()
+                destination = self.directory / 'archives' / f'archive_{matching}'
+                destination.mkdir(parents=True)
                 args = argparse.Namespace(
                     command='finish', ssh_target='root@gpu', remote_home='/gpu', remote_repo='/gpu/repo',
                     ssh_timeout=20, poll_interval=60, poll_max_seconds=60, operation_timeout=60,
@@ -359,6 +359,8 @@ class MilestoneTests(unittest.TestCase):
                         with self.assertRaisesRegex(RuntimeError, 'SHA-256 inventory differs'):
                             controller.run(args)
                         self.assertTrue(all(call.args[0][0] == 'rsync' for call in invoke.call_args_list))
+                        self.assertEqual(list(destination.iterdir()), [])
+                        self.assertTrue((self.directory / 'archives_staging' / destination.name).is_dir())
 
     def test_manual_finish_reuses_recording_logic_and_is_idempotent(self):
         record = self.directory / controller.RECORD

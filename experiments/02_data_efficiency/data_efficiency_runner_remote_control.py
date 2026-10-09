@@ -178,7 +178,11 @@ def check_times(logs, filename, folds, epochs):
         fields += ('case_count',)
     if folds and filename == 'benchmark_times.csv':
         fields += ('benchmark_output',)
-    count = 40 if filename in ('prediction_times.csv', 'benchmark_times.csv') else (20 if folds else 4)
+    count = len(SCALES) * len(FOLDS) if folds else len(SCALES)
+    if filename == 'prediction_times.csv':
+        count *= len(CHECKPOINT_EPOCHS)
+    elif filename == 'benchmark_times.csv':
+        count *= 2
     rows = csv_rows(logs / filename, fields, count)
     found = set()
     for row in rows:
@@ -199,10 +203,13 @@ def check_times(logs, filename, folds, epochs):
                 require(int(row['epochs']) == epochs and int(row['checkpoint_current_epoch']) == epochs,
                         f'Wrong training budget in {filename}: {row}')
             else:
-                require(row['checkpoint'] in ('checkpoint_final.pth', 'checkpoint_best.pth'),
+                allowed = CHECKPOINT_EPOCHS if filename == 'prediction_times.csv' else (
+                    'checkpoint_final.pth', 'checkpoint_best.pth')
+                require(row['checkpoint'] in allowed,
                         f'Wrong checkpoint in {filename}: {row}')
-                if row['checkpoint'] == 'checkpoint_best.pth':
-                    stage += '_best'
+                checkpoint_label = row['checkpoint'].removeprefix('checkpoint_').removesuffix('.pth')
+                if checkpoint_label != 'final':
+                    stage += f'_{checkpoint_label}'
                 key += (row['checkpoint'],)
             require(row['gpu_samples'] == str(logs / f'gpu_{stage}_size{key[0]}_fold{key[2]}.csv'),
                     f'Wrong GPU sampler path in {filename}: {row}')
@@ -326,8 +333,9 @@ def verify(config):
             require(training_logs, f'Missing training logs: {checkpoint_dir}')
             for log in training_logs:
                 required_file(log)
-            for stage in ('train', 'predict', 'benchmark', 'predict_best', 'benchmark_best'):
+            for stage in ('train', 'benchmark', 'benchmark_best'):
                 check_stage(logs, f'{stage}_size{size}_fold{fold}')
+            check_predictions(logs, size, fold, testing)
             training_time = dict(line.split('=', 1) for line in
                                  (logs / f'time_train_size{size}_fold{fold}.txt').read_text().splitlines())
             check_milestone_times(checkpoint_dir, float(training_time['wall_clock_seconds']))
@@ -338,6 +346,17 @@ def verify(config):
                 inference = logs / inference_root / f'size{size}/fold{fold}'
                 check_inference(prediction, inference, testing, fold, checkpoint, name, dataset_id)
     return events
+
+
+def check_predictions(logs, size, fold, testing):
+    for checkpoint in CHECKPOINT_EPOCHS:
+        label = checkpoint.removeprefix('checkpoint_').removesuffix('.pth')
+        suffix = '' if label == 'final' else f'_{label}'
+        check_stage(logs, f'predict{suffix}_size{size}_fold{fold}')
+        directory = logs / f'predictions{suffix}' / f'size{size}/fold{fold}'
+        require(case_ids(directory, '.png',
+                         ('dataset.json', 'plans.json', 'predict_from_raw_data_args.json')) == testing,
+                f'Wrong held-out masks: {directory}')
 
 
 def check_inference(prediction, inference, testing, fold, checkpoint, name, dataset_id):
@@ -595,6 +614,21 @@ def check_destination(destination):
             f'Destination must be new or empty: {destination}')
 
 
+def prepare_staging(destination):
+    staging = destination.parent.parent / 'archives_staging' / destination.name
+    require(not staging.parent.is_symlink() and not staging.is_symlink(),
+            f'Staging must not be a symlink: {staging}')
+    require(not staging.exists() or staging.is_dir(), f'Staging must be a directory: {staging}')
+    staging.mkdir(parents=True, exist_ok=True)
+    return staging
+
+
+def publish_archive(staging, destination):
+    check_destination(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    staging.rename(destination)
+
+
 def run(args):
     require(re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9._-]*@[A-Za-z0-9][A-Za-z0-9._-]*', args.ssh_target),
             'SSH target must be user@host without shell metacharacters')
@@ -626,21 +660,22 @@ def run(args):
     summary = remote(args, config, 'finish', args.operation_timeout)
     print(summary, end='', flush=True)
     check_destination(destination)
-    destination.mkdir(parents=True, exist_ok=True)
+    staging = prepare_staging(destination)
     sources = source_paths(config)
     for name, root in sources.items():
         print(f'Copying {name}...', flush=True)
-        target = destination / name
-        target.mkdir()
+        target = staging / name
+        require(not target.is_symlink(), f'Staging tree must not be a symlink: {target}')
+        target.mkdir(exist_ok=True)
         ssh_command = ' '.join(shlex.quote(item) for item in ssh_args(args)[:-1])
         source = f'{args.ssh_target}:{shlex.quote(str(root) + "/")}'
         invoke(['rsync', '-a', f'--timeout={args.ssh_timeout + 60}', '-e', ssh_command,
                 '--', source, str(target) + '/'], args.operation_timeout)
     remote_manifest = remote(args, config, 'manifest', args.operation_timeout)
     require(isinstance(remote_manifest, dict) and remote_manifest, 'Empty remote manifest')
-    save_json(destination / 'remote_sha256_manifest.json', remote_manifest)
-    local_manifest = local_inventory(destination, args.operation_timeout)
-    save_json(destination / 'local_sha256_manifest.json', local_manifest)
+    save_json(staging / 'remote_sha256_manifest.json', remote_manifest)
+    local_manifest = local_inventory(staging, args.operation_timeout)
+    save_json(staging / 'local_sha256_manifest.json', local_manifest)
     require(local_manifest == remote_manifest, 'Local SHA-256 inventory differs from GPU inventory')
     require(remote(args, config, 'manifest', args.operation_timeout) == remote_manifest,
             'GPU files changed during verification')
@@ -652,9 +687,10 @@ def run(args):
                   'remote_repo': args.remote_repo, 'remote_home': args.remote_home,
                   'verified_at_utc': datetime.now(timezone.utc).isoformat(),
                   'file_count': len(local_manifest), 'gpu_usage_summary': summary}
-    save_json(destination / 'completion_manifest.json', completion)
-    require(json.loads((destination / 'completion_manifest.json').read_text()) == completion,
+    save_json(staging / 'completion_manifest.json', completion)
+    require(json.loads((staging / 'completion_manifest.json').read_text()) == completion,
             'Could not persist completion manifest')
+    publish_archive(staging, destination)
     print(f'Local copy verified: {len(local_manifest)} files. Deleting {args.instance_id}...',
           flush=True)
     invoke(['verda', 'vm', 'delete', args.instance_id, '--yes'], args.operation_timeout)
