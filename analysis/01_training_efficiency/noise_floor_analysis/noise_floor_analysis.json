@@ -1,0 +1,82 @@
+{
+  "description": "Sweep of a relative noise floor (fraction of image area) against the selected floor. 'lost' counts mass-present cases detected under the selected floor but missed under the candidate.",
+  "aul_mean_area_px": 589926,
+  "baseline_floor_fraction": 0.0003,
+  "criteria": [
+    "triage",
+    "centroid_025",
+    "centroid_050",
+    "centroid_100",
+    "overlap_000",
+    "overlap_020",
+    "overlap_050"
+  ],
+  "results": [
+    {
+      "fraction": 5e-05,
+      "aul_average_px": 29,
+      "triage_lost": 0,
+      "centroid_025_lost": 0,
+      "centroid_050_lost": 0,
+      "centroid_100_lost": 0,
+      "overlap_000_lost": 0,
+      "overlap_020_lost": 0,
+      "overlap_050_lost": 0
+    },
+    {
+      "fraction": 0.0001,
+      "aul_average_px": 58,
+      "triage_lost": 0,
+      "centroid_025_lost": 0,
+      "centroid_050_lost": 0,
+      "centroid_100_lost": 0,
+      "overlap_000_lost": 0,
+      "overlap_020_lost": 0,
+      "overlap_050_lost": 0
+    },
+    {
+      "fraction": 0.0002,
+      "aul_average_px": 117,
+      "triage_lost": 0,
+      "centroid_025_lost": 0,
+      "centroid_050_lost": 0,
+      "centroid_100_lost": 0,
+      "overlap_000_lost": 0,
+      "overlap_020_lost": 0,
+      "overlap_050_lost": 0
+    },
+    {
+      "fraction": 0.0003,
+      "aul_average_px": 176,
+      "triage_lost": 0,
+      "centroid_025_lost": 0,
+      "centroid_050_lost": 0,
+      "centroid_100_lost": 0,
+      "overlap_000_lost": 0,
+      "overlap_020_lost": 0,
+      "overlap_050_lost": 0
+    },
+    {
+      "fraction": 0.0004,
+      "aul_average_px": 235,
+      "triage_lost": 26,
+      "centroid_025_lost": 11,
+      "centroid_050_lost": 22,
+      "centroid_100_lost": 22,
+      "overlap_000_lost": 22,
+      "overlap_020_lost": 3,
+      "overlap_050_lost": 0
+    },
+    {
+      "fraction": 0.0005,
+      "aul_average_px": 294,
+      "triage_lost": 51,
+      "centroid_025_lost": 27,
+      "centroid_050_lost": 42,
+      "centroid_100_lost": 42,
+      "overlap_000_lost": 41,
+      "overlap_020_lost": 12,
+      "overlap_050_lost": 3
+    }
+  ]
+}

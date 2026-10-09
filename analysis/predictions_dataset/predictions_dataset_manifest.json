@@ -1,0 +1,208 @@
+{
+  "schema_version": 2,
+  "snapshot_id": "2a91099919b6",
+  "built_at_utc": "2026-10-08T02:04:09+00:00",
+  "git_sha": "7c9c997996752455f344cbf3a5ec1e837591c09b",
+  "configurations": [
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch150",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch300",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch50",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch500",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch75",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_epoch750",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch150",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch300",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch50",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch500",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch75",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_epoch750",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch150",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch300",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch50",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch500",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch75",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_epoch750",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch150",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch300",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch50",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch500",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch75",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_epoch750",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch150",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch300",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch50",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch500",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch75",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_epoch750",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_training_efficiency_588images_seed42_fold4_final",
+      "row_count": 147
+    }
+  ]
+}
