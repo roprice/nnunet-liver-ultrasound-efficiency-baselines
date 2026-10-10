@@ -19,4 +19,4 @@ export nnUNet_preprocessed="$DRYRUN_PREPROCESSED"
 export nnUNet_results="$DRYRUN_RESULTS"
 
 # The dry run rehearses the real runner, so it calls the full run's script in dry-run mode.
-bash "$SCRIPT_DIR/../training_efficiency_runner.sh" --dry-run
+bash "$SCRIPT_DIR/../01_training_efficiency/training_efficiency_runner.sh" --dry-run
