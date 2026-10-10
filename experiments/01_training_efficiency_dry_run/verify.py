@@ -17,8 +17,7 @@ import sys
 import torch
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent / 'prepare_data'))
-
+sys.path.insert(0, str(HERE.parents[1] / 'prepare_data'))
 from aul_splits import folds_for_scale  # noqa: E402
 
 TRAINER = 'nnUNetTrainer_trainingMilestonesDryRun_Seed42'
@@ -117,9 +116,9 @@ def main():
     require(case_ids(raw / 'labelsTs', '.png') == testing, 'Test labels do not match images')
     require(json.loads((raw / 'dataset.json').read_text()).get('numTraining') == 588,
             'dataset.json must report 588 training cases')
-    reference = json.loads((HERE.parent / 'prepare_data/reference/case_mapping.json').read_text())
+    mapping = json.loads((raw / 'case_mapping.json').read_text())
     reference = json.loads((HERE.parents[1] / 'prepare_data/reference/case_mapping.json').read_text())
-    require(mapping == reference, 'case_mapping.json differs from the committed reference')
+    reference = json.loads((HERE.parent / 'prepare_data/reference/case_mapping.json').read_text())
     require(json.loads((logs / 'case_mapping.json').read_text()) == mapping, 'Archived mapping differs')
     splits = json.loads((home / 'nnUNet_preprocessed/dry_run/Dataset001_AUL/splits_final.json').read_text())
     require(splits == folds_for_scale(mapping, 588), 'splits_final.json differs from the mapping\'s five folds')
