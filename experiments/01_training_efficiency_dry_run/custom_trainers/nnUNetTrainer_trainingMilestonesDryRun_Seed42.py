@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'custom_trainers'))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / '01_training_efficiency' / 'custom_trainers'))
 from nnUNetTrainer_trainingMilestones_Seed42 import nnUNetTrainer_trainingMilestones_Seed42
 
 

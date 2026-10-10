@@ -2,7 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 : "${nnUNet_raw:?Set nnUNet_raw before running}"
 : "${nnUNet_preprocessed:?Set nnUNet_preprocessed before running}"
 : "${nnUNet_results:?Set nnUNet_results before running}"
