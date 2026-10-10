@@ -1,26 +1,29 @@
 # Training efficiency: dry run
 
-This runbook sets up a dry run of the training efficiency experiment on a GPU server. It trains fold 0 for two epochs; that's about 0.04% of the full run's epochs and should come to less than a dollar in rental fees. It saves an epoch-1 milestone plus nnU-Net's final and best checkpoints (almost certainly one and the same) and runs predictions on all. It also verifies results, scores predictions, archives everything to your computer, and records costs.
+Train fold 0 for two epochs on GPU. Save an epoch-1 milestone, final and best checkpoints, and predict all three on the same 147 held-out AUL test cases. Verify, score and archive the results.
 
-To reproduce our study as closely as possible, we recommend a Verda.com GPU. 
+## Fixed conditions
 
-Follow steps 1 to 14 in order.  If an attempt fails, keep its outputs and use a new instance for the next one.
-
-Step 15 is optional and explains how to optionally reuse the same instance for the full training efficiency run.
+| Setting | Value |
+|---|---|
+| Dataset | AUL / `Dataset001_AUL` |
+| Training-pool size | 588 |
+| Held-out test cases | 147 |
+| Fold | 0 |
+| Epoch budget | 2 |
+| Milestone epoch | 1 |
+| Saved checkpoints | `checkpoint_epoch1.pth`, `checkpoint_final.pth`, `checkpoint_best.pth` |
 
 ## 1. Check Python and install system dependencies
 
-Use an Ubuntu GPU instance with Python 3.10+, working NVIDIA drivers/`nvidia-smi`, and enough storage for the source data, all three nnU-Net directories, and logs. Run setup in one Bash shell; the system-package commands below assume root access.
+Use a fresh Ubuntu GPU instance with Python 3.10+, working NVIDIA drivers/`nvidia-smi`, and space for the source data, three nnU-Net directories, and logs.
 
 ```sh
 python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ required"'
 apt update
 apt install python3-pip python3-venv python3-dev git unzip tmux rsync time -y
-```
 
-### Optional: color the shell prompt
-
-```sh
+# Optional: color the shell prompt
 cat >> ~/.bashrc << 'PROMPTEOF'
 PS1='\[\e[38;5;208m\]\u@\h:\w \t \[\e[0m\]\$ '
 PROMPTEOF
@@ -35,11 +38,9 @@ git clone https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baseline
 cd nnunet-liver-ultrasound-efficiency-baselines
 ```
 
-Run every later command from the repository root on the GPU server unless noted otherwise.
-
 ## 3. Start GPU usage and estimated cost recording
 
-The event log and GPU samples stay on the instance. The preset is an RTX A6000 at **$0.67/hour**; edit the model and rate below if they change. The estimate covers only the recorded window.
+Edit the rate and model to match this GPU instance. The estimate covers the recorded window, not time before or after it.
 
 ```sh
 mkdir -p logs/01_training_efficiency_dryrun
@@ -63,7 +64,7 @@ python3 -m venv "$HOME/.venv"
 . "$HOME/.venv/bin/activate"
 ```
 
-Keep `.venv` outside the checkout: the archive step copies the whole repository.
+Keep `.venv` outside the checkout: the archive step copies the entire repository.
 
 ## 5. Install Python dependencies
 
@@ -73,7 +74,7 @@ python -m pip install 'nnunetv2==2.8.1' 'torch==2.14.1' zenodo-get
 python -c 'import torch, numpy, PIL; assert torch.cuda.is_available()'
 ```
 
-nnU-Net installs NumPy and Pillow as dependencies. PyTorch is pinned to 2.14.1, the version an unpinned `nnunetv2==2.8.1` install resolved to on 2026-10-01. The runner records the installed versions, CPU and data-augmentation worker counts, the repository git SHA and working-tree status, and saves `pip freeze`.
+The runner records installed versions, CPU and data-augmentation worker counts, Git SHA/status, and `pip freeze`.
 
 ## 6. Configure nnU-Net directories
 
@@ -93,7 +94,7 @@ export nnUNet_extTrainer="$HOME/nnunet-liver-ultrasound-efficiency-baselines/exp
 ENVEOF
 ```
 
-The dry-run runner sets its own `nnUNet_extTrainer` and writes to `dry_run` subfolders of the preprocessed and results directories. Run this step in the shell you use for steps 8 and 9. New tmux shells read `~/.bashrc`, so they pick these variables up.
+The runner sets `nnUNet_extTrainer` and uses isolated `dry_run` subfolders for preprocessing and results.
 
 ## 7. Download AUL from Zenodo
 
@@ -124,7 +125,7 @@ python experiments/prepare_data/aul_conversion.py \
   --reference-mapping experiments/prepare_data/reference/case_mapping.json
 ```
 
-Expect 588 training and 147 test image/label pairs. The converter stops if the case assignments differ from the committed reference, or if annotation files are missing or unexpected. It writes `conversion_report.json` with per-category label pixel counts. For Malignant images 229 and 306, AUL files the liver polygon under `segmentation/outline/`, so the converter uses it as the liver. Malignant image 374 has no liver polygon; its label contains the mass only. The report lists all three.
+Expect 588 training and 147 test image/label pairs. The converter checks case assignments and annotations, and writes `conversion_report.json`. For Malignant images 229 and 306, it uses the outline as the liver polygon; image 374 has a mass-only label. The report lists all three and per-category label pixel counts.
 
 ## 9. Verify input data and mark setup complete
 
@@ -133,27 +134,25 @@ ls "$nnUNet_raw/Dataset001_AUL/imagesTr" | wc -l  # expect 588
 ls "$nnUNet_raw/Dataset001_AUL/imagesTs" | wc -l  # expect 147
 ```
 
-Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases. Then record setup as complete:
+Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases. Then mark setup complete:
 
 ```sh
 sh logs/01_training_efficiency_dryrun/record_event.sh setup_complete
 ```
 
-## 10. Run the short experiment
-
-Start a tmux shell on the GPU server:
+## 10. Run the dry run
 
 ```sh
 tmux new -s training_dryrun
 ```
 
-Inside tmux, from the repository root, run this entire block. The commands timestamp the run and save its exit status automatically:
+Inside tmux, run from the repository root. The launcher log stays outside `logs/01_training_efficiency_dryrun/`, and the exit-status file is written only after the runner exits:
 
 ```sh
 . "$HOME/.venv/bin/activate"
 rm -f dryrun_exit_status.txt
 sh logs/01_training_efficiency_dryrun/record_event.sh dryrun_started
-if bash -o pipefail -c 'bash experiments/01_training_efficiency/dry_run/dry_run_runner.sh 2>&1 | tee logs/training_efficiency_dryrun.log'; then
+if bash -o pipefail -c 'bash experiments/01_training_efficiency_dry_run/dry_run_runner.sh 2>&1 | tee logs/training_efficiency_dryrun.log'; then
   RUN_STATUS=0
   sh logs/01_training_efficiency_dryrun/record_event.sh dryrun_complete
 else
@@ -163,30 +162,33 @@ printf '%s\n' "$RUN_STATUS" > dryrun_exit_status.txt.tmp
 mv dryrun_exit_status.txt.tmp dryrun_exit_status.txt
 ```
 
-Detach without stopping work with `Ctrl+b` then `d`. Reattach with `tmux attach -t training_dryrun`, or inspect `logs/training_efficiency_dryrun.log` from another SSH session. The log ends with `Training efficiency dry run complete`. A nonzero `dryrun_exit_status.txt` means stop here and inspect the log. If it stopped at once with `Set nnUNet_raw before running`, nothing was created: run step 6, run `source ~/.bashrc` in this shell, and repeat the block.
+Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training_dryrun`. Check `logs/training_efficiency_dryrun.log` if it fails. A successful run prints `Training efficiency dry run complete`.
 
-## 11. Verify the results
+## 11. Complete the run
 
-With the venv active, from the repository root:
+#### Verify completion
+
+On the **GPU**, from the repository root with the venv active, require exit status `0` and successful verification:
 
 ```sh
-python experiments/01_training_efficiency/dry_run/verify.py
+cat dryrun_exit_status.txt  # must be 0
+python experiments/01_training_efficiency_dry_run/verify.py
 ```
 
-It checks the exit status, runner log, events, timing rows, input data and splits, checkpoint epochs (epoch 1 and final must record 1 and 2), both prediction sets of 147 masks, both inference benchmarks, and the training log. It prints `Dry run verified` or stops at the first failed check.
+Checks the logs, events, timings, inputs, splits, checkpoint epochs, predictions and benchmarks. Prints `Dry run verified` or stops at the first failed check.
 
-## 12. Sample analysis
+#### Sample analysis
 
-Score the predictions and perform a simple analysis of how Dice segmentation improves after one training epoch.
+Score the epoch-1, best and final predictions:
 
 ```sh
-python experiments/01_training_efficiency/dry_run/analyze_predictions.py \
+python experiments/01_training_efficiency_dry_run/analyze_predictions.py \
   --nnunet-results "$nnUNet_results/dry_run" \
   --logs-dir logs/01_training_efficiency_dryrun \
   --output logs/01_training_efficiency_dryrun/dice_summary.json
 ```
 
-`analyze_predictions.py` yields a sample analysis table like this:
+Example output:
 
 ```text
 ==================================================================
@@ -199,28 +201,11 @@ final                     0.34              0.17              0.06
 ==================================================================
 ```
 
- Epoch-1 and best masks come from `nnUNet_results/dry_run`. Final masks come from the benchmark directory `logs/01_training_efficiency_dryrun/inference/fold0/`, the same place a full run's final masks are. 
+Epoch-1 and best masks come from `nnUNet_results/dry_run`; final masks come from `logs/01_training_efficiency_dryrun/inference/fold0/`.
 
+#### Finish the GPU usage record
 
-## 13. Archive everything to your computer
-
-On your **local computer**, from your checkout of this repository, download the dry run's results. Replace `<gpu-ip>` with the GPU server's IP address, and use `root@` or your login:
-
-```sh
-bash experiments/download_archive.sh --live 01_training_efficiency_dry_run root@<gpu-ip>
-```
-
-The script stages the following in `archives_staging/01_training_efficiency_dry_run/`:
-- the repository (with logs, records and the converted-data reports)
-- `nnUNet_raw`
-- `nnUNet_preprocessed` 
-- `nnUNet_results` 
-
-It then re-runs `rsync` as a checksum comparison, excluding the entire `.git/` directory but still copying it, and records and compares Git HEAD in the staged copy's `git_commit.txt`. `--live` omits the still-running sampler file; step 14 adds it. It prints `Live copy verified in staging` if these checks pass. Retry interrupted downloads with the same command; local-only files are preserved and reported as differences.
-
-## 14. Finish the GPU usage record and publish the archive
-
-On the **GPU**, stop recording and calculate the instance-level cost estimate:
+On the **GPU**, from the repository root:
 
 ```sh
 sh logs/01_training_efficiency_dryrun/record_event.sh recording_ended
@@ -242,19 +227,25 @@ print(summary, end='')
 PY
 ```
 
-Then, on your **local computer**, add the sampler file and final records to the staged copy, verify every file, and publish the immutable archive:
+#### Download everything
+
+On your **local computer**, from the repository root (replace `<gpu-ip>`):
 
 ```sh
-bash experiments/download_archive.sh --refresh 01_training_efficiency_dry_run root@<gpu-ip>
+bash experiments/download_archive.sh 01_training_efficiency_dry_run root@<gpu-ip>
 ```
 
-This gives you the final cost. Once you see `Archive verified` from this second download, you can either delete the instance or move on to step 15.
+Stages and verifies the repository and three nnU-Net directories, then publishes them to `archives/01_training_efficiency_dry_run/`. The Python environment is not copied. Retry interrupted staging downloads with the same command; published archives are immutable.
 
-## 15. Optional: clean the server for a full run
+#### Delete the GPU
 
-Skip this step if you will use a fresh instance for the full run: start the [full runbook](../training_efficiency_runbook.md) at step 1 there. 
+After `Archive verified`, delete the instance in Verda or continue to step 12.
 
-To run the full experiment on this same instance, first remove the dry run's outputs. Run this on the GPU server from the repository root, only after step 14 printed `Archive verified`, since it deletes the only server copy:
+## 12. Optional: clean the server for a full run
+
+For a fresh instance, start the [full runbook](../01_training_efficiency/training_efficiency_runbook.md) at step 1.
+
+To reuse this instance, remove the dry-run outputs from the repository root on the **GPU**, only after `Archive verified`:
 
 ```sh
 rm -rf ~/nnUNet_preprocessed/dry_run ~/nnUNet_results/dry_run \
@@ -264,4 +255,4 @@ rm -rf ~/nnUNet_preprocessed/dry_run ~/nnUNet_results/dry_run \
 [ -n "$TMUX" ] && exit
 ```
 
-This leaves the checkout, Python environment, installed dependencies, downloaded AUL data and converted `nnUNet_raw` in place, and they are reused. Then continue with the [full runbook](../training_efficiency_runbook.md): skip its steps 1, 2 and 4 to 8, do its step 3 (a fresh cost record), then the `setup_complete` command at the end of its step 9, then its step 10.
+The checkout, Python environment and raw data remain. In the [full runbook](../01_training_efficiency/training_efficiency_runbook.md), skip steps 1, 2 and 4–8; run step 3, the setup-complete command in step 9, then step 10.
