@@ -117,7 +117,7 @@ def main():
     require(json.loads((raw / 'dataset.json').read_text()).get('numTraining') == 588,
             'dataset.json must report 588 training cases')
     mapping = json.loads((raw / 'case_mapping.json').read_text())
-    reference = json.loads((HERE.parents[1] / 'prepare_data/reference/case_mapping.json').read_text())
+    reference = json.loads((HERE.parent / 'prepare_data/reference/case_mapping.json').read_text())
     reference = json.loads((HERE.parent / 'prepare_data/reference/case_mapping.json').read_text())
     require(json.loads((logs / 'case_mapping.json').read_text()) == mapping, 'Archived mapping differs')
     splits = json.loads((home / 'nnUNet_preprocessed/dry_run/Dataset001_AUL/splits_final.json').read_text())
