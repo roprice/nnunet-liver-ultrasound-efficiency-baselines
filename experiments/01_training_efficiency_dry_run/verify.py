@@ -17,7 +17,7 @@ import sys
 import torch
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parents[1] / 'prepare_data'))
+sys.path.insert(0, str(HERE.parent / 'prepare_data'))
 from aul_splits import folds_for_scale  # noqa: E402
 
 TRAINER = 'nnUNetTrainer_trainingMilestonesDryRun_Seed42'
