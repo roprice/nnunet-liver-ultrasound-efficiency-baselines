@@ -23,10 +23,11 @@ python3 -c 'import sys; assert sys.version_info >= (3, 10), "Python 3.10+ requir
 apt update
 apt install python3-pip python3-venv python3-dev git unzip tmux rsync time -y
 
-# Optional: color the shell prompt
+# Optional for readability: color the shell prompt and a line break
 cat >> ~/.bashrc << 'PROMPTEOF'
 PS1='\[\e[38;5;208m\]\u@\h:\w \t \[\e[0m\]\$ '
 PROMPTEOF
+PROMPT="${PROMPT}"$'\n'
 source ~/.bashrc
 ```
 
@@ -130,6 +131,7 @@ Expect 588 training and 147 test image/label pairs. The converter checks case as
 ## 9. Verify input data and mark setup complete
 
 ```sh
+# verify split
 ls "$nnUNet_raw/Dataset001_AUL/imagesTr" | wc -l  # expect 588
 ls "$nnUNet_raw/Dataset001_AUL/imagesTs" | wc -l  # expect 147
 ```
@@ -137,18 +139,21 @@ ls "$nnUNet_raw/Dataset001_AUL/imagesTs" | wc -l  # expect 147
 Check that `dataset.json` reports 588 training cases and `case_mapping.json` records all 735 cases. Then mark setup complete:
 
 ```sh
+# mark the completion of setup
 sh logs/01_training_efficiency_dryrun/record_event.sh setup_complete
 ```
 
 ## 10. Run the dry run
 
 ```sh
+# load tmux in which to start the run
 tmux new -s training_dryrun
 ```
 
 Inside tmux, run from the repository root. The launcher log stays outside `logs/01_training_efficiency_dryrun/`, and the exit-status file is written only after the runner exits:
 
 ```sh
+# start the run
 . "$HOME/.venv/bin/activate"
 rm -f dryrun_exit_status.txt
 sh logs/01_training_efficiency_dryrun/record_event.sh dryrun_started
