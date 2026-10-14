@@ -56,25 +56,19 @@ cd nnunet-liver-ultrasound-efficiency-baselines
 
 Set the GPU model and hourly rate in `gpu_rate.csv` below. Recording starts here and ends during completion in step 12; remaining setup time is included, archive download is excluded.
 
-  ```sh
-  #
-  mkdir -p logs/03_augmentation_ablation
-  printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.226\n' > logs/03_augmentation_ablation/gpu_rate.csv
-  printf 'event,utc\n' > logs/03_augmentation_ablation/gpu_events.csv
-  cat > logs/03_augmentation_ablation/record_event.sh <<'EVENTEOF'
-  #!/bin/sh
-  printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/03_augmentation_ablation/gpu_events.csv
-  EVENTEOF
-  sh logs/03_augmentation_ablation/record_event.sh recording_started
-  ```
-
-  Sample the GPU in a detached tmux session so sampling continues through SSH disconnections.
-    
-  ```sh
+```sh
 #
-  tmux new-session -d -s gpu_usage -c "$PWD" \
-    'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > logs/03_augmentation_ablation/gpu_monitor_instance.csv'
-  ```
+mkdir -p logs/03_augmentation_ablation
+printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.277\n' > logs/03_augmentation_ablation/gpu_rate.csv
+printf 'event,utc\n' > logs/03_augmentation_ablation/gpu_events.csv
+printf '%s\n' '#!/bin/sh' 'printf "%s,%s\n" "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/03_augmentation_ablation/gpu_events.csv' > logs/03_augmentation_ablation/record_event.sh
+
+sh logs/03_augmentation_ablation/record_event.sh recording_started
+
+# Sample the GPU in a detached tmux session so sampling continues through SSH disconnections.
+tmux new-session -d -s gpu_usage -c "$PWD" \
+  'nvidia-smi --query-gpu=timestamp,index,utilization.gpu,memory.used,power.draw --format=csv --loop-ms=1000 > logs/03_augmentation_ablation/gpu_monitor_instance.csv'
+```
   
   Per-fold timings are recorded separately from the total GPU rental estimate.
 
@@ -299,7 +293,14 @@ sh logs/03_augmentation_ablation/record_event.sh setup_complete
   bash experiments/download_archive.sh 03_augmentation_ablation root@<gpu-ip>
   ```
   
-  Downloads and verifies the repository, logs, and three nnU-Net directories, excluding the Python environment. The completed archive is published to `archives/03_augmentation_ablation/`. Retry interrupted downloads with the same command; partial copies remain in `archives_staging/03_augmentation_ablation/`. Published archives are immutable; later additions belong in `archives_amendments/`.
+  Downloads and verifies the repository, logs, and three nnU-Net directories, excluding the Python environment. The completed archive is published to `archives/03_augmentation_ablation/`. 
+
+  On completion look for: `Staging copy verified: <path-to-repo>/archives_staging/03_augmentation_ablation`
+
+
+  Retry interrupted downloads with the same command; partial copies remain in `archives_staging/03_augmentation_ablation/`. Published archives are immutable; later additions belong in `archives_amendments/`.
+
+  
   
   #### Delete the GPU
   

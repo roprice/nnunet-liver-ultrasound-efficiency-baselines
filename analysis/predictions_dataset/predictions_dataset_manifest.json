@@ -1,11 +1,111 @@
 {
   "schema_version": 2,
-  "snapshot_id": "15fff4c2cfb4",
-  "built_at_utc": "2026-10-13T02:10:59+00:00",
-  "git_sha": "47078f3b1bddc28c61e525dea7d5dd61bcca4298",
+  "snapshot_id": "cbed1239c12a",
+  "built_at_utc": "2026-10-14T15:29:17+00:00",
+  "git_sha": "94bcab67e88020d3eb4168da998dfe2c7608fa4a",
   "configurations": [
     {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold4_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_augmentation_ablation_74images_seed42_fold4_final",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_epoch75",
       "row_count": 147
     },
     {
@@ -17,11 +117,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_epoch75",
       "row_count": 147
     },
     {
@@ -33,11 +173,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_epoch75",
       "row_count": 147
     },
     {
@@ -49,11 +229,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_epoch75",
       "row_count": 147
     },
     {
@@ -65,11 +285,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_epoch75",
       "row_count": 147
     },
     {
@@ -81,11 +341,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_epoch75",
       "row_count": 147
     },
     {
@@ -97,11 +397,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_epoch75",
       "row_count": 147
     },
     {
@@ -113,11 +453,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_epoch75",
       "row_count": 147
     },
     {
@@ -129,11 +509,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_epoch75",
       "row_count": 147
     },
     {
@@ -145,6 +565,26 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_final",
       "row_count": 147
     },
@@ -153,11 +593,51 @@
       "row_count": 147
     },
     {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_epoch75",
+      "row_count": 147
+    },
+    {
       "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_final",
       "row_count": 147
     },
     {
       "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_epoch100",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_epoch125",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_epoch25",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_epoch5",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_epoch75",
       "row_count": 147
     },
     {

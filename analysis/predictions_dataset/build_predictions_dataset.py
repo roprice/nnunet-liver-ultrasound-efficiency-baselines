@@ -14,7 +14,8 @@ interpretation; those live in downstream analyses.
 
 This builder discovers prediction directories under each experiment archive in
 ``archives/`` and each amendment archive in ``archives_amendments/``.
-Experiment 02's nested predictions are limited to best and final checkpoints.
+Experiment 02 includes nested best, final, and archived milestone predictions.
+Experiment 03 includes nested best and final predictions.
 Each prediction directory contributes one row per evaluated image.
 """
 
@@ -73,6 +74,10 @@ DATA_EFFICIENCY_DATASETS = {
     588: "Dataset001_AUL",
     294: "Dataset002_AUL_294",
     147: "Dataset003_AUL_147",
+    74: "Dataset004_AUL_074",
+}
+AUGMENTATION_ABLATION_DATASETS = {
+    588: "Dataset001_AUL",
     74: "Dataset004_AUL_074",
 }
 
@@ -234,7 +239,7 @@ def component_centroid_matches(reference, retained_prediction, diameter_factor):
 def dataset_directory(experiment_archive):
     """Return the dataset containing the experiment's evaluation cohort."""
     raw_root = experiment_archive / "nnUNet_raw"
-    if experiment_archive.name == "02_data_efficiency":
+    if experiment_archive.name in {"02_data_efficiency", "03_augmentation_ablation"}:
         dataset = raw_root / "Dataset001_AUL"
         if not dataset.is_dir():
             raise InputValidationError(f"Missing test dataset: {relative_path(dataset)}")
@@ -538,13 +543,15 @@ def discover_amendment_configurations(main_archives):
 
 
 def discover_data_efficiency_configurations(experiment_archive):
-    """Discover best/final runs using size-specific checkpoint metadata."""
+    """Discover runs using size-specific checkpoint metadata."""
     logs_root = experiment_archive / "repo/logs/02_data_efficiency"
     configurations = []
     seed = 42
     trainer = f"nnUNetTrainer_dataSubsets_Seed{seed}"
-    for prediction_root, checkpoint in (("predictions_best", "best"),
-                                        ("predictions", "final")):
+    checkpoints = [("predictions_best", "best"), ("predictions", "final")]
+    checkpoints.extend((f"predictions_epoch{epoch}", f"epoch{epoch}")
+                       for epoch in (5, 25, 75, 100, 125))
+    for prediction_root, checkpoint in checkpoints:
         for directory in sorted((logs_root / prediction_root).glob("size*/fold*")):
             if not directory.is_dir():
                 continue
@@ -570,11 +577,65 @@ def discover_data_efficiency_configurations(experiment_archive):
             if (record.get("fold") != fold or record.get("trainer_name") != trainer
                     or type(epoch) is not int or epoch <= 0):
                 raise InputValidationError(f"Invalid {checkpoint} metadata: {relative_path(metadata_path)}")
+            expected_epoch = int(checkpoint[5:]) if checkpoint.startswith("epoch") else None
+            if expected_epoch is not None and epoch != expected_epoch:
+                raise InputValidationError(f"Unexpected {checkpoint} epoch: {epoch}")
             configurations.append({
                 "experiment_name": "data_efficiency",
                 "evaluation_split": "test",
                 "configuration_id": (
                     f"predictions_data_efficiency_{size}images_seed{seed}_fold{fold}_{checkpoint}"
+                ),
+                "training_set_size": size,
+                "seed": seed,
+                "fold": fold,
+                "epoch": epoch,
+                "checkpoint": checkpoint,
+                "encoder": read_encoder(directory),
+                "experiment_archive": experiment_archive,
+                "prediction_directory": directory,
+            })
+    return configurations
+
+
+def discover_augmentation_ablation_configurations(experiment_archive):
+    """Discover primary test runs using size-specific checkpoint metadata."""
+    logs_root = experiment_archive / "repo/logs/03_augmentation_ablation"
+    configurations = []
+    seed = 42
+    trainer = "nnUNetTrainer_brightnessAugmentation"
+    for prediction_root, checkpoint in (("predictions_best", "best"), ("predictions", "final")):
+        for directory in sorted((logs_root / prediction_root).glob("size*/fold*")):
+            if not directory.is_dir():
+                continue
+            size_match = re.fullmatch(r"size([0-9]+)", directory.parent.name)
+            fold_match = re.fullmatch(r"fold([0-9]+)", directory.name)
+            if not size_match or not fold_match:
+                raise InputValidationError(f"Unrecognized prediction path: {relative_path(directory)}")
+            size = int(size_match.group(1))
+            fold = int(fold_match.group(1))
+            if size not in AUGMENTATION_ABLATION_DATASETS:
+                raise InputValidationError(f"Unknown augmentation-ablation training size: {size}")
+            metadata_path = (
+                experiment_archive / "nnUNet_results" / AUGMENTATION_ABLATION_DATASETS[size]
+                / f"{trainer}__nnUNetPlans__2d" / f"fold_{fold}"
+                / "checkpoint_metadata.json"
+            )
+            if not metadata_path.is_file():
+                raise InputValidationError(f"Missing checkpoint metadata: {relative_path(metadata_path)}")
+            with open(metadata_path) as file:
+                metadata = json.load(file)
+            record = metadata.get("checkpoints", {}).get(f"checkpoint_{checkpoint}.pth", {})
+            epoch = record.get("current_epoch")
+            if (record.get("fold") != fold or record.get("trainer_name") != trainer
+                    or record.get("dataset_size") != size
+                    or type(epoch) is not int or epoch <= 0):
+                raise InputValidationError(f"Invalid {checkpoint} metadata: {relative_path(metadata_path)}")
+            configurations.append({
+                "experiment_name": "augmentation_ablation",
+                "evaluation_split": "test",
+                "configuration_id": (
+                    f"predictions_augmentation_ablation_{size}images_seed{seed}_fold{fold}_{checkpoint}"
                 ),
                 "training_set_size": size,
                 "seed": seed,
@@ -603,6 +664,8 @@ def discover_configurations():
             continue
         if experiment_archive.name == "02_data_efficiency":
             configurations.extend(discover_data_efficiency_configurations(experiment_archive))
+        elif experiment_archive.name == "03_augmentation_ablation":
+            configurations.extend(discover_augmentation_ablation_configurations(experiment_archive))
         for directory in sorted(results_root.glob("predictions_*")):
             if not directory.is_dir():
                 continue
