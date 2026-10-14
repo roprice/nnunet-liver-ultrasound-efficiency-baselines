@@ -64,7 +64,7 @@ The estimate covers the recorded window, not time before or after it.
   ```sh
   # log the start of the experiment
   mkdir -p logs/04_gaussian_noise_ablation
-  printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.226\n' > logs/04_gaussian_noise_ablation/gpu_rate.csv
+  printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.290\n' > logs/04_gaussian_noise_ablation/gpu_rate.csv
   printf 'event,utc\n' > logs/04_gaussian_noise_ablation/gpu_events.csv
   cat > logs/04_gaussian_noise_ablation/record_event.sh <<'EVENTEOF'
   #!/bin/sh
