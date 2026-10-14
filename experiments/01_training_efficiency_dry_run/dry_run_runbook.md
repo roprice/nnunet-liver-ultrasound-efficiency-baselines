@@ -237,20 +237,20 @@ PY
 On your **local computer**, from the repository root (replace `<gpu-ip>`):
 
 ```sh
-bash experiments/download_archive.sh 01_training_efficiency_dry_run root@<gpu-ip>
+bash experiments/download_archive.sh 01_training_efficiency_dry_run_01 root@<gpu-ip>
 ```
 
-Stages and verifies the repository and three nnU-Net directories, then publishes them to `archives/01_training_efficiency_dry_run/`. The Python environment is not copied. Retry interrupted staging downloads with the same command; published archives are immutable.
+Downloads and verifies the repository and three nnU-Net directories into `archives_staging/01_training_efficiency_dry_run_01/`. The Python environment is not copied. Retry interrupted downloads with the same command; use a new suffix (_02, _03, etc.) for each new dry run.
 
 #### Delete the GPU
 
-After `Archive verified`, delete the instance in Verda or continue to step 12.
+After `Staging copy verified`, delete the instance in Verda or continue to step 12.
 
 ## 12. Optional: clean the server for a full run
 
 For a fresh instance, start the [full runbook](../01_training_efficiency/training_efficiency_runbook.md) at step 1.
 
-To reuse this instance, remove the dry-run outputs from the repository root on the **GPU**, only after `Archive verified`:
+To reuse this instance, remove the dry-run outputs from the repository root on the **GPU**, only after `Staging copy verified`:
 
 ```sh
 rm -rf ~/nnUNet_preprocessed/dry_run ~/nnUNet_results/dry_run \

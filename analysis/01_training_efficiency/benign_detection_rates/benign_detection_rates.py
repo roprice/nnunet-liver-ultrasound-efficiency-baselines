@@ -10,8 +10,7 @@ For every milestone checkpoint (and the final model) of the
 training_efficiency experiment, writes two tables restricted to benign
 mass images:
   1. presence-based detection: image-level screen (detection rate on
-     benign mass images, flagged normal images, spurious components on
-     normal images)
+     benign mass images, flagged normal images)
   2. proximity-based detection: overlap and centroid criteria (detection
      rate on benign mass images, uncredited retained components per image)
 
@@ -88,14 +87,13 @@ def format_rate(values):
 
 
 def detection_cell(pathology_rows, flag_field):
-    """Format 'mean ± SD (detected/total)' for a flag on pathology images."""
+    """Format 'mean ± SD' for a flag on pathology images."""
     def fold_rate(fold_rows):
         detected = sum(1 for row in fold_rows if getattr(row, flag_field))
         return detected / len(fold_rows)
 
     per_fold = fold_values(pathology_rows, fold_rate)
-    detected = sum(1 for row in pathology_rows if getattr(row, flag_field))
-    return f"{format_rate(per_fold)} ({detected}/{len(pathology_rows)})"
+    return format_rate(per_fold)
 
 
 def fp_per_image_cell(checkpoint_rows, fp_field):
@@ -108,12 +106,10 @@ def fp_per_image_cell(checkpoint_rows, fp_field):
 
 def presence_section(checkpoint_rows):
     """Write the one-row presence-based detection table: detection on
-    benign mass images, flagged normal images, spurious components on
-    normal images."""
+    benign mass images, flagged normal images."""
     pathology_rows = [
         row for row in checkpoint_rows if row.pathology == PATHOLOGY
     ]
-    normal_rows = [row for row in checkpoint_rows if not row.mass_present]
     detection = detection_cell(pathology_rows, "triage_detection_flag")
 
     def fold_rate(fold_rows):
@@ -122,17 +118,14 @@ def presence_section(checkpoint_rows):
         return flagged / len(fold_normals)
 
     per_fold = fold_values(checkpoint_rows, fold_rate)
-    flagged = sum(1 for row in normal_rows if row.triage_detection_flag)
-    fp_normal = f"{format_rate(per_fold)} ({flagged}/{len(normal_rows)})"
-    components = sum(row.retained_component_count for row in normal_rows)
+    fp_normal = format_rate(per_fold)
 
     return [
         "### Presence-based detection",
         "",
-        "| detection rate (benign mass images) | FP/normal image | "
-        "spurious components on normal images |",
-        "|---|---|---|",
-        f"| {detection} | {fp_normal} | {components} |",
+        "| detection rate | FP/normal image |",
+        "|---|---|",
+        f"| {detection} | {fp_normal} |",
         "",
     ]
 
@@ -146,7 +139,7 @@ def proximity_section(checkpoint_rows):
     lines = [
         "### Proximity-based detection",
         "",
-        "| criterion | detection rate (benign mass images) | FP/image |",
+        "| criterion | detection rate | FP/image |",
         "|---|---|---|",
     ]
     for name, flag_field, fp_field in DETECTION_CRITERIA:

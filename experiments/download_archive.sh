@@ -52,9 +52,6 @@ from pathlib import Path
 import sys
 
 destination, staging = map(Path, sys.argv[1:])
-if destination.is_symlink() or (destination.exists() and
-        (not destination.is_dir() or any(destination.iterdir()))):
-    raise SystemExit(f'Archive is immutable; destination must be new or empty: {destination}')
 if staging.parent.is_symlink() or staging.is_symlink() or (staging.exists() and not staging.is_dir()):
     raise SystemExit(f'Staging must be an unlinked directory: {staging}')
 staging.mkdir(parents=True, exist_ok=True)
@@ -104,15 +101,4 @@ if [[ "$LIVE" == 1 ]]; then
     echo 'Stop recording, then repeat without --live to publish the final immutable archive.'
     exit 0
 fi
-python3 - "$STAGING" "$DEST" <<'PY'
-from pathlib import Path
-import sys
-
-staging, destination = map(Path, sys.argv[1:])
-if destination.is_symlink() or (destination.exists() and
-        (not destination.is_dir() or any(destination.iterdir()))):
-    raise SystemExit(f'Archive is immutable; destination must be new or empty: {destination}')
-destination.parent.mkdir(parents=True, exist_ok=True)
-staging.rename(destination)
-PY
-echo "Archive verified: $DEST"
+echo "Staging copy verified: $STAGING"

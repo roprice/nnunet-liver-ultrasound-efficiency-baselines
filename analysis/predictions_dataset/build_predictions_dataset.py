@@ -13,9 +13,9 @@ contains no aggregate statistics, confidence intervals, quartiles, or
 interpretation; those live in downstream analyses.
 
 This builder discovers prediction directories under each experiment archive in
-``archives/`` and each amendment archive in ``archives_amendments/`` so that
-new experiments, folds, seeds, and encoders are picked up without editing
-this file. Each prediction directory contributes one row per evaluated image.
+``archives/`` and each amendment archive in ``archives_amendments/``.
+Experiment 02's nested predictions are limited to best and final checkpoints.
+Each prediction directory contributes one row per evaluated image.
 """
 
 import csv
@@ -69,6 +69,12 @@ PREDICTION_DIR_PATTERN = re.compile(
     r"_(?P<checkpoint>[A-Za-z0-9_]+)"
 )
 EPOCH_CHECKPOINT_PATTERN = re.compile(r"epoch([0-9]+)")
+DATA_EFFICIENCY_DATASETS = {
+    588: "Dataset001_AUL",
+    294: "Dataset002_AUL_294",
+    147: "Dataset003_AUL_147",
+    74: "Dataset004_AUL_074",
+}
 
 FIELDNAMES = (
     "experiment_name",
@@ -226,8 +232,13 @@ def component_centroid_matches(reference, retained_prediction, diameter_factor):
 
 
 def dataset_directory(experiment_archive):
-    """Return the single nnU-Net dataset directory of an experiment archive."""
+    """Return the dataset containing the experiment's evaluation cohort."""
     raw_root = experiment_archive / "nnUNet_raw"
+    if experiment_archive.name == "02_data_efficiency":
+        dataset = raw_root / "Dataset001_AUL"
+        if not dataset.is_dir():
+            raise InputValidationError(f"Missing test dataset: {relative_path(dataset)}")
+        return dataset
     if not raw_root.is_dir():
         raise InputValidationError(
             f"Missing nnUNet_raw in {relative_path(experiment_archive)}"
@@ -526,8 +537,59 @@ def discover_amendment_configurations(main_archives):
     return configurations
 
 
+def discover_data_efficiency_configurations(experiment_archive):
+    """Discover best/final runs using size-specific checkpoint metadata."""
+    logs_root = experiment_archive / "repo/logs/02_data_efficiency"
+    configurations = []
+    seed = 42
+    trainer = f"nnUNetTrainer_dataSubsets_Seed{seed}"
+    for prediction_root, checkpoint in (("predictions_best", "best"),
+                                        ("predictions", "final")):
+        for directory in sorted((logs_root / prediction_root).glob("size*/fold*")):
+            if not directory.is_dir():
+                continue
+            size_match = re.fullmatch(r"size([0-9]+)", directory.parent.name)
+            fold_match = re.fullmatch(r"fold([0-9]+)", directory.name)
+            if not size_match or not fold_match:
+                raise InputValidationError(f"Unrecognized prediction path: {relative_path(directory)}")
+            size = int(size_match.group(1))
+            fold = int(fold_match.group(1))
+            if size not in DATA_EFFICIENCY_DATASETS:
+                raise InputValidationError(f"Unknown data-efficiency training size: {size}")
+            metadata_path = (
+                experiment_archive / "nnUNet_results" / DATA_EFFICIENCY_DATASETS[size]
+                / f"{trainer}__nnUNetPlans__2d" / f"fold_{fold}"
+                / "checkpoint_metadata.json"
+            )
+            if not metadata_path.is_file():
+                raise InputValidationError(f"Missing checkpoint metadata: {relative_path(metadata_path)}")
+            with open(metadata_path) as file:
+                metadata = json.load(file)
+            record = metadata.get("checkpoints", {}).get(f"checkpoint_{checkpoint}.pth", {})
+            epoch = record.get("current_epoch")
+            if (record.get("fold") != fold or record.get("trainer_name") != trainer
+                    or type(epoch) is not int or epoch <= 0):
+                raise InputValidationError(f"Invalid {checkpoint} metadata: {relative_path(metadata_path)}")
+            configurations.append({
+                "experiment_name": "data_efficiency",
+                "evaluation_split": "test",
+                "configuration_id": (
+                    f"predictions_data_efficiency_{size}images_seed{seed}_fold{fold}_{checkpoint}"
+                ),
+                "training_set_size": size,
+                "seed": seed,
+                "fold": fold,
+                "epoch": epoch,
+                "checkpoint": checkpoint,
+                "encoder": read_encoder(directory),
+                "experiment_archive": experiment_archive,
+                "prediction_directory": directory,
+            })
+    return configurations
+
+
 def discover_configurations():
-    """Discover every top-level prediction directory across all experiment
+    """Discover top-level and supported nested prediction directories across experiment
     archives and amendment archives (dry-run archives and archives without
     results are skipped)."""
     main_archives = discover_main_archives()
@@ -539,6 +601,8 @@ def discover_configurations():
         results_root = experiment_archive / "nnUNet_results"
         if not results_root.is_dir():
             continue
+        if experiment_archive.name == "02_data_efficiency":
+            configurations.extend(discover_data_efficiency_configurations(experiment_archive))
         for directory in sorted(results_root.glob("predictions_*")):
             if not directory.is_dir():
                 continue

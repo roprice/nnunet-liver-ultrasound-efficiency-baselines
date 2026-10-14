@@ -1,7 +1,49 @@
 # Study log
 
+## 2026-10-13
+
+The ablation experiment asks whether modifying nnU-Net augmentation defaults is a low-cost way to improve malignant mass detection rates while also lowering false positive rates. For efficiency's sake the scope of augmentation is limited to brightness, inspired by (though not replicating) Tupper & Gagné's [Revisiting Data Augmentation](https://arxiv.org/html/2501.13193v2) for U-Net segmentation.
+
+The answer will be `probably` if two of these three views of detection are improved by more than 0.03:
+
+- presence-based detection
+- iou>0.0 detection
+- iou>0.2 detection
+
+0.03 was the range used to set the epoch budget of 150 during experiment 01 on training efficiency.
+
+And if false positives decrease by more than 0.03 for those same views of detection.
+
+The answer will be `maybe` if detection or false positive metrics are better by between 0.01 and 0.03. 
+
+It will be `probably not` if changes in both metrics are under 0.01.
+
+If either detection or the false positive metric is substantially bettered (more than 0.05), the answer to the question: "is modifying nnU-Net augmentation defaults a low-cost way to improve malignant mass detection rates while also lowering false positive rates?" will also be `yes`.
+
+If results are muddied by being better in one respect and worse in another, for a varying number of models, we'll evaluate on a case by case basis; it would be a waste of effort to walk through and pre-register every possible permutation.
+
+The ablation experiment will be applied to the largest (588) and smallest (74) models trained during experiment 02.
+
+Other augmentation tests could potentially impact malignant mass detection on ultrasound (eg reducing Gaussian blur) but here we focus on just one augmentation transform for the sake of efficiency.
 
 
+
+## 2026-10-12
+
+The results of the data efficiency experiment show that smaller dataset models perform well in most views of malignant mass detection, but that smaller models perform badly with respect to triggering false alarms.
+
+
+
+
+## 2026-10-11
+
+Because Verda, as with many GPU cloud providers, frequently updates pricing and has varied availability, we chose to update the runbooks to be device agnostic. The initial dry runs and the training efficiency experiments ran on an older RTX A6000. Experiment 02, however, runs on an RTX 6000 Pro. The total cost should come to within 10% more of what was anticipated.
+
+Furthermore, Verda discontinued the ability to use a vanilla Ubuntu VM with the A6000; it only allows Ubuntu through a Docker image. A triviality ultimately, but before running 02, we ran a 3rd dry run against a Verda Docker image and made a series of updates to the runbooks accordingly.
+
+Ultimately, we will provide "one-click" script to run the entirely easily, in the interest of reproduction. But the runbooks are meant to help with troubleshooting and also with understanding of how the configuration is designed.
+
+An unanticipated block storage issue caused a mid-run failure and stoppage for hte 02 data efficiency experiment. We remedied the stoppage.
 
 
 

@@ -1,9 +1,169 @@
 {
   "schema_version": 2,
-  "snapshot_id": "2a91099919b6",
-  "built_at_utc": "2026-10-08T02:04:09+00:00",
-  "git_sha": "7c9c997996752455f344cbf3a5ec1e837591c09b",
+  "snapshot_id": "15fff4c2cfb4",
+  "built_at_utc": "2026-10-13T02:10:59+00:00",
+  "git_sha": "47078f3b1bddc28c61e525dea7d5dd61bcca4298",
   "configurations": [
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_147images_seed42_fold4_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_294images_seed42_fold4_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_588images_seed42_fold4_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_final",
+      "row_count": 147
+    },
     {
       "configuration_id": "predictions_training_efficiency_588images_seed42_fold0_best",
       "row_count": 147
