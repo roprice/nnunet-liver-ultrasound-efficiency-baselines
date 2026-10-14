@@ -16,6 +16,7 @@ import numpy as np
 from PIL import Image
 import torch
 from batchgeneratorsv2.transforms.intensity.brightness import MultiplicativeBrightnessTransform
+from batchgeneratorsv2.transforms.intensity.contrast import BGContrast
 from batchgeneratorsv2.transforms.utils.random import RandomTransform
 
 
@@ -88,8 +89,14 @@ class PipelineTests(TemporaryTests):
                 wrapper = brightness_wrapper(result)
                 self.assertIsNot(wrapper, old_wrapper)
                 self.assertEqual(wrapper.apply_probability, 0.5)
-                self.assertIs(type(wrapper.transform.multiplier_range), tuple)
-                self.assertEqual(wrapper.transform.multiplier_range, (0.8, 1.2))
+                self.assertEqual(old_wrapper.apply_probability, 0.15)
+                self.assertIs(type(wrapper.transform), type(old_wrapper.transform))
+                self.assertIs(type(wrapper.transform.multiplier_range), BGContrast)
+                self.assertIs(type(old_wrapper.transform.multiplier_range), BGContrast)
+                self.assertEqual(wrapper.transform.multiplier_range.contrast_range, (0.75, 1.25))
+                self.assertEqual(wrapper.transform.multiplier_range.contrast_range,
+                                 old_wrapper.transform.multiplier_range.contrast_range)
+                self.assertEqual(repr(wrapper.transform), repr(old_wrapper.transform))
                 self.assertFalse(wrapper.transform.synchronize_channels)
                 self.assertEqual(wrapper.transform.p_per_channel, 1)
                 self.assertEqual(sum(isinstance(t, RandomTransform) and
@@ -111,22 +118,24 @@ class PipelineTests(TemporaryTests):
                     with self.assertRaisesRegex(RuntimeError, 'exactly one'):
                         Trainer.get_training_transforms(**PIPELINE_ARGS)
 
-    def test_tuple_uses_uniform_independent_channel_sampling(self):
+    def test_bgcontrast_uses_default_independent_channel_sampling(self):
         brightness = brightness_wrapper(Trainer.get_training_transforms(**PIPELINE_ARGS)).transform
         image = torch.ones((3, 8, 8))
-        with patch.object(np.random, 'uniform', side_effect=[0.8, 1.0, 1.2]) as uniform:
+        with patch.object(np.random, 'random', side_effect=[0.1, 0.9, 0.2]) as choose_side, \
+                patch.object(np.random, 'uniform', side_effect=[0.75, 1.25, 0.9]) as uniform:
             result = brightness(image=image)['image']
+        self.assertEqual(choose_side.call_count, 3)
         self.assertEqual(uniform.call_count, 3)
-        for call in uniform.call_args_list:
-            self.assertEqual(call.args, (0.8, 1.2))
-        torch.testing.assert_close(result[:, 0, 0], torch.tensor([0.8, 1.0, 1.2]))
+        self.assertEqual([call.args for call in uniform.call_args_list],
+                         [(0.75, 1), (1, 1.25), (0.75, 1)])
+        torch.testing.assert_close(result[:, 0, 0], torch.tensor([0.75, 1.25, 0.9]))
         state = np.random.get_state()
         self.addCleanup(np.random.set_state, state)
         np.random.seed(42)
         values = brightness.get_parameters(image=torch.ones((10000, 1, 1)))['multipliers'].numpy()
-        self.assertTrue(np.all((values >= 0.8) & (values <= 1.2)))
+        self.assertTrue(np.all((values >= 0.75) & (values <= 1.25)))
         self.assertAlmostEqual(float(values.mean()), 1.0, delta=0.005)
-        self.assertAlmostEqual(float(values.var()), 0.4 ** 2 / 12, delta=0.001)
+        self.assertAlmostEqual(float(values.var()), 0.5 ** 2 / 12, delta=0.001)
 
     def test_debug_accepts_real_pipeline_rejects_wrong_brightness(self):
         write_debug(self.directory)
@@ -135,7 +144,8 @@ class PipelineTests(TemporaryTests):
         valid = json.loads(path.read_text())['dataloader_train.generator.transforms']
         expected = repr(brightness_wrapper(Trainer.get_training_transforms(**PIPELINE_ARGS)))
         invalid = [repr(BaseTrainer.get_training_transforms(**PIPELINE_ARGS)),
-                   valid.replace('(0.8, 1.2)', '(0.75, 1.25)'),
+                   valid.replace('(0.75, 1.25)', '(0.5, 1.5)'),
+                   valid.replace('BGContrast(contrast_range=(0.75, 1.25))', '(0.75, 1.25)'),
                    valid.replace('p=0.5, transform=Multiplicative', 'p=0.15, transform=Multiplicative'),
                    valid.replace(expected, repr(brightness_wrapper(
                        Trainer.get_training_transforms(**PIPELINE_ARGS)).transform)),

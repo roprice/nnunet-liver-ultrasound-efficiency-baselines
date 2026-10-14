@@ -5,6 +5,7 @@ import time
 
 import torch
 from batchgeneratorsv2.transforms.intensity.brightness import MultiplicativeBrightnessTransform
+from batchgeneratorsv2.transforms.intensity.contrast import BGContrast
 from batchgeneratorsv2.transforms.utils.random import RandomTransform
 from nnunetv2.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
 
@@ -49,7 +50,7 @@ class nnUNetTrainer_brightnessAugmentation(_parent_module.nnUNetTrainer_dataSubs
             raise RuntimeError('Expected exactly one RandomTransform wrapping MultiplicativeBrightnessTransform')
         pipeline.transforms[brightness[0]] = RandomTransform(
             MultiplicativeBrightnessTransform(
-                multiplier_range=(0.8, 1.2), synchronize_channels=False, p_per_channel=1),
+                multiplier_range=BGContrast((0.75, 1.25)), synchronize_channels=False, p_per_channel=1),
             apply_probability=0.5)
         return pipeline
 

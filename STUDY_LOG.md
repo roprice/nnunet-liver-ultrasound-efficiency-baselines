@@ -2,9 +2,11 @@
 
 ## 2026-10-13
 
-The ablation experiment asks whether modifying nnU-Net augmentation defaults is a low-cost way to improve malignant mass detection rates while also lowering false positive rates. For efficiency's sake the scope of augmentation is limited to brightness, inspired by (though not replicating) Tupper & Gagné's [Revisiting Data Augmentation](https://arxiv.org/html/2501.13193v2) for U-Net segmentation.
+The ablation experiment asks whether modifying nnU-Net augmentation defaults is a low-cost way to improve malignant mass detection rates while also lowering false positive rates. For efficiency's sake the scope of augmentation is limited to brightness, inspired by (though not replicating) Tupper & Gagné's [Revisiting Data Augmentation](https://arxiv.org/html/2501.13193v2) for U-Net segmentation on the same AUL dataset (among others). Specifically, the ablation will set the frequency of brightness augmentation to 0.5, as opposed to the nnU-Net default of 0.15. No other modification will be made to brightness or any other form of augmentation.
 
-The answer will be `probably` if two of these three views of detection are improved by more than 0.03:
+The refined question becomes: **will modifying this nnU-Net brightness-augmentation default improve malignant-mass detection rates and/or lower false positive rates?**
+
+For us, the answer will be `probably` if two of these three views of detection are improved by more than 0.03:
 
 - presence-based detection
 - iou>0.0 detection
@@ -18,13 +20,16 @@ The answer will be `maybe` if detection or false positive metrics are better by 
 
 It will be `probably not` if changes in both metrics are under 0.01.
 
-If either detection or the false positive metric is substantially bettered (more than 0.05), the answer to the question: "is modifying nnU-Net augmentation defaults a low-cost way to improve malignant mass detection rates while also lowering false positive rates?" will also be `yes`.
+If either detection or the false positive metric is substantially bettered (more than 0.05), the answer to the question above will also be `yes`.
 
 If results are muddied by being better in one respect and worse in another, for a varying number of models, we'll evaluate on a case by case basis; it would be a waste of effort to walk through and pre-register every possible permutation.
 
 The ablation experiment will be applied to the largest (588) and smallest (74) models trained during experiment 02.
 
 Other augmentation tests could potentially impact malignant mass detection on ultrasound (eg reducing Gaussian blur) but here we focus on just one augmentation transform for the sake of efficiency.
+
+
+Note that the UoU>0.0 and 
 
 
 

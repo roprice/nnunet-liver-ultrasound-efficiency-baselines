@@ -96,7 +96,7 @@ def check_debug_brightness(directory):
     require(isinstance(transforms, str), f'Missing training transforms: {path}')
     compact = re.sub(r'\s+', '', transforms)
     expected = ('RandomTransform(p=0.5,transform=MultiplicativeBrightnessTransform('
-                'multiplier_range=(0.8,1.2),synchronize_channels=False,p_per_channel=1))')
+                'multiplier_range=BGContrast(contrast_range=(0.75,1.25)),synchronize_channels=False,p_per_channel=1))')
     require(compact.count('MultiplicativeBrightnessTransform(') == 1 and
             len(re.findall(r'(?<![\w])' + re.escape(expected), compact)) == 1,
             f'Expected exactly one brightness wrapper (p=0.5): {path}')
