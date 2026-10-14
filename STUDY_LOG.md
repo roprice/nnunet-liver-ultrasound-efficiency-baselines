@@ -1,5 +1,79 @@
 # Study log
 
+## 2026-10-14
+
+Having reviewed and analyzed the brightness-frequency augmentation ablation tests, we have decided to pursue an additional augmentation ablation: removing Gaussian noise. Tupper & Gagné found Gaussian noise to be the most significant augmentation factor on ultrasound.
+
+Of the many other augmentation tests that make sense for B-mode ultrasound, this seems like the lowest hanging fruit. The results from the prior ablation justify it as an area of exploration, before moving on to the planned efficiency experiment and external validation testing.
+
+As with the prior augmentation ablation, we will register our assessment of the results around the 0.03 mark: detection improvements of 0.3 or better are significant, as are false positives decreases of 0.3 or better. 
+
+Without forecasting every permutation, a preponderance of such results answers the question "is removing Gaussian noise on B-mode ultrasound for the purpose of improving malignant-mass detection a worthwhile, cost-efficient methodological approach?" with "probably"
+
+---
+
+
+Looking at the results of the augmentation ablation, where we asked: "will modifying this nnU-Net brightness-augmentation default improve malignant-mass detection rates and/or lower false positive rates?" 
+
+We found that for the 588 image-pool models, the answer is between `maybe` or `probably not`, with little or no improvements in detection rates and a modest improvement in false positives.
+
+For the the 588 models final checkpoint, the false positives rate for malignant triage went from 0.15 to 0.12, a solid 0.03 drop. For the best checkpoint, it dropped from 0.19 to 0.13, a 0.06 drop paired - but both improvements comes against a 0.002 drop in detection rate (essentially null). That's a net improvement if not a dramatic one to suggest that modifying augmentation could be worth exploring.
+
+For the other detection metrics and 588 image models, we saw a similar pattern but less pronounced, with slight decreases in detection rates and slightly larger decreases in corresponding false positive rates.
+
+For the ioU>0.2 metric on the final checkpoint, we saw a 0.005 improvement in detection paired with a 0.008 decrease in false positives, putting it in the `maybe` category. 
+
+For the 74 image models, the effect of the augmentation was slighly more pronounced, with modest improvements in detection paired with concerningly large increases in corresponding false positive rates. For example, for the final checkpoint, the malignant triage detection rate increased by 0.01, but false positives on normal images increased by an alarming 0.1.
+
+For the best checkpoint at the IoU>0.2 metric there was a 0.016 increase paired with a .005 increase in false positive rate, but that was not the trend. For the 74 image models, this augmentation modification is `maybe` useful.
+
+On the most permissive triage metric (presence-based detection), the highest performing single model from experiment 02 was the 588 image, best checkpoint on fold4 — with detection of 0.966, and false positives rate of 0.05.
+
+Looking at it from the top-level point of view, we do see a slight improvements in some views of triage-level detection, particularly presence based detection, which is the metric that will evaluated during the external validation experiment. For that experiment, we'll compare the 74 and 588 models from both 02 and 03, to see how they perform in predicting malignant masses.
+
+#### Presence-based (triage)
+
+| Experiment | Detection | FP | Blended |
+|---|---|---|---|
+| 02 data_efficiency  | **0.956 ± 0.010** | 0.150 ± 0.100 | 0.806 ± 0.103 |
+| 03 augmentation_ablation  | 0.954 ± 0.008 | **0.120 ± 0.027** | **0.834 ± 0.023** |
+
+#### IoU > 0
+
+| Experiment | Detection | FP | Blended |
+|---|---|---|---|
+| 02 data_efficiency  | **0.940 ± 0.015** | **0.107 ± 0.038** | **0.833 ± 0.042** |
+| 03 augmentation_ablation  | 0.931 ± 0.011 | 0.110 ± 0.012 | 0.821 ± 0.013 |
+
+#### IoU > 0.2
+
+| Experiment | Detection | FP | Blended |
+|---|---|---|---|
+| 02 data_efficiency  | 0.899 ± 0.015 | 0.177 ± 0.043 | 0.722 ± 0.055 |
+| 03 augmentation_ablation  | **0.903 ± 0.006** | **0.169 ± 0.021** | **0.735 ± 0.022** |
+
+#### Centroid d_eq (100%)
+
+| Experiment | Detection | FP | Blended |
+|---|---|---|---|
+| 02 data_efficiency  | **0.936 ± 0.010** | **0.105 ± 0.035** | **0.831 ± 0.040** |
+| 03 augmentation_ablation  | 0.922 ± 0.005 | 0.109 ± 0.019 | 0.813 ± 0.021 |
+
+Altogether, the results indicate that overriding nnU-Net augmentation defaults will probably make a difference for malignant mass detection on ultrasound.  What's uncertain is how to orchestrate those over-rides, with (reducing) Gaussian noise and increasing brightness multiplication being potential areas of exploration.
+
+---
+
+Exploratorily, we looked at internal epoch milestones during the data efficiency training too. As with the original training efficiency study, there were interesting results at 75 epochs, especially against the 147 image training set size, with malignant detection of 0.86 for IoU>0 and 89 for presence-based detection.
+
+| Training pool | Presence-based detection | Malignant detection, IoU >0 | Malignant detection, IoU >0.2 | FP/image |
+|---:|---:|---:|---:|---:|
+| 74 | 89.2% → 90.8% | 81.6% → 85.1% | 56.6% → 60.7% | 0.427 → 0.429 |
+| 147 | 89.4% → 88.0% | 86.0% → 83.9% | 73.8% → 74.7% | 0.290 → 0.245 |
+| 294 | 89.7% → 91.5% | 85.7% → 89.0% | 80.0% → 80.5% | 0.162 → 0.152 |
+| 588 | 93.3% → 95.6% | 91.7% → 94.0% | 89.0% → 89.9% | 0.125 → 0.107 |
+
+This table shows the change from 75 epochs to 150.
+
 ## 2026-10-13
 
 The ablation experiment asks whether modifying nnU-Net augmentation defaults is a low-cost way to improve malignant mass detection rates while also lowering false positive rates. For efficiency's sake the scope of augmentation is limited to brightness, inspired by (though not replicating) Tupper & Gagné's [Revisiting Data Augmentation](https://arxiv.org/html/2501.13193v2) for U-Net segmentation on the same AUL dataset (among others). Specifically, the ablation will set the frequency of brightness augmentation to 0.5, as opposed to the nnU-Net default of 0.15. No other modification will be made to brightness or any other form of augmentation.
@@ -26,10 +100,7 @@ If results are muddied by being better in one respect and worse in another, for 
 
 The ablation experiment will be applied to the largest (588) and smallest (74) models trained during experiment 02.
 
-Other augmentation tests could potentially impact malignant mass detection on ultrasound (eg reducing Gaussian blur) but here we focus on just one augmentation transform for the sake of efficiency.
-
-
-Note that the UoU>0.0 and 
+Other augmentation tests could potentially impact malignant mass detection on ultrasound (eg reducing Gaussian noise) but here we focus on just one augmentation transform for the sake of efficiency.
 
 
 
