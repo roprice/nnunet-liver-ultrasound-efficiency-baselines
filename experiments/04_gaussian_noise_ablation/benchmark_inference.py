@@ -82,8 +82,8 @@ def main():
                         help="Dataset containing the test images (defaults to --dataset-name)")
     parser.add_argument("--dataset-id", required=True)
     parser.add_argument("--seeds", nargs="+", type=int, required=True)
-    parser.add_argument("--trainer-prefix", required=True,
-                        help="Trainer class name prefix; seed is appended")
+    parser.add_argument("--trainer-name", required=True,
+                        help="Exact trainer class name")
     parser.add_argument("--plans", default="nnUNetPlans")
     parser.add_argument("--configuration", default="2d")
     parser.add_argument("--fold", type=int, required=True)
@@ -165,7 +165,7 @@ def main():
     checkpoint_file_sizes_bytes = {}
 
     for seed in args.seeds:
-        trainer_name = f"{args.trainer_prefix}{seed}"
+        trainer_name = args.trainer_name
         print(f"\n=== Seed {seed} (trainer {trainer_name}, checkpoint {args.checkpoint}) ===")
 
         predictor = nnUNetPredictor(
@@ -372,7 +372,7 @@ def main():
         "dataset_name": args.dataset_name,
         "test_dataset_name": args.test_dataset_name or args.dataset_name,
         "dataset_id": args.dataset_id,
-        "trainer_prefix": args.trainer_prefix,
+        "trainer_name": args.trainer_name,
         "seeds": args.seeds,
         "plans": args.plans,
         "configuration": args.configuration,

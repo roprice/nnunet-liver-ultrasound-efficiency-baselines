@@ -66,10 +66,7 @@ The estimate covers the recorded window, not time before or after it.
   mkdir -p logs/04_gaussian_noise_ablation
   printf 'gpu_model,hourly_rate_usd\nRTX 6000 Ada,1.290\n' > logs/04_gaussian_noise_ablation/gpu_rate.csv
   printf 'event,utc\n' > logs/04_gaussian_noise_ablation/gpu_events.csv
-  cat > logs/04_gaussian_noise_ablation/record_event.sh <<'EVENTEOF'
-  #!/bin/sh
-  printf '%s,%s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/04_gaussian_noise_ablation/gpu_events.csv
-  EVENTEOF
+  printf '%s\n' '#!/bin/sh' 'printf "%s,%s\n" "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/04_gaussian_noise_ablation/gpu_events.csv' > logs/04_gaussian_noise_ablation/record_event.sh
   sh logs/04_gaussian_noise_ablation/record_event.sh recording_started
   
   # Sample the GPU in a detached tmux session so sampling continues through SSH disconnections

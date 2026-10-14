@@ -474,6 +474,35 @@ class EvidenceTests(TemporaryTests):
             self.assertFalse(args.destination.exists())
 
 
+class BenchmarkTests(TemporaryTests):
+    def test_runner_arguments_use_exact_trainer_name_for_model_lookup(self):
+        benchmark = load_module('gaussian_noise_ablation_benchmark', HERE / 'benchmark_inference.py')
+        image = self.directory / 'case_0000.png'
+        Image.new('L', (2, 3)).save(image)
+        for checkpoint in controller.CHECKPOINT_EPOCHS:
+            with self.subTest(checkpoint=checkpoint):
+                arguments = [
+                    'benchmark_inference.py', '--nnunet-raw', str(self.directory),
+                    '--dataset-name', 'Dataset001_AUL', '--dataset-id', '1',
+                    '--test-dataset-name', 'Dataset001_AUL', '--seeds', '42',
+                    '--trainer-name', controller.TRAINER_NAME, '--fold', '0',
+                    '--checkpoint', checkpoint, '--device', 'cpu',
+                    '--output-dir', str(self.directory / checkpoint),
+                ]
+                with patch.object(sys, 'argv', arguments), \
+                        patch.object(benchmark.torch, 'set_num_threads'), \
+                        patch.object(benchmark, 'create_lists_from_splitted_dataset_folder',
+                                     return_value=[[str(image)]]), \
+                        patch.object(benchmark, 'nnUNetPredictor'), \
+                        patch.object(benchmark, 'get_output_folder',
+                                     side_effect=RuntimeError('model lookup reached')) as lookup, \
+                        patch('sys.stdout', new_callable=io.StringIO):
+                    with self.assertRaisesRegex(RuntimeError, 'model lookup reached'):
+                        benchmark.main()
+                lookup.assert_called_once_with(
+                    '1', controller.TRAINER_NAME, 'nnUNetPlans', '2d')
+
+
 class RunnerTests(TemporaryTests):
     def test_runner_rejects_noncanonical_epoch_budgets(self):
         environment = {**os.environ, 'nnUNet_raw': str(self.directory),
