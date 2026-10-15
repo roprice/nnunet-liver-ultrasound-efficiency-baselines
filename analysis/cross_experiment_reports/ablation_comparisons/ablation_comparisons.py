@@ -1,14 +1,14 @@
-"""Compare augmentation-ablation models against data-efficiency baselines.
+"""Compare malignant-mass detection of augmentation ablations.
 
-Compares 588- and 74-image training-pool models from experiment 03
-(brightness-augmentation probability 0.5) against the matching experiment 02
-baselines (probability 0.15) on the shared test cohort. Run from the
-repository root:
+Compare experiment 03 brightness ablation at 588 and 74 images, and experiment
+04 Gaussian-noise ablation at 588 images only, against experiment 02 baselines.
+Read only the canonical prediction dataset; do not rebuild source archives.
+Run from the repository root:
 
-    python3 -m analysis.03_augmentation_ablation.ablation_comparisons.ablation_comparisons
+    .venv/bin/python -B -m analysis.cross_experiment_reports.ablation_comparisons.ablation_comparisons
 
 Output:
-    analysis/03_augmentation_ablation/ablation_comparisons/ablation_comparisons.md
+    analysis/cross_experiment_reports/ablation_comparisons/ablation_comparisons.md
 """
 
 import json
@@ -28,31 +28,18 @@ MANIFEST_PATH = (
 )
 BASELINE_EXPERIMENT = "data_efficiency"
 ABLATION_EXPERIMENT = "augmentation_ablation"
-SIZES = [74, 588]
+GAUSSIAN_EXPERIMENT = "gaussian_noise_ablation"
+SIZES = [588, 74]
 CHECKPOINTS = ["final", "best"]
 FOLDS = [0, 1, 2, 3, 4]
-CHECKPOINT_LABELS = {
-    "final": "Final checkpoint (150 epochs)",
-    "best": "Best checkpoint",
-}
-def metrics(pathology):
-    """(row label, flag field, FP label, FP field, flag population) rows.
-
-    The FP/normal-image row is pathology-independent and appears only in the
-    malignant table to avoid duplicating it across pathology tables.
-    """
-    rows = [(f"{pathology.capitalize()} triage", "triage_detection_flag",
-             None, None, pathology)]
-    if pathology == "malignant":
-        rows.append(("FP/normal image (triage)", "triage_detection_flag",
-                     None, None, "normal"))
-    rows.extend([
-        (f"{pathology.capitalize()} IoU > 0", "overlap_detection_iou_00_flag",
-         "FP/image (IoU > 0)", "overlap_detection_iou_00_fp_count", pathology),
-        (f"{pathology.capitalize()} IoU > 0.2", "overlap_detection_iou_02_flag",
-         "FP/image (IoU > 0.2)", "overlap_detection_iou_02_fp_count", pathology),
-    ])
-    return rows
+METRICS = [
+    ("Malignant triage", "triage_detection_flag", "malignant"),
+    ("FP/normal image (triage)", "triage_detection_flag", "normal"),
+    ("Malignant IoU > 0", "overlap_detection_iou_00_flag", "malignant"),
+    ("FP/image (IoU > 0)", "overlap_detection_iou_00_fp_count", None),
+    ("Malignant IoU > 0.2", "overlap_detection_iou_02_flag", "malignant"),
+    ("FP/image (IoU > 0.2)", "overlap_detection_iou_02_fp_count", None),
+]
 
 
 def fold_rates(rows, field):
@@ -83,29 +70,71 @@ def select_rows(rows, experiment, checkpoint, size, pathology=None):
     return selected
 
 
+def validate_groups(groups):
+    """Require the same test images and model pairing across all groups."""
+    shared_cohort = None
+    shared_encoder = None
+    for label, rows in groups.items():
+        if {row.seed for row in rows} != {42}:
+            raise RuntimeError(f"{label}: expected seed 42")
+        encoders = {row.encoder for row in rows}
+        if len(encoders) != 1:
+            raise RuntimeError(f"{label}: expected one encoder")
+        encoder = next(iter(encoders))
+        if shared_encoder is not None and encoder != shared_encoder:
+            raise RuntimeError(f"{label}: mismatched encoder")
+        shared_encoder = encoder
+        for fold in FOLDS:
+            fold_rows = [row for row in rows if row.fold == fold]
+            cohort = {row.image_id: (row.pathology, row.mass_present)
+                      for row in fold_rows}
+            if len(cohort) != len(fold_rows):
+                raise RuntimeError(f"{label}, fold {fold}: duplicate images")
+            if (len(cohort) != 147
+                    or sum(row.pathology == "malignant" for row in fold_rows) != 87
+                    or sum(row.pathology == "normal" for row in fold_rows) != 20):
+                raise RuntimeError(f"{label}, fold {fold}: unexpected cohort counts")
+            if shared_cohort is not None and cohort != shared_cohort:
+                raise RuntimeError(f"{label}, fold {fold}: mismatched cohort")
+            shared_cohort = cohort
+
+
+def format_rate(values):
+    return f"{statistics.mean(values):.3f} ± {statistics.stdev(values):.3f}"
+
+
 def paired_cell(baseline_rows, ablation_rows, field):
     baseline = fold_rates(baseline_rows, field)
     ablation = fold_rates(ablation_rows, field)
     diffs = [b - a for a, b in zip(baseline, ablation)]
-    format_rate = lambda values: f"{statistics.mean(values):.3f} ± {statistics.stdev(values):.3f}"
-    return f"{format_rate(baseline)} | {format_rate(ablation)} | {statistics.mean(diffs):+.3f} ± {statistics.stdev(diffs):.3f}"
+    return (f"{format_rate(baseline)} | {format_rate(ablation)} | "
+            f"{statistics.mean(diffs):+.3f} ± {statistics.stdev(diffs):.3f}")
 
 
-def comparison_table(rows, checkpoint, size, pathology):
+def comparison_table(groups, checkpoint, size):
+    experiments = [BASELINE_EXPERIMENT, ABLATION_EXPERIMENT]
+    columns = ["Metric", "02 (baseline)", "03 (brightness)", "Paired diff (03 − 02)"]
+    if size == 588:
+        experiments.append(GAUSSIAN_EXPERIMENT)
+        columns.extend(["04 (Gaussian noise)", "Paired diff (04 − 02)"])
     lines = [
-        f"### {CHECKPOINT_LABELS[checkpoint]}, {pathology} masses",
+        f"### Training pool: {size} images",
         "",
-        "| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |",
-        "|---|---|---|---|",
+        "| " + " | ".join(columns) + " |",
+        "|" + "---|" * len(columns),
     ]
-    for label, flag_field, fp_label, fp_field, population in metrics(pathology):
-        baseline_mass = select_rows(rows, BASELINE_EXPERIMENT, checkpoint, size, population)
-        ablation_mass = select_rows(rows, ABLATION_EXPERIMENT, checkpoint, size, population)
-        lines.append(f"| {label} | {paired_cell(baseline_mass, ablation_mass, flag_field)} |")
-        if fp_field is not None:
-            baseline_all = select_rows(rows, BASELINE_EXPERIMENT, checkpoint, size)
-            ablation_all = select_rows(rows, ABLATION_EXPERIMENT, checkpoint, size)
-            lines.append(f"| {fp_label} | {paired_cell(baseline_all, ablation_all, fp_field)} |")
+    for label, field, population in METRICS:
+        populations = []
+        for experiment in experiments:
+            selected = groups[experiment, checkpoint, size]
+            if population is not None:
+                selected = [row for row in selected if row.pathology == population]
+            populations.append(selected)
+        cells = paired_cell(populations[0], populations[1], field)
+        if size == 588:
+            gaussian_cells = paired_cell(populations[0], populations[2], field)
+            cells += " | " + gaussian_cells.split(" | ", 1)[1]
+        lines.append(f"| {label} | {cells} |")
     lines.append("")
     return lines
 
@@ -116,37 +145,38 @@ def build_report(data, manifest):
             "predictions_dataset.csv does not match its build manifest; "
             "rebuild the dataset first"
         )
+    groups = {}
+    for checkpoint in CHECKPOINTS:
+        for size in SIZES:
+            experiments = [BASELINE_EXPERIMENT, ABLATION_EXPERIMENT]
+            if size == 588:
+                experiments.append(GAUSSIAN_EXPERIMENT)
+            for experiment in experiments:
+                groups[experiment, checkpoint, size] = select_rows(
+                    data.rows, experiment, checkpoint, size
+                )
+    validate_groups(groups)
     lines = [
-        "# Augmentation-ablation comparison against data-efficiency baselines",
+        "# Comparing malignant-mass detection of augmentation ablations",
         "",
-        f"Augmentation-ablation experiment (03) versus data-efficiency baselines "
-        f"(02) on the shared test cohort, dataset snapshot {data.snapshot_id} "
-        f"(schema version {manifest['schema_version']}). Brightness-augmentation "
-        "application probability is 0.15 in experiment 02 and 0.5 in "
-        "experiment 03; the multiplier range is unchanged (0.75–1.25).",
+        "02: baseline; 03: brightness ablation; 04: Gaussian-noise ablation "
+        "(588 images only). "
+        f"Dataset snapshot {data.snapshot_id} (schema version {manifest['schema_version']}).",
         "",
-        "Matching training-pool size, seed 42, folds 0–4 and checkpoints are "
-        "compared. Values are mean ± sample SD across the five fold models. "
-        "The paired difference is per-fold (03 − 02), mean ± sample SD of the "
-        "five paired values; positive favors 03 for detection rates and 02 for "
-        "false-positive rates. Malignant detection rates use malignant images "
-        "only (n = 87) and benign detection rates use benign images only "
-        "(n = 40). FP/normal image is the fraction of normal images flagged "
-        "(n = 20) and appears once per checkpoint. Proximity FP/image counts "
-        "uncredited retained components per evaluated image (all 147 test "
-        "images).",
+        "Matched test cohorts, seed 42, encoder and folds 0–4. Values are "
+        "mean ± sample SD across five fold models; paired differences are "
+        "ablation − 02 per fold, summarized as mean ± sample SD. Detection "
+        "uses 87 malignant images; FP/normal image is the flagged fraction "
+        "of 20 normal images. Component FP/image counts uncredited retained "
+        "components across all 147 test images.",
         "",
     ]
-    for size in SIZES:
-        lines.extend([
-            f"## Training pool: {size} images",
-            "",
-        ])
-        for checkpoint in CHECKPOINTS:
-            for pathology in ("malignant", "benign"):
-                lines.extend(comparison_table(data.rows, checkpoint, size, pathology))
+    for checkpoint in CHECKPOINTS:
+        lines.extend([f"## {checkpoint.title()} checkpoints", ""])
+        for size in SIZES:
+            lines.extend(comparison_table(groups, checkpoint, size))
     lines.append("Generated by `ablation_comparisons.py`.")
-    return "\n".join(lines)
+    return "\n".join(lines) + "\n"
 
 
 def main():

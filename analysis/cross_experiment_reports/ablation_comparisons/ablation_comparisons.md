@@ -1,13 +1,25 @@
-# Augmentation-ablation comparison against data-efficiency baselines
+# Comparing malignant-mass detection of augmentation ablations
 
-Augmentation-ablation experiment (03) versus data-efficiency baselines (02) on the shared test cohort, dataset snapshot cbed1239c12a (schema version 2). Brightness-augmentation application probability is 0.15 in experiment 02 and 0.5 in experiment 03; the multiplier range is unchanged (0.75–1.25).
+02: baseline; 03: brightness ablation; 04: Gaussian-noise ablation (588 images only). Dataset snapshot b63d4754f920 (schema version 2).
 
+Matched test cohorts, seed 42, encoder and folds 0–4. Values are mean ± sample SD across five fold models; paired differences are ablation − 02 per fold, summarized as mean ± sample SD. Detection uses 87 malignant images; FP/normal image is the flagged fraction of 20 normal images. Component FP/image counts uncredited retained components across all 147 test images.
 
-## Training pool: 74 images
+## Final checkpoints
 
-### Final checkpoint (150 epochs), malignant masses
+### Training pool: 588 images
 
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
+| Metric | 02 (baseline) | 03 (brightness) | Paired diff (03 − 02) | 04 (Gaussian noise) | Paired diff (04 − 02) |
+|---|---|---|---|---|---|
+| Malignant triage | 0.956 ± 0.010 | 0.954 ± 0.008 | -0.002 ± 0.013 | 0.959 ± 0.017 | +0.002 ± 0.022 |
+| FP/normal image (triage) | 0.150 ± 0.100 | 0.120 ± 0.027 | -0.030 ± 0.115 | 0.190 ± 0.042 | +0.040 ± 0.119 |
+| Malignant IoU > 0 | 0.940 ± 0.015 | 0.931 ± 0.011 | -0.009 ± 0.015 | 0.938 ± 0.017 | -0.002 ± 0.015 |
+| FP/image (IoU > 0) | 0.107 ± 0.038 | 0.110 ± 0.012 | +0.003 ± 0.039 | 0.101 ± 0.017 | -0.007 ± 0.026 |
+| Malignant IoU > 0.2 | 0.899 ± 0.015 | 0.903 ± 0.006 | +0.005 ± 0.013 | 0.901 ± 0.017 | +0.002 ± 0.019 |
+| FP/image (IoU > 0.2) | 0.177 ± 0.043 | 0.169 ± 0.021 | -0.008 ± 0.044 | 0.156 ± 0.035 | -0.020 ± 0.017 |
+
+### Training pool: 74 images
+
+| Metric | 02 (baseline) | 03 (brightness) | Paired diff (03 − 02) |
 |---|---|---|---|
 | Malignant triage | 0.908 ± 0.076 | 0.920 ± 0.023 | +0.011 ± 0.064 |
 | FP/normal image (triage) | 0.330 ± 0.097 | 0.430 ± 0.175 | +0.100 ± 0.255 |
@@ -16,19 +28,22 @@ Augmentation-ablation experiment (03) versus data-efficiency baselines (02) on t
 | Malignant IoU > 0.2 | 0.607 ± 0.062 | 0.630 ± 0.057 | +0.023 ± 0.045 |
 | FP/image (IoU > 0.2) | 0.695 ± 0.095 | 0.683 ± 0.157 | -0.012 ± 0.175 |
 
-### Final checkpoint (150 epochs), benign masses
+## Best checkpoints
 
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
-|---|---|---|---|
-| Benign triage | 0.625 ± 0.116 | 0.670 ± 0.105 | +0.045 ± 0.105 |
-| Benign IoU > 0 | 0.385 ± 0.105 | 0.385 ± 0.058 | +0.000 ± 0.071 |
-| FP/image (IoU > 0) | 0.429 ± 0.089 | 0.446 ± 0.139 | +0.018 ± 0.132 |
-| Benign IoU > 0.2 | 0.215 ± 0.080 | 0.245 ± 0.069 | +0.030 ± 0.060 |
-| FP/image (IoU > 0.2) | 0.695 ± 0.095 | 0.683 ± 0.157 | -0.012 ± 0.175 |
+### Training pool: 588 images
 
-### Best checkpoint, malignant masses
+| Metric | 02 (baseline) | 03 (brightness) | Paired diff (03 − 02) | 04 (Gaussian noise) | Paired diff (04 − 02) |
+|---|---|---|---|---|---|
+| Malignant triage | 0.961 ± 0.013 | 0.959 ± 0.006 | -0.002 ± 0.013 | 0.968 ± 0.015 | +0.007 ± 0.013 |
+| FP/normal image (triage) | 0.190 ± 0.114 | 0.130 ± 0.027 | -0.060 ± 0.114 | 0.190 ± 0.022 | +0.000 ± 0.127 |
+| Malignant IoU > 0 | 0.945 ± 0.005 | 0.936 ± 0.015 | -0.009 ± 0.015 | 0.940 ± 0.010 | -0.005 ± 0.010 |
+| FP/image (IoU > 0) | 0.117 ± 0.047 | 0.103 ± 0.025 | -0.014 ± 0.036 | 0.114 ± 0.021 | -0.003 ± 0.041 |
+| Malignant IoU > 0.2 | 0.908 ± 0.022 | 0.901 ± 0.010 | -0.007 ± 0.021 | 0.899 ± 0.010 | -0.009 ± 0.022 |
+| FP/image (IoU > 0.2) | 0.177 ± 0.052 | 0.155 ± 0.032 | -0.022 ± 0.030 | 0.171 ± 0.035 | -0.005 ± 0.064 |
 
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
+### Training pool: 74 images
+
+| Metric | 02 (baseline) | 03 (brightness) | Paired diff (03 − 02) |
 |---|---|---|---|
 | Malignant triage | 0.901 ± 0.055 | 0.926 ± 0.019 | +0.025 ± 0.038 |
 | FP/normal image (triage) | 0.360 ± 0.096 | 0.450 ± 0.154 | +0.090 ± 0.167 |
@@ -36,59 +51,5 @@ Augmentation-ablation experiment (03) versus data-efficiency baselines (02) on t
 | FP/image (IoU > 0) | 0.442 ± 0.068 | 0.450 ± 0.143 | +0.008 ± 0.114 |
 | Malignant IoU > 0.2 | 0.609 ± 0.059 | 0.625 ± 0.066 | +0.016 ± 0.036 |
 | FP/image (IoU > 0.2) | 0.699 ± 0.047 | 0.705 ± 0.147 | +0.005 ± 0.152 |
-
-### Best checkpoint, benign masses
-
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
-|---|---|---|---|
-| Benign triage | 0.620 ± 0.087 | 0.685 ± 0.086 | +0.065 ± 0.115 |
-| Benign IoU > 0 | 0.360 ± 0.065 | 0.410 ± 0.074 | +0.050 ± 0.056 |
-| FP/image (IoU > 0) | 0.442 ± 0.068 | 0.450 ± 0.143 | +0.008 ± 0.114 |
-| Benign IoU > 0.2 | 0.220 ± 0.072 | 0.255 ± 0.074 | +0.035 ± 0.049 |
-| FP/image (IoU > 0.2) | 0.699 ± 0.047 | 0.705 ± 0.147 | +0.005 ± 0.152 |
-
-## Training pool: 588 images
-
-### Final checkpoint (150 epochs), malignant masses
-
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
-|---|---|---|---|
-| Malignant triage | 0.956 ± 0.010 | 0.954 ± 0.008 | -0.002 ± 0.013 |
-| FP/normal image (triage) | 0.150 ± 0.100 | 0.120 ± 0.027 | -0.030 ± 0.115 |
-| Malignant IoU > 0 | 0.940 ± 0.015 | 0.931 ± 0.011 | -0.009 ± 0.015 |
-| FP/image (IoU > 0) | 0.107 ± 0.038 | 0.110 ± 0.012 | +0.003 ± 0.039 |
-| Malignant IoU > 0.2 | 0.899 ± 0.015 | 0.903 ± 0.006 | +0.005 ± 0.013 |
-| FP/image (IoU > 0.2) | 0.177 ± 0.043 | 0.169 ± 0.021 | -0.008 ± 0.044 |
-
-### Final checkpoint (150 epochs), benign masses
-
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
-|---|---|---|---|
-| Benign triage | 0.725 ± 0.018 | 0.790 ± 0.063 | +0.065 ± 0.078 |
-| Benign IoU > 0 | 0.665 ± 0.022 | 0.720 ± 0.041 | +0.055 ± 0.054 |
-| FP/image (IoU > 0) | 0.107 ± 0.038 | 0.110 ± 0.012 | +0.003 ± 0.039 |
-| Benign IoU > 0.2 | 0.575 ± 0.047 | 0.605 ± 0.057 | +0.030 ± 0.067 |
-| FP/image (IoU > 0.2) | 0.177 ± 0.043 | 0.169 ± 0.021 | -0.008 ± 0.044 |
-
-### Best checkpoint, malignant masses
-
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
-|---|---|---|---|
-| Malignant triage | 0.961 ± 0.013 | 0.959 ± 0.006 | -0.002 ± 0.013 |
-| FP/normal image (triage) | 0.190 ± 0.114 | 0.130 ± 0.027 | -0.060 ± 0.114 |
-| Malignant IoU > 0 | 0.945 ± 0.005 | 0.936 ± 0.015 | -0.009 ± 0.015 |
-| FP/image (IoU > 0) | 0.117 ± 0.047 | 0.103 ± 0.025 | -0.014 ± 0.036 |
-| Malignant IoU > 0.2 | 0.908 ± 0.022 | 0.901 ± 0.010 | -0.007 ± 0.021 |
-| FP/image (IoU > 0.2) | 0.177 ± 0.052 | 0.155 ± 0.032 | -0.022 ± 0.030 |
-
-### Best checkpoint, benign masses
-
-| Metric | 02 (baseline) | 03 (ablation) | Paired diff (03 − 02) |
-|---|---|---|---|
-| Benign triage | 0.750 ± 0.073 | 0.785 ± 0.060 | +0.035 ± 0.080 |
-| Benign IoU > 0 | 0.685 ± 0.049 | 0.705 ± 0.037 | +0.020 ± 0.065 |
-| FP/image (IoU > 0) | 0.117 ± 0.047 | 0.103 ± 0.025 | -0.014 ± 0.036 |
-| Benign IoU > 0.2 | 0.600 ± 0.053 | 0.630 ± 0.051 | +0.030 ± 0.072 |
-| FP/image (IoU > 0.2) | 0.177 ± 0.052 | 0.155 ± 0.032 | -0.022 ± 0.030 |
 
 Generated by `ablation_comparisons.py`.
