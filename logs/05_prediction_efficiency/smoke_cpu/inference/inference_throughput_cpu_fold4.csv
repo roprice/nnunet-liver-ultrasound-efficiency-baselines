@@ -1,2 +1,0 @@
-seed,fold,checkpoint,device,repeat,case_count,batch_wall_seconds,batch_average_seconds_per_image,images_per_second,preprocessing_workers,export_workers,process_tree_peak_rss_mib,process_tree_memory_status,process_tree_rss_samples,timing_json
-42,4,checkpoint_final.pth,cpu,1,1,13.034620,13.034620,0.076719,1,1,,unavailable_psutil_not_installed,0,batch_cpu_seed42_fold4_repeat1.json

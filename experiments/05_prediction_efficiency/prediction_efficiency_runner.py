@@ -23,6 +23,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 benchmark = importlib.import_module("experiments.05_prediction_efficiency.benchmark_inference")
 DEFAULT_ARCHIVE = REPO / "archives/02_data_efficiency"
+PREDICTIONS_ROOT = REPO / "archives/05_prediction_efficiency/nnUNet_results/Dataset001_AUL"
 MODEL_NAME = f"{benchmark.TRAINER_NAME}__nnUNetPlans__2d"
 AGREEMENT_FIELDS = ("triage", "iou_gt_0", "iou_gt_02", "fp_iou_gt_0", "fp_iou_gt_02")
 
@@ -177,9 +178,10 @@ def mac_hardware():
     return hardware
 
 
-def build_command(args, raw, inference):
+def build_command(args, raw, inference, predictions):
     command = [sys.executable, "-B", str(Path(__file__).with_name("benchmark_inference.py")),
                "--nnunet-raw", str(raw), "--device", args.device, "--output-dir", str(inference),
+               "--predictions-dir", str(predictions),
                "--throughput-repeats", str(args.throughput_repeats),
                "--latency-repeats", str(args.latency_repeats), "--warmup-images", str(args.warmup_images)]
     if args.case_limit is not None:
@@ -206,13 +208,21 @@ def main(argv=None):
     results = (args.nnunet_results or archive / "nnUNet_results").resolve()
     baseline = (args.cuda_predictions or archive / "repo/logs/02_data_efficiency/inference/size588/fold4/predictions_cuda_seed42_fold4_repeat1").resolve()
     output = (args.output_dir or REPO / "logs/05_prediction_efficiency" / args.device).resolve()
+    predictions = (PREDICTIONS_ROOT / output.name).resolve()
     try:
         protected = [archive, raw, results, baseline, *(REPO / name for name in
                      ("archives", "archives_staging", "archives_amendments"))]
         require(not any(output.is_relative_to(path.resolve()) for path in protected),
                 "Outputs must be outside input/archive trees")
         require(not output.exists() or (output.is_dir() and not any(output.iterdir())),
-                f"Output directory must be empty: {output}")
+                 f"Output directory must be empty: {output}")
+        require(not any(predictions.is_relative_to(path.resolve()) or path.resolve().is_relative_to(predictions)
+                        for path in (archive, raw, results, baseline)),
+                "Predictions must be separate from input trees")
+        require(predictions.is_relative_to(PREDICTIONS_ROOT.resolve()),
+                "Predictions must stay inside the experiment 05 archive")
+        require(not predictions.exists() or (predictions.is_dir() and not any(predictions.iterdir())),
+                f"Prediction directory must be empty: {predictions}")
         cases, sizes, evidence = check_inputs(raw, results, baseline, args.case_limit)
         require(Path(__file__).with_name("benchmark_inference.py").is_file(), "Missing benchmark helper")
         require(version("nnunetv2") == "2.8.1" and version("torch").split("+")[0] == "2.14.1",
@@ -224,7 +234,7 @@ def main(argv=None):
     except (OSError, ValueError, KeyError) as error:
         parser.error(str(error))
     inference = output / "inference"
-    command = build_command(args, raw, inference)
+    command = build_command(args, raw, inference, predictions)
     if args.check_only:
         print(f"Verified pool 588 / fold 4 / final; {len(cases)} of 147 held-out cases. No files written.")
         print(shlex.join(command))
@@ -239,6 +249,7 @@ def main(argv=None):
         "experiment": "05_prediction_efficiency", "training_experiment": "02_data_efficiency",
         "pool": 588, "fold": 4, "checkpoint": benchmark.CHECKPOINT, "seed": 42,
         "device": args.device, "status": "running", "case_count": len(cases),
+        "predictions_dir": str(predictions),
         "full_test_cohort": len(cases) == 147, "input_evidence": evidence,
         "git_commit": git_output("rev-parse", "HEAD"), "git_status": git_output("status", "--short"),
         "hardware": mac_hardware(), "platform": platform.platform(), "python": sys.version,
@@ -257,8 +268,8 @@ def main(argv=None):
             subprocess.run(command, stdout=stream, stderr=subprocess.STDOUT, env=env, check=True)
         agreements = []
         for repeat in range(1, args.throughput_repeats + 1):
-            predictions = inference / f"predictions_{args.device}_seed42_fold4_repeat{repeat}"
-            agreements.append(compare_predictions(predictions, baseline,
+            repeat_predictions = predictions / f"predictions_{args.device}_seed42_fold4_repeat{repeat}"
+            agreements.append(compare_predictions(repeat_predictions, baseline,
                 raw / benchmark.DATASET_NAME / "labelsTs", cases, sizes, output,
                 f"{args.device}_repeat{repeat}"))
         settings["agreement_passed"] = all(not report["mismatched_case_ids"] for report in agreements)

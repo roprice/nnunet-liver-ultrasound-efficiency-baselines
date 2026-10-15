@@ -6,8 +6,9 @@ Run from the repository root (as a module):
 Output:
     analysis/01_training_efficiency/detection_rates/detection_rates.md
 
-For every milestone checkpoint (and the final model) of the
-training_efficiency experiment, writes two tables:
+For every milestone checkpoint (and the final and best models) of the
+training_efficiency experiment, writes two tables for malignant, benign,
+and combined mass images:
   1. presence-based detection: image-level screen (detection rate on mass
      images, flagged normal images)
   2. proximity-based detection: overlap and centroid criteria (detection rate
@@ -34,8 +35,7 @@ MANIFEST_PATH = (
 
 EXPERIMENT_NAME = "training_efficiency"
 
-# Milestone checkpoints in training order, then the final model. "best" is a
-# selected checkpoint rather than a milestone, so it is excluded.
+# Milestone checkpoints in training order, then the final and selected best models.
 CHECKPOINTS = [
     "epoch25",
     "epoch50",
@@ -46,6 +46,7 @@ CHECKPOINTS = [
     "epoch500",
     "epoch750",
     "final",
+    "best",
 ]
 
 DETECTION_CRITERIA = [
@@ -102,11 +103,17 @@ def fp_per_image_cell(checkpoint_rows, fp_field):
     return format_rate(fold_values(checkpoint_rows, fold_rate))
 
 
-def triage_section(checkpoint_rows):
-    """Write the one-row presence-based detection table: detection on mass
-    images, flagged normal images."""
-    mass_rows = [row for row in checkpoint_rows if row.mass_present]
-    detection = detection_cell(mass_rows, "triage_detection_flag")
+def cohort_rows(checkpoint_rows, pathology):
+    if pathology is None:
+        return [row for row in checkpoint_rows if row.mass_present]
+    return [row for row in checkpoint_rows if row.pathology == pathology]
+
+
+def triage_section(checkpoint_rows, pathology=None, heading_level=4):
+    """Write detection on the selected cohort and FP on normal images."""
+    detection = detection_cell(
+        cohort_rows(checkpoint_rows, pathology), "triage_detection_flag"
+    )
 
     def fold_rate(fold_rows):
         fold_normals = [row for row in fold_rows if not row.mass_present]
@@ -117,7 +124,7 @@ def triage_section(checkpoint_rows):
     fp_normal = format_rate(per_fold)
 
     return [
-        "### Presence-based detection",
+        f"{'#' * heading_level} Presence-based detection",
         "",
         "| detection rate | FP/normal image |",
         "|---|---|",
@@ -126,12 +133,11 @@ def triage_section(checkpoint_rows):
     ]
 
 
-def detection_section(checkpoint_rows):
-    """Write the proximity-based detection table: detection rate and FP per
-    image."""
-    mass_rows = [row for row in checkpoint_rows if row.mass_present]
+def detection_section(checkpoint_rows, pathology=None, heading_level=4):
+    """Write cohort detection and FP per evaluated image."""
+    mass_rows = cohort_rows(checkpoint_rows, pathology)
     lines = [
-        "### Proximity-based detection",
+        f"{'#' * heading_level} Proximity-based detection",
         "",
         "| criterion | detection rate | FP/image |",
         "|---|---|---|",
@@ -170,10 +176,26 @@ def main():
         checkpoint_rows = [row for row in rows if row.checkpoint == checkpoint]
         if not checkpoint_rows:
             raise RuntimeError(f"No rows for checkpoint '{checkpoint}'")
-        lines.append(f"## {checkpoint}")
-        lines.append("")
-        lines.extend(triage_section(checkpoint_rows))
-        lines.extend(detection_section(checkpoint_rows))
+        if checkpoint in ("final", "best"):
+            if checkpoint == "final":
+                lines.extend(["## Final epoch (1000)", ""])
+            lines.extend([f"### {checkpoint.title()}", ""])
+            cohort_heading_level = 4
+        else:
+            lines.extend([f"## epoch {checkpoint.removeprefix('epoch')}", ""])
+            cohort_heading_level = 3
+        for pathology, label in (
+            ("malignant", "Malignant-mass detection"),
+            ("benign", "Benign-mass detection"),
+            (None, "Combined-mass detection"),
+        ):
+            lines.extend([f"{'#' * cohort_heading_level} {label}", ""])
+            lines.extend(triage_section(
+                checkpoint_rows, pathology, cohort_heading_level + 1
+            ))
+            lines.extend(detection_section(
+                checkpoint_rows, pathology, cohort_heading_level + 1
+            ))
 
     OUTPUT_PATH.write_text("\n".join(lines))
     print(f"Wrote {OUTPUT_PATH.resolve().relative_to(PROJECT_ROOT).as_posix()}")

@@ -21,7 +21,7 @@ MANIFEST_PATH = (
 )
 EXPERIMENT_NAME = "data_efficiency"
 SIZES = [74, 147, 294, 588]
-CHECKPOINTS = ["best", "final"]
+CHECKPOINTS = ["final", "best"]
 FOLDS = [0, 1, 2, 3, 4]
 DETECTION_CRITERIA = [
     ("overlap_iou_00", "overlap_detection_iou_00_flag",
@@ -116,42 +116,67 @@ def table_row(label, cells):
     return f"| {label} | " + " | ".join(cells) + " |"
 
 
+def cohort_rows(rows, pathology):
+    return [row for row in rows if row.mass_present
+            and (pathology is None or row.pathology == pathology)]
+
+
+def triage_section(rows, pathology=None):
+    detection = detection_cell(cohort_rows(rows, pathology), "triage_detection_flag")
+    normal_rows = [row for row in rows if not row.mass_present]
+    fp_normal = detection_cell(normal_rows, "triage_detection_flag")
+    return [
+        "##### Presence-based detection",
+        "",
+        "| detection rate | FP/normal image |",
+        "|---|---|",
+        f"| {detection} | {fp_normal} |",
+        "",
+    ]
+
+
+def detection_section(rows, pathology=None):
+    mass_rows = cohort_rows(rows, pathology)
+    lines = [
+        "##### Proximity-based detection",
+        "",
+        "| criterion | detection rate | FP/image |",
+        "|---|---|---|",
+    ]
+    for name, flag_field, fp_field in DETECTION_CRITERIA:
+        detection = detection_cell(mass_rows, flag_field)
+        fp_per_image = fp_per_image_cell(rows, fp_field)
+        lines.append(f"| {name} | {detection} | {fp_per_image} |")
+    lines.append("")
+    return lines
+
+
 def checkpoint_section(groups, checkpoint, pathology=None):
     if pathology not in (None, "malignant", "benign"):
         raise ValueError("pathology must be 'malignant', 'benign', or None")
-    size_rows = [groups[checkpoint, size] for size in SIZES]
-    mass_rows = [
-        [row for row in rows if row.mass_present
-         and (pathology is None or row.pathology == pathology)]
-        for rows in size_rows
+    cohorts = [
+        ("malignant", "Malignant-mass detection"),
+        ("benign", "Benign-mass detection"),
+        (None, "Combined-mass detection"),
     ]
     if pathology is not None:
-        for size, rows in zip(SIZES, mass_rows):
-            for fold in FOLDS:
-                if not any(row.fold == fold for row in rows):
-                    raise RuntimeError(
-                        f"{checkpoint}, size {size}, fold {fold}: "
-                        f"need {pathology} mass images"
-                    )
-    normal_rows = [[row for row in rows if not row.mass_present] for rows in size_rows]
-    lines = [f"## {checkpoint}", ""]
-    lines.extend(table_header("Presence-based detection", "type | metric"))
-    lines.append(table_row("mass-present | detection rate", [
-        detection_cell(rows, "triage_detection_flag") for rows in mass_rows
-    ]))
-    lines.append(table_row("mass-present | FP/normal image", [
-        detection_cell(rows, "triage_detection_flag") for rows in normal_rows
-    ]))
-    lines.append("")
-    lines.extend(table_header("Proximity-based detection", "type | metric"))
-    for name, flag_field, fp_field in DETECTION_CRITERIA:
-        lines.append(table_row(f"{name} | detection rates", [
-            detection_cell(rows, flag_field) for rows in mass_rows
-        ]))
-        lines.append(table_row(f"{name} | false positives", [
-            fp_per_image_cell(rows, fp_field) for rows in size_rows
-        ]))
-    lines.append("")
+        cohorts = [(cohort, label) for cohort, label in cohorts if cohort == pathology]
+    lines = [f"## {checkpoint.title()}", ""]
+    for size in reversed(SIZES):
+        rows = groups[checkpoint, size]
+        lines.extend([f"### {size} images", ""])
+        for cohort, label in cohorts:
+            if cohort is not None:
+                mass_rows = cohort_rows(rows, cohort)
+                for fold in FOLDS:
+                    if not any(row.fold == fold for row in mass_rows):
+                        raise RuntimeError(
+                            f"{checkpoint}, size {size}, fold {fold}: "
+                            f"need {cohort} mass images"
+                        )
+            lines.extend([f"#### {label}", ""])
+            lines.extend(triage_section(rows, cohort))
+            lines.extend(detection_section(rows, cohort))
     return lines
 
 
@@ -167,27 +192,11 @@ def build_report(data, manifest, pathology=None):
         ("# Detection rates by training-set size" if pathology is None else
          f"# {pathology.capitalize()}-mass detection rates by training-set size"),
         "",
-        f"Data-efficiency experiment, test split, {row_count} rows, dataset snapshot "
+        f"Data-efficiency experiment, {row_count} rows, dataset snapshot "
         f"{data.snapshot_id} (schema version {manifest['schema_version']}). "
-        "Columns are training-set sizes in images. Best and final checkpoints "
-        "are reported separately; milestone checkpoints are excluded.",
-        "",
-        "Rates are mean ± sample SD across folds 0–4, with equal fold weighting.",
-        "",
-        "Presence-based FP/normal image is the fraction of normal images flagged. "
-        "Proximity-based FP/image counts uncredited retained components per "
-        "evaluated image, including both mass and normal images.",
+        "Rates are mean ± sample SD across the five folds.",
         "",
     ]
-    if pathology is not None:
-        lines.extend([
-            f"Detection rates use only {pathology} mass images in each fold. "
-            "The row count above includes all evaluated images. Normal flagged "
-            "rates use only normal images. "
-            "Proximity-based FP/image uses ALL evaluated images (malignant, "
-            "benign, and normal) for both the component count and image denominator.",
-            "",
-        ])
     for checkpoint in CHECKPOINTS:
         lines.extend(checkpoint_section(groups, checkpoint, pathology))
     return "\n".join(lines)

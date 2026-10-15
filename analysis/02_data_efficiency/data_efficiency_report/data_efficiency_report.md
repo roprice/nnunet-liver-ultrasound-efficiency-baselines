@@ -44,4 +44,4 @@ Best checkpoints are selected by training-time validation, with potentially diff
 
 Best checkpoint epochs (folds 0–4): pool 74: 134, 125, 105, 146, 132; pool 147: 107, 62, 110, 136, 116; pool 294: 132, 147, 150, 150, 107; pool 588: 149, 145, 117, 135, 150.
 
-Companion reports: [benign detection](../benign_detection_rates/benign_detection_rates.md), [segmentation](../segmentation_rates/segmentation_rates.md), and [full detection criteria](../detection_rates/detection_rates.md).
+Companion reports: [detection](../detection_rates/detection_rates.md) and [segmentation](../segmentation_rates/segmentation_rates.md).

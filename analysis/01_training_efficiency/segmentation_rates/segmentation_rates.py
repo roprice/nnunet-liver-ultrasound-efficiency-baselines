@@ -7,7 +7,7 @@ Output:
     analysis/01_training_efficiency/segmentation_rates/segmentation_rates.md
 
 For the training_efficiency experiment, writes one sweep table with one row
-per milestone checkpoint (and the final model):
+per milestone checkpoint (and the final and best models):
   - liver Dice over all test images
   - combined / malignant / benign mass Dice over the matching mass images
 
@@ -33,8 +33,7 @@ MANIFEST_PATH = (
 
 EXPERIMENT_NAME = "training_efficiency"
 
-# Milestone checkpoints in training order, then the final model. "best" is a
-# selected checkpoint rather than a milestone, so it is excluded.
+# Milestone checkpoints in training order, then the final and selected best models.
 CHECKPOINTS = [
     "epoch25",
     "epoch50",
@@ -45,6 +44,7 @@ CHECKPOINTS = [
     "epoch500",
     "epoch750",
     "final",
+    "best",
 ]
 
 

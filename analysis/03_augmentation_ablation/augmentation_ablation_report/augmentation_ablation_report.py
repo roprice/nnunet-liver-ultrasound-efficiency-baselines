@@ -112,12 +112,7 @@ def main():
     charts(results)
     lines = ["# Augmentation-ablation report", "",
              f"Dataset snapshot `{data.snapshot_id}` (schema {manifest['schema_version']}); test split, seed 42, five fold models per training-pool size.", "",
-             "## Definitions and cohort", "",
-             "The brightness-augmentation application probability is increased from 0.15 to 0.5; the multiplier range remains 0.75–1.25.", "",
-             f"The same {sum(counts.values())} unique test images ({counts['malignant']} malignant, {counts['benign']} benign, {counts['normal']} normal) are evaluated by every model. Repeated model evaluations are not additional unique cases.", "",
-             "Training-pool sizes are 74 and 588 images; each fold trains on its training portion of that pool. Detection rates use only malignant images. Triage means any retained predicted mass component, regardless of location. Overlap detection requires at least one retained component with IoU strictly greater than 0 or 0.2 against the full reference mass mask.", "",
-             "FP/image (IoU > 0) counts retained components with no reference-mass overlap, divided by all evaluated images (malignant, benign and normal). Every retained component on a normal image is an FP. The normal-image flagged fraction is the fraction of normal images with any retained component; it is distinct from component FP/image.", "",
-             "Predictions use the shared 8-connected component filter with minimum area int(0.0003 × image area). Every table cell and shaded band is mean ± sample SD across five fold-model rates (SD denominator n−1). Models share the same test images and overlapping training data: this SD describes model variability, not independent patient uncertainty or a confidence interval. Bands are untruncated mean ± SD; axes start at zero.", "",
+             f"With brightness-augmentation probability increased from 0.15 to 0.5, models trained on pools of 74 and 588 images are evaluated on the same {sum(counts.values())} test images for malignant detection and false positives, reported as mean ± sample SD across five fold models.", "",
              "## Final150 training-pool sweep", "",
              "Fixed 150-epoch checkpoints provide the main size comparison. No winning-size selection rule is imposed.", "",
              "![Final150 aligned detection and FP panels](augmentation_ablation_report.png)", ""]
@@ -127,7 +122,7 @@ def main():
     lines.extend(table(results, "best"))
     lines.extend(["", "Best checkpoint epochs (folds 0–4): " + "; ".join(
         f"pool {size}: " + ", ".join(map(str, results["best", size]["epochs"])) for size in rates.SIZES) + ".", "",
-        "Companion reports: [malignant detection](../malignant_detection_rates/malignant_detection_rates.md), [benign detection](../benign_detection_rates/benign_detection_rates.md), [segmentation](../segmentation_rates/segmentation_rates.md), and [full detection criteria](../detection_rates/detection_rates.md).", ""])
+        "Companion reports: [detection rates](../detection_rates/detection_rates.md) and [segmentation](../segmentation_rates/segmentation_rates.md).", ""])
     (HERE / "augmentation_ablation_report.md").write_text("\n".join(lines))
     print(f"Generated augmentation-ablation report: snapshot {data.snapshot_id}, cohort {counts}")
 

@@ -99,7 +99,9 @@ def build_parser():
     parser.add_argument('--nnunet-raw', required=True, type=Path,
                         help='nnUNet_raw root containing Dataset001_AUL/imagesTs')
     parser.add_argument('--output-dir', required=True, type=Path,
-                        help='New or empty directory for reports and predictions')
+                        help='New or empty directory for reports and logs')
+    parser.add_argument('--predictions-dir', required=True, type=Path,
+                        help='New or empty archive directory for masks and nnU-Net sidecars')
     parser.add_argument('--device', choices=('cpu', 'mps'), default='cpu')
     parser.add_argument('--case-limit', type=case_limit_value,
                         help='Smoke run: select the first N sorted held-out cases (1..147)')
@@ -429,8 +431,15 @@ def main(argv=None):
         parser.error('DATA_EFFICIENCY_EPOCHS must be 150')
     args.nnunet_raw = args.nnunet_raw.resolve()
     output_dir = args.output_dir.resolve()
+    predictions_dir = args.predictions_dir.resolve()
     try:
+        if output_dir.is_relative_to(predictions_dir) or predictions_dir.is_relative_to(output_dir):
+            raise ValueError('Report and prediction directories must be separate')
+        for directory in (output_dir, predictions_dir):
+            if directory.exists() and (not directory.is_dir() or any(directory.iterdir())):
+                raise ValueError(f'Output directory must be empty: {directory}')
         prepare_output_dir(output_dir)
+        prepare_output_dir(predictions_dir)
         images_dir, case_lists, source_sizes = discover_cases(args.nnunet_raw, args.case_limit)
     except (OSError, ValueError) as error:
         parser.error(str(error))
@@ -468,6 +477,7 @@ def main(argv=None):
         'checkpoint_file_sizes_bytes': {str(SEED): checkpoint_path.stat().st_size},
         'step_size': 0.5, 'use_mirroring': True, 'use_gaussian': True,
         'device': args.device, 'case_limit': args.case_limit,
+        'predictions_dir': str(predictions_dir),
         'cohort_selection': 'First N lexicographically sorted case IDs, or all 147 if no limit',
         'source_test_image_count': TEST_CASE_COUNT, 'test_image_count': len(source_sizes),
         'case_ids': list(source_sizes), 'warmup_images': args.warmup_images,
@@ -506,7 +516,7 @@ def main(argv=None):
         first_case_id = next(iter(source_sizes))
         with staged_inputs(case_lists[:1]) as single_input:
             single = run_cli_prediction(
-                single_input, output_dir / f'single_case_{args.device}', args.device,
+                single_input, predictions_dir / f'single_case_{args.device}', args.device,
                 {first_case_id: source_sizes[first_case_id]},
                 output_dir / f'single_case_{args.device}.log',
                 output_dir / f'single_case_{args.device}.json', env, 'single_case_process_cold',
@@ -530,7 +540,7 @@ def main(argv=None):
                 stem = f'{args.device}_seed{SEED}_fold{FOLD}_repeat{repeat}'
                 timing_path = output_dir / f'batch_{stem}.json'
                 record = run_cli_prediction(
-                    input_dir, output_dir / f'predictions_{stem}', args.device, source_sizes,
+                    input_dir, predictions_dir / f'predictions_{stem}', args.device, source_sizes,
                     output_dir / f'batch_{stem}.log', timing_path, env, 'batch_throughput', repeat,
                 )
                 wall_seconds = record['wall_seconds']

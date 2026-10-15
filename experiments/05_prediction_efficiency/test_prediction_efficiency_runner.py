@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 from PIL import Image
@@ -88,11 +89,26 @@ class InputTests(unittest.TestCase):
 
     def test_check_only_writes_nothing(self):
         output = self.root / "untouched"
-        with redirect_stdout(io.StringIO()) as stream:
+        predictions_root = self.root / "archive_predictions"
+        with patch.object(runner, "PREDICTIONS_ROOT", predictions_root), redirect_stdout(io.StringIO()) as stream:
             runner.main(["--nnunet-raw", str(self.raw), "--nnunet-results", str(self.results),
                          "--cuda-predictions", str(self.baseline), "--output-dir", str(output),
                          "--check-only", "--case-limit", "1"])
         self.assertIn("fold 4 / final", stream.getvalue())
+        self.assertFalse(output.exists())
+        self.assertFalse(predictions_root.exists())
+        self.assertIn(str(predictions_root / output.name), stream.getvalue())
+
+    def test_refuses_existing_predictions_before_creating_reports(self):
+        predictions_root = self.root / "archive_predictions"
+        predictions = predictions_root / "fresh_logs"
+        predictions.mkdir(parents=True)
+        (predictions / "previous.png").write_bytes(b"previous prediction")
+        output = self.root / "fresh_logs"
+        with patch.object(runner, "PREDICTIONS_ROOT", predictions_root), redirect_stderr(io.StringIO()) as stream:
+            with self.assertRaises(SystemExit):
+                runner.main(["--output-dir", str(output), "--check-only"])
+        self.assertIn("Prediction directory must be empty", stream.getvalue())
         self.assertFalse(output.exists())
 
     def test_refuses_archive_outputs_and_existing_output(self):
@@ -161,7 +177,8 @@ class CommandTests(unittest.TestCase):
     def test_fixed_selection_and_smoke_options(self):
         args = argparse.Namespace(device="mps", throughput_repeats=1, latency_repeats=2,
                                   warmup_images=1, case_limit=1)
-        command = runner.build_command(args, Path("raw"), Path("output"))
+        command = runner.build_command(args, Path("raw"), Path("output"), Path("archive_predictions"))
+        self.assertEqual(command[command.index("--predictions-dir") + 1], "archive_predictions")
         self.assertIn("05_prediction_efficiency/benchmark_inference.py", command[2])
         self.assertEqual(command[-2:], ["--case-limit", "1"])
         predict = runner.benchmark.build_predict_command(Path("in"), Path("out"), "mps")

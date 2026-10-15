@@ -12,7 +12,7 @@ The default input is `archives/02_data_efficiency`. Required files:
 - `nnUNet_results/Dataset001_AUL/nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d/{plans.json,dataset.json,fold_4/checkpoint_final.pth,fold_4/checkpoint_metadata.json}`.
 - Saved CUDA benchmark masks: `repo/logs/02_data_efficiency/inference/size588/fold4/predictions_cuda_seed42_fold4_repeat1/`.
 
-`--archive-root` changes the archive location; `--nnunet-raw`, `--nnunet-results` and `--cuda-predictions` can override individual roots. The runner verifies the selected checkpoint against archived SHA256/size/epoch metadata and records input-image, reference and baseline-mask hashes. It uses experiment 02's custom trainer via `nnUNet_extTrainer` and sets `DATA_EFFICIENCY_EPOCHS=150`. Outputs must be outside the input/archive trees and new or empty.
+`--archive-root` changes the input archive location; `--nnunet-raw`, `--nnunet-results` and `--cuda-predictions` can override individual roots. The runner verifies the selected checkpoint against archived SHA256/size/epoch metadata and records input-image, reference and baseline-mask hashes. It uses experiment 02's custom trainer via `nnUNet_extTrainer` and sets `DATA_EFFICIENCY_EPOCHS=150`. Report outputs must be outside the input/archive trees and new or empty. Predictions are stored separately in the experiment-05 archive; their run directory must also be new or empty.
 
 ## Check and smoke-test
 
@@ -43,10 +43,12 @@ Every run also times the first sorted image in an independent, process-cold CLI 
 
 - `run_settings.json`, input/checkpoint hashes, Mac chip/RAM, repository revision/status, UTC boundaries and run status; `environment_packages.txt` records installed package versions.
 - `benchmark.log`; `inference/inference_{per_image,summary,throughput,settings}_<device>_fold4.*` with warmed latency (including interpolated p95), full-process throughput and exact settings.
-- `inference/single_case_<device>.json` and `batch_<device>_seed42_fold4_repeatN.json`: subprocess timings, failures and sampled child-tree RSS when available. Each has a log and saved prediction masks.
+- `inference/single_case_<device>.json` and `batch_<device>_seed42_fold4_repeatN.json`: subprocess timings, failures and sampled child-tree RSS when available. Each has a log and records the archived prediction directory.
 - `agreement_<device>_repeatN.{csv,json}`: pixel differences/mass Dice and per-image triage, IoU > 0 / > 0.2 decisions and false-positive component counts against the saved CUDA masks. Metrics reuse the study's 8-connected 0.03%-area filter. Malignant detection divides by malignant images; FP components/image divides by all evaluated images; normal flagged fraction divides by normal images.
 
-Pixel-identical masks are not required, but any per-image decision/count discrepancy makes the runner fail **after writing the agreement reports**. Inspect those differences rather than silently accepting a new model/device result. Output-name, mask-format, dimension and label checks also fail on mismatch. Other failures preserve logs/settings; reruns require a new empty directory.
+Prediction masks and nnU-Net sidecars are stored under `archives/05_prediction_efficiency/nnUNet_results/Dataset001_AUL/<run-name>/`, which is Git-ignored. `<run-name>` is the report output directory's final component: `cpu` or `mps` by default, or `smoke_cpu` for the documented smoke test. Each run contains `single_case_<device>/` and `predictions_<device>_seed42_fold4_repeatN/`. Reports, settings, CSVs and logs remain under `logs/` for Git tracking.
+
+Pixel-identical masks are not required, but any per-image decision/count discrepancy makes the runner fail **after writing the agreement reports**. Inspect those differences rather than silently accepting a new model/device result. Output-name, mask-format, dimension and label checks also fail on mismatch. Other failures preserve logs/settings; reruns require new empty report and prediction directories.
 
 Parent lifetime RSS includes all preloaded images and is labelled separately. Optional child-tree summed RSS excludes the benchmark parent, can count shared pages repeatedly and can miss short peaks; it is not MPS peak allocated memory. No Mac energy sensor is sampled: local energy is null, not zero or a TDP estimate. Training GPU energy and invoice attribution are handled by the [compute-cost tooling](../../analysis/compute_efficiency/compute_cost/compute_cost_runbook.md); weights-only FP16 export is handled by the [footprint tooling](../../analysis/compute_efficiency/model_footprint/model_footprint_runbook.md).
 

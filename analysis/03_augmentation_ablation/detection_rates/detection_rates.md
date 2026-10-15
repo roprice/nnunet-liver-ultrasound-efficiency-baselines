@@ -1,59 +1,243 @@
 # Detection rates by training-set size
 
-Augmentation-ablation experiment, test split, 2940 rows, dataset snapshot cbed1239c12a (schema version 2). Columns are training-set sizes in images. Best and final checkpoints are reported separately.
+Augmentation-ablation experiment, 2940 rows, dataset snapshot b63d4754f920 (schema version 2). Rates are mean ± sample SD across the five folds.
 
-Rates are mean ± sample SD across folds 0–4, with equal fold weighting.
+## Final
 
-Presence-based FP/normal image is the fraction of normal images flagged. Proximity-based FP/image counts uncredited retained components per evaluated image, including both mass and normal images.
+### 588 images
 
-## best
+#### Malignant-mass detection
 
-### Presence-based detection
+##### Presence-based detection
 
-| type | metric | 74 | 588 |
-|---|---|---|---|
-| mass-present | detection rate | 0.850 ± 0.036 | 0.904 ± 0.023 |
-| mass-present | FP/normal image | 0.450 ± 0.154 | 0.130 ± 0.027 |
+| detection rate | FP/normal image |
+|---|---|
+| 0.954 ± 0.008 | 0.120 ± 0.027 |
 
-### Proximity-based detection
+##### Proximity-based detection
 
-| type | metric | 74 | 588 |
-|---|---|---|---|
-| overlap_iou_00 | detection rates | 0.723 ± 0.031 | 0.863 ± 0.018 |
-| overlap_iou_00 | false positives | 0.450 ± 0.143 | 0.103 ± 0.025 |
-| overlap_iou_02 | detection rates | 0.509 ± 0.053 | 0.816 ± 0.021 |
-| overlap_iou_02 | false positives | 0.705 ± 0.147 | 0.155 ± 0.032 |
-| overlap_iou_05 | detection rates | 0.313 ± 0.055 | 0.690 ± 0.030 |
-| overlap_iou_05 | false positives | 0.873 ± 0.163 | 0.264 ± 0.043 |
-| centroid_deq_025 | detection rates | 0.405 ± 0.033 | 0.765 ± 0.030 |
-| centroid_deq_025 | false positives | 0.789 ± 0.149 | 0.199 ± 0.037 |
-| centroid_deq_050 | detection rates | 0.578 ± 0.034 | 0.828 ± 0.012 |
-| centroid_deq_050 | false positives | 0.588 ± 0.143 | 0.135 ± 0.029 |
-| centroid_deq_100 | detection rates | 0.683 ± 0.035 | 0.857 ± 0.017 |
-| centroid_deq_100 | false positives | 0.431 ± 0.119 | 0.105 ± 0.027 |
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.931 ± 0.011 | 0.110 ± 0.012 |
+| overlap_iou_02 | 0.903 ± 0.006 | 0.169 ± 0.021 |
+| overlap_iou_05 | 0.805 ± 0.023 | 0.267 ± 0.026 |
+| centroid_deq_025 | 0.855 ± 0.017 | 0.211 ± 0.032 |
+| centroid_deq_050 | 0.901 ± 0.019 | 0.144 ± 0.023 |
+| centroid_deq_100 | 0.922 ± 0.005 | 0.109 ± 0.019 |
 
-## final
+#### Benign-mass detection
 
-### Presence-based detection
+##### Presence-based detection
 
-| type | metric | 74 | 588 |
-|---|---|---|---|
-| mass-present | detection rate | 0.841 ± 0.044 | 0.902 ± 0.021 |
-| mass-present | FP/normal image | 0.430 ± 0.175 | 0.120 ± 0.027 |
+| detection rate | FP/normal image |
+|---|---|
+| 0.790 ± 0.063 | 0.120 ± 0.027 |
 
-### Proximity-based detection
+##### Proximity-based detection
 
-| type | metric | 74 | 588 |
-|---|---|---|---|
-| overlap_iou_00 | detection rates | 0.707 ± 0.020 | 0.865 ± 0.020 |
-| overlap_iou_00 | false positives | 0.446 ± 0.139 | 0.110 ± 0.012 |
-| overlap_iou_02 | detection rates | 0.509 ± 0.047 | 0.809 ± 0.022 |
-| overlap_iou_02 | false positives | 0.683 ± 0.157 | 0.169 ± 0.021 |
-| overlap_iou_05 | detection rates | 0.304 ± 0.048 | 0.696 ± 0.023 |
-| overlap_iou_05 | false positives | 0.860 ± 0.162 | 0.267 ± 0.026 |
-| centroid_deq_025 | detection rates | 0.398 ± 0.035 | 0.761 ± 0.032 |
-| centroid_deq_025 | false positives | 0.774 ± 0.149 | 0.211 ± 0.032 |
-| centroid_deq_050 | detection rates | 0.572 ± 0.046 | 0.831 ± 0.017 |
-| centroid_deq_050 | false positives | 0.576 ± 0.141 | 0.144 ± 0.023 |
-| centroid_deq_100 | detection rates | 0.679 ± 0.038 | 0.857 ± 0.018 |
-| centroid_deq_100 | false positives | 0.422 ± 0.112 | 0.109 ± 0.019 |
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.720 ± 0.041 | 0.110 ± 0.012 |
+| overlap_iou_02 | 0.605 ± 0.057 | 0.169 ± 0.021 |
+| overlap_iou_05 | 0.460 ± 0.038 | 0.267 ± 0.026 |
+| centroid_deq_025 | 0.555 ± 0.080 | 0.211 ± 0.032 |
+| centroid_deq_050 | 0.680 ± 0.048 | 0.144 ± 0.023 |
+| centroid_deq_100 | 0.715 ± 0.052 | 0.109 ± 0.019 |
+
+#### Combined-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.902 ± 0.021 | 0.120 ± 0.027 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.865 ± 0.020 | 0.110 ± 0.012 |
+| overlap_iou_02 | 0.809 ± 0.022 | 0.169 ± 0.021 |
+| overlap_iou_05 | 0.696 ± 0.023 | 0.267 ± 0.026 |
+| centroid_deq_025 | 0.761 ± 0.032 | 0.211 ± 0.032 |
+| centroid_deq_050 | 0.831 ± 0.017 | 0.144 ± 0.023 |
+| centroid_deq_100 | 0.857 ± 0.018 | 0.109 ± 0.019 |
+
+### 74 images
+
+#### Malignant-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.920 ± 0.023 | 0.430 ± 0.175 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.855 ± 0.024 | 0.446 ± 0.139 |
+| overlap_iou_02 | 0.630 ± 0.057 | 0.683 ± 0.157 |
+| overlap_iou_05 | 0.386 ± 0.057 | 0.860 ± 0.162 |
+| centroid_deq_025 | 0.501 ± 0.044 | 0.774 ± 0.149 |
+| centroid_deq_050 | 0.699 ± 0.048 | 0.576 ± 0.141 |
+| centroid_deq_100 | 0.811 ± 0.046 | 0.422 ± 0.112 |
+
+#### Benign-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.670 ± 0.105 | 0.430 ± 0.175 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.385 ± 0.058 | 0.446 ± 0.139 |
+| overlap_iou_02 | 0.245 ± 0.069 | 0.683 ± 0.157 |
+| overlap_iou_05 | 0.125 ± 0.073 | 0.860 ± 0.162 |
+| centroid_deq_025 | 0.175 ± 0.059 | 0.774 ± 0.149 |
+| centroid_deq_050 | 0.295 ± 0.054 | 0.576 ± 0.141 |
+| centroid_deq_100 | 0.390 ± 0.065 | 0.422 ± 0.112 |
+
+#### Combined-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.841 ± 0.044 | 0.430 ± 0.175 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.707 ± 0.020 | 0.446 ± 0.139 |
+| overlap_iou_02 | 0.509 ± 0.047 | 0.683 ± 0.157 |
+| overlap_iou_05 | 0.304 ± 0.048 | 0.860 ± 0.162 |
+| centroid_deq_025 | 0.398 ± 0.035 | 0.774 ± 0.149 |
+| centroid_deq_050 | 0.572 ± 0.046 | 0.576 ± 0.141 |
+| centroid_deq_100 | 0.679 ± 0.038 | 0.422 ± 0.112 |
+
+## Best
+
+### 588 images
+
+#### Malignant-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.959 ± 0.006 | 0.130 ± 0.027 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.936 ± 0.015 | 0.103 ± 0.025 |
+| overlap_iou_02 | 0.901 ± 0.010 | 0.155 ± 0.032 |
+| overlap_iou_05 | 0.795 ± 0.030 | 0.264 ± 0.043 |
+| centroid_deq_025 | 0.853 ± 0.022 | 0.199 ± 0.037 |
+| centroid_deq_050 | 0.901 ± 0.013 | 0.135 ± 0.029 |
+| centroid_deq_100 | 0.926 ± 0.010 | 0.105 ± 0.027 |
+
+#### Benign-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.785 ± 0.060 | 0.130 ± 0.027 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.705 ± 0.037 | 0.103 ± 0.025 |
+| overlap_iou_02 | 0.630 ± 0.051 | 0.155 ± 0.032 |
+| overlap_iou_05 | 0.460 ± 0.049 | 0.264 ± 0.043 |
+| centroid_deq_025 | 0.575 ± 0.077 | 0.199 ± 0.037 |
+| centroid_deq_050 | 0.670 ± 0.045 | 0.135 ± 0.029 |
+| centroid_deq_100 | 0.705 ± 0.048 | 0.105 ± 0.027 |
+
+#### Combined-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.904 ± 0.023 | 0.130 ± 0.027 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.863 ± 0.018 | 0.103 ± 0.025 |
+| overlap_iou_02 | 0.816 ± 0.021 | 0.155 ± 0.032 |
+| overlap_iou_05 | 0.690 ± 0.030 | 0.264 ± 0.043 |
+| centroid_deq_025 | 0.765 ± 0.030 | 0.199 ± 0.037 |
+| centroid_deq_050 | 0.828 ± 0.012 | 0.135 ± 0.029 |
+| centroid_deq_100 | 0.857 ± 0.017 | 0.105 ± 0.027 |
+
+### 74 images
+
+#### Malignant-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.926 ± 0.019 | 0.450 ± 0.154 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.867 ± 0.021 | 0.450 ± 0.143 |
+| overlap_iou_02 | 0.625 ± 0.066 | 0.705 ± 0.147 |
+| overlap_iou_05 | 0.395 ± 0.056 | 0.873 ± 0.163 |
+| centroid_deq_025 | 0.503 ± 0.043 | 0.789 ± 0.149 |
+| centroid_deq_050 | 0.697 ± 0.031 | 0.588 ± 0.143 |
+| centroid_deq_100 | 0.811 ± 0.040 | 0.431 ± 0.119 |
+
+#### Benign-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.685 ± 0.086 | 0.450 ± 0.154 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.410 ± 0.074 | 0.450 ± 0.143 |
+| overlap_iou_02 | 0.255 ± 0.074 | 0.705 ± 0.147 |
+| overlap_iou_05 | 0.135 ± 0.078 | 0.873 ± 0.163 |
+| centroid_deq_025 | 0.190 ± 0.068 | 0.789 ± 0.149 |
+| centroid_deq_050 | 0.320 ± 0.057 | 0.588 ± 0.143 |
+| centroid_deq_100 | 0.405 ± 0.072 | 0.431 ± 0.119 |
+
+#### Combined-mass detection
+
+##### Presence-based detection
+
+| detection rate | FP/normal image |
+|---|---|
+| 0.850 ± 0.036 | 0.450 ± 0.154 |
+
+##### Proximity-based detection
+
+| criterion | detection rate | FP/image |
+|---|---|---|
+| overlap_iou_00 | 0.723 ± 0.031 | 0.450 ± 0.143 |
+| overlap_iou_02 | 0.509 ± 0.053 | 0.705 ± 0.147 |
+| overlap_iou_05 | 0.313 ± 0.055 | 0.873 ± 0.163 |
+| centroid_deq_025 | 0.405 ± 0.033 | 0.789 ± 0.149 |
+| centroid_deq_050 | 0.578 ± 0.034 | 0.588 ± 0.143 |
+| centroid_deq_100 | 0.683 ± 0.035 | 0.431 ± 0.119 |

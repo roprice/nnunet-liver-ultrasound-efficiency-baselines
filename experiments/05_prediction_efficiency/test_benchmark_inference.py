@@ -2,6 +2,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
@@ -42,7 +43,8 @@ class SpreadStatsTests(unittest.TestCase):
 class ArgumentTests(unittest.TestCase):
     def parse(self, *options):
         return benchmark.build_parser().parse_args([
-            '--nnunet-raw', '/raw', '--output-dir', '/output', *options])
+            '--nnunet-raw', '/raw', '--output-dir', '/output',
+            '--predictions-dir', '/archive_predictions', *options])
 
     def test_defaults_and_limit_boundaries(self):
         args = self.parse()
@@ -105,6 +107,50 @@ class FileValidationTests(unittest.TestCase):
             benchmark.prepare_output_dir(empty)
         with self.assertRaisesRegex(ValueError, 'must be empty'):
             benchmark.prepare_output_dir(empty / 'existing.log')
+
+    def test_benchmark_separates_prediction_artifacts_from_reports(self):
+        import torch
+
+        raw = self.root / 'raw'
+        images = raw / benchmark.DATASET_NAME / 'imagesTs'
+        images.mkdir(parents=True)
+        for index in range(147):
+            Image.new('L', (3, 2)).save(images / f'case_{index:03d}_0000.png')
+        model = self.root / 'model'
+        (model / 'fold_4').mkdir(parents=True)
+        (model / 'fold_4' / benchmark.CHECKPOINT).write_bytes(b'fixture')
+        reports = self.root / 'logs'
+        predictions = self.root / 'archive_predictions'
+
+        def predict(command, log_path, timing_path, env, details):
+            masks = Path(command[command.index('-o') + 1])
+            masks.mkdir()
+            self.save_mask(masks, case_id='case_000')
+            (masks / 'dataset.json').write_text('{}')
+            log_path.write_text('prediction completed')
+            record = {**details, 'wall_seconds': 1.0, 'process_tree_peak_rss_mib': None,
+                      'process_tree_memory_status': 'unavailable', 'process_tree_rss_samples': 0}
+            benchmark.write_json(timing_path, record)
+            return record
+
+        with patch.dict(os.environ, {'nnUNet_results': str(model), 'DATA_EFFICIENCY_EPOCHS': '150'}), \
+                patch('nnunetv2.utilities.file_path_utilities.get_output_folder', return_value=str(model)), \
+                patch.object(torch, 'set_num_threads'), \
+                patch.object(benchmark, 'timed_subprocess', side_effect=predict), \
+                patch.object(benchmark, 'measure_latency', return_value=(
+                    [{'image_id': 'case_000', 'inference_seconds': 1.0}],
+                    {'n_images': 1, 'n_measurements': 1, 'median_seconds': 1.0, 'p95_seconds': 1.0}, {})), \
+                contextlib.redirect_stdout(io.StringIO()):
+            benchmark.main(['--nnunet-raw', str(raw), '--output-dir', str(reports),
+                            '--predictions-dir', str(predictions), '--case-limit', '1',
+                            '--throughput-repeats', '1'])
+
+        self.assertEqual(len(list(predictions.rglob('*.png'))), 2)
+        self.assertFalse(list(reports.rglob('*.png')))
+        self.assertTrue((reports / 'inference_throughput_cpu_fold4.csv').is_file())
+        timing = json.loads((reports / 'batch_cpu_seed42_fold4_repeat1.json').read_text())
+        self.assertEqual(timing['prediction_dir'], str(predictions.resolve() / 'predictions_cpu_seed42_fold4_repeat1'))
+        self.assertEqual(timing['mask_validation'], 'passed')
 
     def test_selected_cases_are_sorted_and_only_selected_files_are_staged(self):
         images = self.root / benchmark.DATASET_NAME / 'imagesTs'

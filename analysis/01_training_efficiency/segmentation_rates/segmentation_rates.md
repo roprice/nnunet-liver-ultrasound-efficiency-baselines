@@ -1,6 +1,6 @@
 # Segmentation Dice by training milestone
 
-Training-efficiency experiment, dataset snapshot 2a91099919b6 (schema version 2). Dice are per-image means, mean ± sample SD across the five folds. Liver Dice covers all test images; mass Dice covers mass images only.
+Training-efficiency experiment, dataset snapshot b63d4754f920 (schema version 2). Dice are per-image means, mean ± sample SD across the five folds. Liver Dice covers all test images; mass Dice covers mass images only.
 
 | checkpoint | liver Dice | combined mass Dice | malignant mass Dice | benign mass Dice |
 |---|---|---|---|---|
@@ -13,3 +13,4 @@ Training-efficiency experiment, dataset snapshot 2a91099919b6 (schema version 2)
 | epoch500 | 0.899 ± 0.002 | 0.664 ± 0.035 | 0.744 ± 0.026 | 0.489 ± 0.058 |
 | epoch750 | 0.901 ± 0.002 | 0.688 ± 0.027 | 0.767 ± 0.021 | 0.517 ± 0.047 |
 | final | 0.903 ± 0.003 | 0.706 ± 0.016 | 0.775 ± 0.012 | 0.555 ± 0.026 |
+| best | 0.903 ± 0.002 | 0.705 ± 0.021 | 0.777 ± 0.013 | 0.549 ± 0.046 |

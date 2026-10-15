@@ -134,7 +134,7 @@ def main():
     lines.extend(table(results, "best"))
     lines.extend(["", "Best checkpoint epochs (folds 0–4): " + "; ".join(
         f"pool {size}: " + ", ".join(map(str, results["best", size]["epochs"])) for size in rates.SIZES) + ".", "",
-        "Companion reports: [benign detection](../benign_detection_rates/benign_detection_rates.md), [segmentation](../segmentation_rates/segmentation_rates.md), and [full detection criteria](../detection_rates/detection_rates.md).", ""])
+        "Companion reports: [detection](../detection_rates/detection_rates.md) and [segmentation](../segmentation_rates/segmentation_rates.md).", ""])
     (HERE / "data_efficiency_report.md").write_text("\n".join(lines))
     print(f"Generated data-efficiency report: snapshot {data.snapshot_id}, cohort {counts}")
 

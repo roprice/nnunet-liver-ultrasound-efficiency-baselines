@@ -1,2 +1,0 @@
-image_id,pathology,different_label_pixels,mass_dice_vs_cuda,decisions_and_counts_match,local_triage,cuda_triage,local_iou_gt_0,cuda_iou_gt_0,local_iou_gt_02,cuda_iou_gt_02,local_fp_iou_gt_0,cuda_fp_iou_gt_0,local_fp_iou_gt_02,cuda_fp_iou_gt_02
-liver_0589,benign,0,1.0,True,False,False,False,False,False,False,0,0,0,0
