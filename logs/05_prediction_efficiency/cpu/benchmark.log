@@ -1,0 +1,3 @@
+Process-cold single case liver_0589: 12.522s
+/Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/.venv/lib/python3.14/site-packages/torch/jit/_script.py:1643: FutureWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+  warnings.warn(

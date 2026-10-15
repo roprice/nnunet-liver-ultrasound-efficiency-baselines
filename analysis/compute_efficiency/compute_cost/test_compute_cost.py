@@ -13,7 +13,7 @@ from decimal import Decimal
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-report = importlib.import_module("analysis.05_prediction_efficiency.compute_cost.compute_cost")
+report = importlib.import_module("analysis.compute_efficiency.compute_cost.compute_cost")
 BASE = datetime(2026, 10, 10, tzinfo=report.UTC)
 
 

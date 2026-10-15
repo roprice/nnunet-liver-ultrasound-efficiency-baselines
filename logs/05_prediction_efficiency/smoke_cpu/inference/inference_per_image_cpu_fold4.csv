@@ -1,0 +1,2 @@
+seed,fold,checkpoint,device,repeat,image_id,width_pixels,height_pixels,pixel_count,inference_seconds
+42,4,checkpoint_final.pth,cpu,1,liver_0589,720,576,414720,3.721644

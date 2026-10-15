@@ -3,8 +3,8 @@
 From the repository root, using only the standard library:
 
 ```sh
-.venv/bin/python -B -m unittest discover -s analysis/05_prediction_efficiency/compute_cost -p 'test_*.py'
-.venv/bin/python -B analysis/05_prediction_efficiency/compute_cost/compute_cost.py --force
+.venv/bin/python -B -m unittest discover -s analysis/compute_efficiency/compute_cost -p 'test_*.py'
+.venv/bin/python -B analysis/compute_efficiency/compute_cost/compute_cost.py --force
 ```
 
 Defaults: `--archive archives/02_data_efficiency` (the experiment root, resolved relative to the repository), `--output-dir` this script's folder, `--gpu-timezone UTC`, `--max-gap-seconds 2`. Existing generated reports require `--force`. All input archives are read-only; output inside the repository's archive trees, a supplied archive, or its enclosing `archives/` tree is rejected, including resolved symlinks. Report-file symlinks are rejected even with `--force`.
@@ -36,10 +36,10 @@ The actual archived device is **NVIDIA RTX 6000 Ada Generation**. Recording runs
 To allocate a supplied normalized invoice:
 
 ```sh
-.venv/bin/python -B analysis/05_prediction_efficiency/compute_cost/compute_cost.py \
+.venv/bin/python -B analysis/compute_efficiency/compute_cost/compute_cost.py \
   --billing-csv /absolute/path/normalized_billing.csv \
   --resource-id provider-resource-id \
-  --output-dir analysis/05_prediction_efficiency/compute_cost/invoice_report
+  --output-dir analysis/compute_efficiency/compute_cost/invoice_report
 ```
 
 Exact CSV columns:

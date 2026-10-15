@@ -1,0 +1,12 @@
+{
+    "channel_names": {
+        "0": "ultrasound"
+    },
+    "labels": {
+        "background": 0,
+        "liver": 1,
+        "mass": 2
+    },
+    "numTraining": 588,
+    "file_ending": ".png"
+}

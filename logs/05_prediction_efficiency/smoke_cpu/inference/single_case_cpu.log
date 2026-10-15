@@ -1,0 +1,26 @@
+/Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/.venv/lib/python3.14/site-packages/torch/jit/_script.py:1643: FutureWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+  warnings.warn(
+
+#######################################################################
+Please cite the following paper when using nnU-Net:
+Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211.
+#######################################################################
+
+perform_everything_on_device=True is only supported for cuda devices! Setting this to False
+Trainer 'nnUNetTrainer_dataSubsets_Seed42' not found in nnunetv2.training.nnUNetTrainer.
+Searching in external trainer paths from environment variable 'nnUNet_extTrainer'...
+Searching in: /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers
+Searching for class nnUNetTrainer_dataSubsets_Seed42 in folder /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers with current module None
+  Inspecting module: nnUNetTrainer_dataSubsets_Seed42
+Found class nnUNetTrainer_dataSubsets_Seed42 in nnUNetTrainer_dataSubsets_Seed42
+Using trainer 'nnUNetTrainer_dataSubsets_Seed42' from: /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers
+There are 1 cases in the source folder
+I am process 0 out of 1 (max process ID is 0, we start counting with 0!)
+There are 1 cases that I would like to predict
+
+Predicting liver_0589:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0589
+GPU prediction completed. Waiting for remaining segmentation exports to finish...
+Segmentation export complete.

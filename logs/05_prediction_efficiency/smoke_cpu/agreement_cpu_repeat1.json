@@ -1,0 +1,41 @@
+{
+  "case_count": 1,
+  "full_test_cohort": false,
+  "mismatched_case_ids": [],
+  "identical_mask_count": 1,
+  "mean_mass_dice_vs_cuda": 1.0,
+  "criterion": "Exact per-image triage, IoU>0/0.2 decisions and FP component counts; pixel identity is not required",
+  "filter": "Shared 8-connected components, minimum area int(0.0003 * image area)",
+  "metrics": {
+    "triage": {
+      "denominator": 0,
+      "local": null,
+      "cuda": null
+    },
+    "iou_gt_0": {
+      "denominator": 0,
+      "local": null,
+      "cuda": null
+    },
+    "iou_gt_02": {
+      "denominator": 0,
+      "local": null,
+      "cuda": null
+    },
+    "fp_iou_gt_0": {
+      "denominator": 1,
+      "local": 0.0,
+      "cuda": 0.0
+    },
+    "fp_iou_gt_02": {
+      "denominator": 1,
+      "local": 0.0,
+      "cuda": 0.0
+    },
+    "normal_flagged": {
+      "denominator": 0,
+      "local": null,
+      "cuda": null
+    }
+  }
+}

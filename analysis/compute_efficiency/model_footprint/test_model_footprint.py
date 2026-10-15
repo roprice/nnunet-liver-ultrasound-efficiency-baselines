@@ -11,7 +11,7 @@ import numpy as np
 import torch
 
 footprint = importlib.import_module(
-    "analysis.05_prediction_efficiency.model_footprint.model_footprint")
+    "analysis.compute_efficiency.model_footprint.model_footprint")
 
 
 class SharedNetwork(torch.nn.Module):

@@ -1,0 +1,13 @@
+Process-cold single case liver_0589: 13.245s
+/Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/.venv/lib/python3.14/site-packages/torch/jit/_script.py:1643: FutureWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+  warnings.warn(
+perform_everything_on_device=True is only supported for cuda devices! Setting this to False
+Trainer 'nnUNetTrainer_dataSubsets_Seed42' not found in nnunetv2.training.nnUNetTrainer.
+Searching in external trainer paths from environment variable 'nnUNet_extTrainer'...
+Searching in: /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers
+Searching for class nnUNetTrainer_dataSubsets_Seed42 in folder /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers with current module None
+  Inspecting module: nnUNetTrainer_dataSubsets_Seed42
+Found class nnUNetTrainer_dataSubsets_Seed42 in nnUNetTrainer_dataSubsets_Seed42
+Using trainer 'nnUNetTrainer_dataSubsets_Seed42' from: /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers
+Warmed latency: 1 images, 1 measurements; median=3.7216s, p95=3.7216s
+Batch repeat 1: 13.035s / 1 images

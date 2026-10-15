@@ -3,8 +3,8 @@
 Run from the repository root with the existing environment:
 
 ```sh
-.venv/bin/python -B -m unittest analysis.05_prediction_efficiency.model_footprint.test_model_footprint
-.venv/bin/python -B analysis/05_prediction_efficiency/model_footprint/model_footprint.py
+.venv/bin/python -B -m unittest analysis.compute_efficiency.model_footprint.test_model_footprint
+.venv/bin/python -B analysis/compute_efficiency/model_footprint/model_footprint.py
 ```
 
 The default archive is `archives/02_data_efficiency`. The CLI verifies all 40 best/final checkpoints (four pools × five folds × two checkpoints) and writes `model_footprint.csv`, `.json`, and `.md` beside the script. Reports are regenerated only after verification; `--output-dir` selects another location. Outputs inside archives, linked report files, and existing retained-export files are rejected.
@@ -16,9 +16,9 @@ Parameter totals use unique `network.parameters()`, with buffers counted separat
 By default all temporary weights files are deleted. To retain one verified artifact, defaulting to pool 588 / fold 4 / final:
 
 ```sh
-.venv/bin/python -B analysis/05_prediction_efficiency/model_footprint/model_footprint.py \
-  --output-dir analysis/05_prediction_efficiency/model_footprint/retained_report \
-  --export-dir analysis/05_prediction_efficiency/model_footprint/fp16_export \
+.venv/bin/python -B analysis/compute_efficiency/model_footprint/model_footprint.py \
+  --output-dir analysis/compute_efficiency/model_footprint/retained_report \
+  --export-dir analysis/compute_efficiency/model_footprint/fp16_export \
   --export-pool 588 --export-fold 4 --export-checkpoint final
 ```
 
