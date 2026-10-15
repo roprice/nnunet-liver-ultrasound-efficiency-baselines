@@ -48,7 +48,7 @@ Every run also times the first sorted image in an independent, process-cold CLI 
 
 Pixel-identical masks are not required, but any per-image decision/count discrepancy makes the runner fail **after writing the agreement reports**. Inspect those differences rather than silently accepting a new model/device result. Output-name, mask-format, dimension and label checks also fail on mismatch. Other failures preserve logs/settings; reruns require a new empty directory.
 
-Parent lifetime RSS includes all preloaded images and is labelled separately. Optional child-tree summed RSS excludes the benchmark parent, can count shared pages repeatedly and can miss short peaks; it is not MPS peak allocated memory. No Mac energy sensor is sampled: local energy is null, not zero or a TDP estimate. Training GPU energy and invoice attribution are handled by the [compute-cost tooling](../../analysis/02_data_efficiency/compute_cost/compute_cost_runbook.md); weights-only FP16 export is handled by the [footprint tooling](../../analysis/02_data_efficiency/model_footprint/model_footprint_runbook.md).
+Parent lifetime RSS includes all preloaded images and is labelled separately. Optional child-tree summed RSS excludes the benchmark parent, can count shared pages repeatedly and can miss short peaks; it is not MPS peak allocated memory. No Mac energy sensor is sampled: local energy is null, not zero or a TDP estimate. Training GPU energy and invoice attribution are handled by the [compute-cost tooling](../../analysis/05_prediction_efficiency/compute_cost/compute_cost_runbook.md); weights-only FP16 export is handled by the [footprint tooling](../../analysis/05_prediction_efficiency/model_footprint/model_footprint_runbook.md).
 
 ## Focused tests
 
