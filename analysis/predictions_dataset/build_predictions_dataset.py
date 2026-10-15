@@ -15,7 +15,7 @@ interpretation; those live in downstream analyses.
 This builder discovers prediction directories under each experiment archive in
 ``archives/`` and each amendment archive in ``archives_amendments/``.
 Experiment 02 includes nested best, final, and archived milestone predictions.
-Experiment 03 includes nested best and final predictions.
+Experiments 03 and 04 (Gaussian noise) include nested best and final predictions.
 Each prediction directory contributes one row per evaluated image.
 """
 
@@ -239,7 +239,9 @@ def component_centroid_matches(reference, retained_prediction, diameter_factor):
 def dataset_directory(experiment_archive):
     """Return the dataset containing the experiment's evaluation cohort."""
     raw_root = experiment_archive / "nnUNet_raw"
-    if experiment_archive.name in {"02_data_efficiency", "03_augmentation_ablation"}:
+    if experiment_archive.name in {
+            "02_data_efficiency", "03_augmentation_ablation", "04_gaussian_noise_ablation"
+        }:
         dataset = raw_root / "Dataset001_AUL"
         if not dataset.is_dir():
             raise InputValidationError(f"Missing test dataset: {relative_path(dataset)}")
@@ -649,6 +651,59 @@ def discover_augmentation_ablation_configurations(experiment_archive):
     return configurations
 
 
+def discover_gaussian_noise_ablation_configurations(experiment_archive):
+    """Discover primary Gaussian-noise test runs using checkpoint metadata."""
+    logs_root = experiment_archive / "repo/logs/04_gaussian_noise_ablation"
+    configurations = []
+    seed = 42
+    trainer = "nnUNetTrainer_gaussianNoiseAugmentation"
+    for prediction_root, checkpoint in (("predictions_best", "best"), ("predictions", "final")):
+        for directory in sorted((logs_root / prediction_root).glob("size*/fold*")):
+            if not directory.is_dir():
+                continue
+            size_match = re.fullmatch(r"size([0-9]+)", directory.parent.name)
+            fold_match = re.fullmatch(r"fold([0-9]+)", directory.name)
+            if not size_match or not fold_match:
+                raise InputValidationError(f"Unrecognized prediction path: {relative_path(directory)}")
+            size = int(size_match.group(1))
+            fold = int(fold_match.group(1))
+            if size != 588:
+                raise InputValidationError(f"Unknown Gaussian-noise-ablation training size: {size}")
+            if fold not in range(5):
+                raise InputValidationError(f"Unknown Gaussian-noise-ablation fold: {fold}")
+            metadata_path = (
+                experiment_archive / "nnUNet_results/Dataset001_AUL"
+                / f"{trainer}__nnUNetPlans__2d" / f"fold_{fold}"
+                / "checkpoint_metadata.json"
+            )
+            if not metadata_path.is_file():
+                raise InputValidationError(f"Missing checkpoint metadata: {relative_path(metadata_path)}")
+            with open(metadata_path) as file:
+                metadata = json.load(file)
+            record = metadata.get("checkpoints", {}).get(f"checkpoint_{checkpoint}.pth", {})
+            epoch = record.get("current_epoch")
+            if (record.get("fold") != fold or record.get("trainer_name") != trainer
+                    or record.get("dataset_size") != size
+                    or type(epoch) is not int or epoch <= 0):
+                raise InputValidationError(f"Invalid {checkpoint} metadata: {relative_path(metadata_path)}")
+            configurations.append({
+                "experiment_name": "gaussian_noise_ablation",
+                "evaluation_split": "test",
+                "configuration_id": (
+                    f"predictions_gaussian_noise_ablation_{size}images_seed{seed}_fold{fold}_{checkpoint}"
+                ),
+                "training_set_size": size,
+                "seed": seed,
+                "fold": fold,
+                "epoch": epoch,
+                "checkpoint": checkpoint,
+                "encoder": read_encoder(directory),
+                "experiment_archive": experiment_archive,
+                "prediction_directory": directory,
+            })
+    return configurations
+
+
 def discover_configurations():
     """Discover top-level and supported nested prediction directories across experiment
     archives and amendment archives (dry-run archives and archives without
@@ -666,6 +721,8 @@ def discover_configurations():
             configurations.extend(discover_data_efficiency_configurations(experiment_archive))
         elif experiment_archive.name == "03_augmentation_ablation":
             configurations.extend(discover_augmentation_ablation_configurations(experiment_archive))
+        elif experiment_archive.name == "04_gaussian_noise_ablation":
+            configurations.extend(discover_gaussian_noise_ablation_configurations(experiment_archive))
         for directory in sorted(results_root.glob("predictions_*")):
             if not directory.is_dir():
                 continue

@@ -297,7 +297,176 @@ class AugmentationAblationDiscoveryTests(ArchiveFixtureTests):
             builder.discover_augmentation_ablation_configurations(self.archive)
 
 
+class GaussianNoiseAblationDiscoveryTests(ArchiveFixtureTests):
+    def setUp(self):
+        super().setUp()
+        self.archive = self.project_root / "archives/04_gaussian_noise_ablation"
+        self.archive.mkdir()
+
+    def prediction_directory(self, size, fold, checkpoint):
+        root = "predictions" if checkpoint == "final" else f"predictions_{checkpoint}"
+        directory = (
+            self.archive / "repo/logs/04_gaussian_noise_ablation" / root
+            / f"size{size}" / f"fold{fold}"
+        )
+        self.write_json(directory / "plans.json", {
+            "configurations": {
+                "2d": {"architecture": {"network_class_name": "example.network.PlainConvUNet"}}
+            }
+        })
+        return directory
+
+    def metadata_path(self, fold):
+        return (
+            self.archive / "nnUNet_results/Dataset001_AUL"
+            / "nnUNetTrainer_gaussianNoiseAugmentation__nnUNetPlans__2d"
+            / f"fold_{fold}" / "checkpoint_metadata.json"
+        )
+
+    def checkpoint_record(self, fold, epoch):
+        return {
+            "dataset_size": 588,
+            "fold": fold,
+            "trainer_name": "nnUNetTrainer_gaussianNoiseAugmentation",
+            "current_epoch": epoch,
+        }
+
+    def test_discovery_includes_only_primary_best_and_final_runs(self):
+        expected = {}
+        for fold in range(5):
+            records = {}
+            for checkpoint, epoch in (("best", 140 + fold), ("final", 150)):
+                directory = self.prediction_directory(588, fold, checkpoint)
+                records[f"checkpoint_{checkpoint}.pth"] = self.checkpoint_record(fold, epoch)
+                configuration_id = (
+                    f"predictions_gaussian_noise_ablation_588images_seed42_fold{fold}_{checkpoint}"
+                )
+                expected[configuration_id] = {
+                    "experiment_name": "gaussian_noise_ablation",
+                    "evaluation_split": "test",
+                    "configuration_id": configuration_id,
+                    "training_set_size": 588,
+                    "seed": 42,
+                    "fold": fold,
+                    "epoch": epoch,
+                    "checkpoint": checkpoint,
+                    "encoder": "PlainConvUNet",
+                    "experiment_archive": self.archive,
+                    "prediction_directory": directory,
+                }
+                benchmark_root = "inference_best" if checkpoint == "best" else "inference"
+                benchmark = (
+                    self.archive / "repo/logs/04_gaussian_noise_ablation" / benchmark_root
+                    / "size588" / f"fold{fold}"
+                    / f"predictions_cuda_seed42_fold{fold}_repeat1"
+                )
+                benchmark.mkdir(parents=True)
+            metadata_path = self.metadata_path(fold)
+            self.write_json(metadata_path, {"checkpoints": records})
+            (metadata_path.parent / "validation").mkdir()
+        self.prediction_directory(588, 0, "epoch25")
+
+        with patch.object(builder, "ARCHIVES_DIR", self.project_root / "archives"), patch.object(
+            builder, "AMENDMENTS_DIR", self.project_root / "archives_amendments"
+        ):
+            configurations = builder.discover_configurations()
+
+        self.assertEqual(len(configurations), 10)
+        ids = [config["configuration_id"] for config in configurations]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual({config["configuration_id"]: config for config in configurations}, expected)
+
+    def test_missing_metadata_is_rejected_for_each_checkpoint(self):
+        for checkpoint in ("best", "final"):
+            with self.subTest(checkpoint=checkpoint):
+                directory = self.prediction_directory(588, 0, checkpoint)
+                with self.assertRaisesRegex(builder.InputValidationError, "Missing checkpoint metadata"):
+                    builder.discover_gaussian_noise_ablation_configurations(self.archive)
+                (directory / "plans.json").unlink()
+                directory.rmdir()
+
+    def test_invalid_metadata_is_rejected_for_each_checkpoint(self):
+        invalid_records = [
+            ("wrong size", {"dataset_size": 74}),
+            ("wrong fold", {"fold": 1}),
+            ("wrong trainer", {"trainer_name": "nnUNetTrainer_brightnessAugmentation"}),
+            ("zero epoch", {"current_epoch": 0}),
+            ("negative epoch", {"current_epoch": -1}),
+            ("boolean epoch", {"current_epoch": True}),
+            ("float epoch", {"current_epoch": 12.0}),
+            ("string epoch", {"current_epoch": "12"}),
+            ("null epoch", {"current_epoch": None}),
+        ]
+        for checkpoint in ("best", "final"):
+            directory = self.prediction_directory(588, 0, checkpoint)
+            valid_record = self.checkpoint_record(0, 12)
+            invalid_metadata = []
+            for name, changes in invalid_records:
+                invalid_metadata.append((name, {
+                    "checkpoints": {f"checkpoint_{checkpoint}.pth": {**valid_record, **changes}}
+                }))
+            for field in valid_record:
+                record = valid_record.copy()
+                del record[field]
+                invalid_metadata.append((f"missing {field}", {
+                    "checkpoints": {f"checkpoint_{checkpoint}.pth": record}
+                }))
+            other_checkpoint = "final" if checkpoint == "best" else "best"
+            invalid_metadata.extend([
+                ("missing checkpoints", {}),
+                ("missing checkpoint", {"checkpoints": {}}),
+                ("only other checkpoint", {
+                    "checkpoints": {f"checkpoint_{other_checkpoint}.pth": valid_record}
+                }),
+            ])
+            for name, metadata in invalid_metadata:
+                with self.subTest(checkpoint=checkpoint, metadata=name):
+                    self.write_json(self.metadata_path(0), metadata)
+                    with self.assertRaisesRegex(builder.InputValidationError, f"Invalid {checkpoint} metadata"):
+                        builder.discover_gaussian_noise_ablation_configurations(self.archive)
+            (directory / "plans.json").unlink()
+            directory.rmdir()
+
+    def test_unsupported_training_sizes_are_rejected(self):
+        for size in (74, 147, 294):
+            for checkpoint in ("best", "final"):
+                with self.subTest(size=size, checkpoint=checkpoint):
+                    directory = self.prediction_directory(size, 0, checkpoint)
+                    with self.assertRaisesRegex(
+                        builder.InputValidationError, "Unknown Gaussian-noise-ablation training size"
+                    ):
+                        builder.discover_gaussian_noise_ablation_configurations(self.archive)
+                    (directory / "plans.json").unlink()
+                    directory.rmdir()
+
+    def test_unsupported_fold_is_rejected(self):
+        self.prediction_directory(588, 5, "best")
+        with self.assertRaisesRegex(builder.InputValidationError, "Unknown Gaussian-noise-ablation fold"):
+            builder.discover_gaussian_noise_ablation_configurations(self.archive)
+
+    def test_malformed_prediction_paths_are_rejected(self):
+        for size, fold in (("invalid", 0), (588, "invalid")):
+            with self.subTest(size=size, fold=fold):
+                directory = self.prediction_directory(size, fold, "best")
+                with self.assertRaisesRegex(builder.InputValidationError, "Unrecognized prediction path"):
+                    builder.discover_gaussian_noise_ablation_configurations(self.archive)
+                (directory / "plans.json").unlink()
+                directory.rmdir()
+
+
 class DatasetDirectoryTests(ArchiveFixtureTests):
+    def test_gaussian_noise_ablation_selects_primary_test_dataset(self):
+        archive = self.project_root / "archives/04_gaussian_noise_ablation"
+        raw_root = archive / "nnUNet_raw"
+        for dataset in ("Dataset001_AUL", "Dataset004_AUL_074"):
+            (raw_root / dataset).mkdir(parents=True)
+        self.assertEqual(builder.dataset_directory(archive), raw_root / "Dataset001_AUL")
+
+    def test_gaussian_noise_ablation_requires_primary_test_dataset(self):
+        archive = self.project_root / "archives/04_gaussian_noise_ablation"
+        (archive / "nnUNet_raw/Dataset004_AUL_074").mkdir(parents=True)
+        with self.assertRaisesRegex(builder.InputValidationError, "Missing test dataset"):
+            builder.dataset_directory(archive)
     def test_augmentation_ablation_selects_primary_test_dataset_among_subsets(self):
         archive = self.project_root / "archives/03_augmentation_ablation"
         raw_root = archive / "nnUNet_raw"

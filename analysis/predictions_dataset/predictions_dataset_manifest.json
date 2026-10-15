@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "snapshot_id": "cbed1239c12a",
-  "built_at_utc": "2026-10-14T15:29:17+00:00",
-  "git_sha": "94bcab67e88020d3eb4168da998dfe2c7608fa4a",
+  "snapshot_id": "b63d4754f920",
+  "built_at_utc": "2026-10-15T04:55:49+00:00",
+  "git_sha": "13fe5a5cbc5e526b77183be4bc223a9daec526a0",
   "configurations": [
     {
       "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold0_best",
@@ -642,6 +642,46 @@
     },
     {
       "configuration_id": "predictions_data_efficiency_74images_seed42_fold4_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold0_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold0_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold1_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold1_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold2_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold2_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold3_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold3_final",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold4_best",
+      "row_count": 147
+    },
+    {
+      "configuration_id": "predictions_gaussian_noise_ablation_588images_seed42_fold4_final",
       "row_count": 147
     },
     {
