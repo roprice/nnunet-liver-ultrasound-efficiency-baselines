@@ -70,29 +70,32 @@ def summarize(rows, manifest, snapshot):
     return results, counts
 
 
-def curves(ax, x, results, indices):
-    for index in indices:
-        label, _, color, marker, style = SERIES[index]
+def bars(ax, results, indices):
+    positions = list(range(len(rates.SIZES)))
+    width = .75 / len(indices)
+    for offset, index in enumerate(indices):
+        label, _, color, *_ = SERIES[index]
         means = [r["stats"][index][0] for r in results]
         sds = [r["stats"][index][1] for r in results]
-        ax.plot(x, means, label=label, color=color, marker=marker, linestyle=style, linewidth=2)
-        ax.fill_between(x, [m-s for m, s in zip(means, sds)],
-                        [m+s for m, s in zip(means, sds)], color=color, alpha=.2, linewidth=0)
-    ax.set_xticks(x)
+        centers = [x + (offset - (len(indices) - 1) / 2) * width for x in positions]
+        ax.bar(centers, means, width=width, yerr=sds, capsize=4,
+               label=label, color=color)
+    ax.set_xticks(positions, labels=[str(size) for size in rates.SIZES])
+    ax.set_axisbelow(True)
     ax.grid(axis="y", alpha=.25)
 
 
 def charts(results):
     final = [results["final", size] for size in rates.SIZES]
     fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True, layout="constrained")
-    curves(axes[0], rates.SIZES, final, range(3))
-    curves(axes[1], rates.SIZES, final, [3])
+    bars(axes[0], final, range(3))
+    bars(axes[1], final, [3])
     axes[0].set(ylabel="Malignant detection rate", ylim=(0, 1.05),
                 title="Augmentation ablation: final checkpoint (150 epochs)")
     axes[1].set(ylabel="FP per evaluated image", xlabel="Training-pool size (images)", ylim=(0, 1.05))
-    for ax in axes:
-        ax.legend(fontsize=9)
-    fig.savefig(HERE / "augmentation_ablation_report.png", dpi=200)
+    axes[0].legend(fontsize=9, loc="lower right")
+    axes[1].legend(fontsize=9, loc="upper right")
+    fig.savefig(HERE / "augmentation_ablation_report_barchart.png", dpi=200)
     plt.close(fig)
 
 
@@ -113,11 +116,11 @@ def main():
     lines = ["# Augmentation-ablation report", "",
              f"Dataset snapshot `{data.snapshot_id}` (schema {manifest['schema_version']}); test split, seed 42, five fold models per training-pool size.", "",
              f"With brightness-augmentation probability increased from 0.15 to 0.5, models trained on pools of 74 and 588 images are evaluated on the same {sum(counts.values())} test images for malignant detection and false positives, reported as mean ± sample SD across five fold models.", "",
-             "## Final150 training-pool sweep", "",
+             "## Final checkpoints", "",
              "Fixed 150-epoch checkpoints provide the main size comparison. No winning-size selection rule is imposed.", "",
-             "![Final150 aligned detection and FP panels](augmentation_ablation_report.png)", ""]
+             "![Final checkpoint detection and FP bar charts with sample-SD error bars](augmentation_ablation_report_barchart.png)", ""]
     lines.extend(table(results, "final"))
-    lines.extend(["", "## Best checkpoints (separate descriptive comparison)", "",
+    lines.extend(["", "## Best checkpoints", "",
                   "Best checkpoints are selected by training-time validation, with potentially different epochs; they are not fixed-budget substitutes for final150.", ""])
     lines.extend(table(results, "best"))
     lines.extend(["", "Best checkpoint epochs (folds 0–4): " + "; ".join(
