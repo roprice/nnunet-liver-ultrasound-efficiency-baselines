@@ -448,6 +448,7 @@ class EvidenceTests(TemporaryTests):
                                   poll_max_seconds=60, operation_timeout=60, instance_id='gpu-1',
                                   destination=self.directory / 'archive')
         with patch.object(controller, 'wait_for_runner'), \
+                patch.object(controller, 'confirm_instance_identity'), \
                 patch.object(controller, 'remote', side_effect=remote), \
                 patch.object(controller, 'invoke') as invoke, \
                 patch.object(controller, 'publish_archive') as publish:
@@ -464,6 +465,7 @@ class EvidenceTests(TemporaryTests):
         responses = {'identity': {'hostname': 'gpu', 'ip': '203.0.113.1'},
                      'verify': 'verified', 'finish': 'summary\n', 'manifest': {'repo/file': 'hash'}}
         with patch.object(controller, 'wait_for_runner'), \
+                patch.object(controller, 'confirm_instance_identity'), \
                 patch.object(controller, 'remote', side_effect=lambda a, c, action, t: responses[action]), \
                 patch.object(controller, 'local_inventory', return_value={'repo/file': 'wrong'}), \
                 patch.object(controller, 'invoke') as invoke, \
@@ -472,6 +474,419 @@ class EvidenceTests(TemporaryTests):
                 controller.run(args)
             self.assertTrue(all(call.args[0][0] == 'rsync' for call in invoke.call_args_list))
             self.assertFalse(args.destination.exists())
+
+
+class ControllerTransportTests(unittest.TestCase):
+    def failure(self, command, returncode, stderr):
+        error = subprocess.CalledProcessError(returncode, command, stderr=stderr.encode())
+        with patch.object(controller.subprocess, 'run', side_effect=error):
+            with self.assertRaises(controller.CommandFailure) as raised:
+                controller.invoke(command, 20)
+        self.assertIsInstance(raised.exception, RuntimeError)
+        self.assertEqual(raised.exception.command, command)
+        self.assertEqual(raised.exception.returncode, returncode)
+        return raised.exception
+
+    def test_remote_retries_connection_reset_then_succeeds_with_defaults(self):
+        args = argparse.Namespace(ssh_target='root@gpu', ssh_timeout=20)
+        failure = self.failure(['ssh'], 255, 'Connection reset by peer')
+        with patch.object(controller, 'invoke', side_effect=[failure, b'{"status": "ok"}']) as invoke, \
+                patch.object(controller.time, 'sleep') as sleep:
+            self.assertEqual(controller.remote(args, {}, 'identity', 60), {'status': 'ok'})
+        self.assertEqual(invoke.call_count, 2)
+        self.assertEqual(invoke.call_args_list[0].args[0], invoke.call_args_list[1].args[0])
+        sleep.assert_called_once_with(5)
+
+    def test_remote_does_not_retry_auth_host_key_or_application_failures(self):
+        args = argparse.Namespace(ssh_target='root@gpu', ssh_timeout=20,
+                                  ssh_retries=3, retry_delay=5)
+        for returncode, stderr in (
+                (255, 'Permission denied (publickey).'),
+                (255, 'Host key verification failed.'),
+                (255, 'WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!'),
+                (1, 'ERROR: checkpoint missing'),
+                (1, 'Application failed: connection reset by peer')):
+            with self.subTest(returncode=returncode, stderr=stderr):
+                failure = self.failure(['ssh'], returncode, stderr)
+                with patch.object(controller, 'invoke', side_effect=failure) as invoke, \
+                        patch.object(controller.time, 'sleep') as sleep:
+                    with self.assertRaises(controller.CommandFailure) as raised:
+                        controller.remote(args, {}, 'verify', 60)
+                self.assertIs(raised.exception, failure)
+                invoke.assert_called_once()
+                sleep.assert_not_called()
+
+    def test_retry_transport_retries_transient_ssh_and_rsync_failures(self):
+        args = argparse.Namespace(ssh_retries=1, retry_delay=0.1)
+        for command, returncode, stderr in (
+                (['ssh'], 255, 'Broken pipe'),
+                (['ssh'], 255, 'Connection timed out'),
+                (['ssh'], 255, 'Network is unreachable'),
+                (['rsync'], 10, 'error in socket IO'),
+                (['rsync'], 12, 'error in rsync protocol data stream'),
+                (['rsync'], 30, 'timeout in data send/receive'),
+                (['rsync'], 35, 'timeout waiting for daemon connection')):
+            with self.subTest(command=command, returncode=returncode):
+                failure = self.failure(command, returncode, stderr)
+                operation = Mock(side_effect=[failure, b'done'])
+                with patch.object(controller.time, 'sleep') as sleep:
+                    self.assertEqual(controller.retry_transport(args, operation, 20), b'done')
+                self.assertEqual(operation.call_count, 2)
+                sleep.assert_called_once_with(0.1)
+
+    def test_retry_transport_does_not_retry_untyped_application_error(self):
+        args = argparse.Namespace(ssh_retries=3, retry_delay=5)
+        failure = RuntimeError('Connection reset by peer')
+        operation = Mock(side_effect=failure)
+        with patch.object(controller.time, 'sleep') as sleep:
+            with self.assertRaises(RuntimeError) as raised:
+                controller.retry_transport(args, operation, 20)
+        self.assertIs(raised.exception, failure)
+        operation.assert_called_once()
+        sleep.assert_not_called()
+
+    def test_retry_transport_respects_retry_limit(self):
+        args = argparse.Namespace(ssh_retries=1, retry_delay=0.1)
+        failure = self.failure(['ssh'], 255, 'Connection reset by peer')
+        operation = Mock(side_effect=failure)
+        with patch.object(controller.time, 'sleep') as sleep:
+            with self.assertRaises(controller.CommandFailure):
+                controller.retry_transport(args, operation, 20)
+        self.assertEqual(operation.call_count, 2)
+        sleep.assert_called_once_with(0.1)
+
+    def test_retry_deadline_bounds_sleep_and_remaining_operation_timeout(self):
+        args = argparse.Namespace(ssh_retries=10, retry_delay=2)
+        failure = self.failure(['ssh'], 255, 'Connection reset by peer')
+        clock = [100.0]
+        timeouts = []
+
+        def operation(remaining):
+            timeouts.append(remaining)
+            clock[0] += 1
+            raise failure
+
+        def sleep(seconds):
+            self.assertGreater(seconds, 0)
+            self.assertLessEqual(seconds, max(0, 105 - clock[0]))
+            clock[0] += seconds
+
+        with patch.object(controller.time, 'monotonic', side_effect=lambda: clock[0]), \
+                patch.object(controller.time, 'sleep', side_effect=sleep):
+            with self.assertRaises(RuntimeError):
+                controller.retry_transport(args, operation, 5)
+        self.assertEqual(timeouts, [5, 2])
+        self.assertLessEqual(clock[0], 105)
+
+
+class ControllerFinishTests(TemporaryTests):
+    def setUp(self):
+        super().setUp()
+        self.args = argparse.Namespace(
+            command='finish', ssh_target='root@gpu', remote_home='/gpu',
+            remote_repo='/gpu/repo', ssh_timeout=20, poll_interval=60,
+            poll_max_seconds=60, operation_timeout=60, instance_id='gpu-1',
+            destination=self.directory / 'archives/run')
+        self.config = {'repo': self.args.remote_repo, 'home': self.args.remote_home}
+        self.identity = {'hostname': 'gpu', 'ip': '203.0.113.1'}
+        self.manifest = {'repo/file': 'hash'}
+
+    def saved_archive(self):
+        self.args.destination.mkdir(parents=True)
+        self.completion = {
+            'instance_id': self.args.instance_id, 'ssh_target': self.args.ssh_target,
+            'remote_repo': self.args.remote_repo, 'remote_home': self.args.remote_home,
+            'connected_gpu_identity': self.identity, 'file_count': len(self.manifest),
+            'verified_at_utc': '2026-10-14T00:00:00+00:00', 'gpu_usage_summary': 'summary\n',
+        }
+        for filename, content in (
+                ('completion_manifest.json', self.completion),
+                ('remote_sha256_manifest.json', self.manifest),
+                ('local_sha256_manifest.json', self.manifest)):
+            controller.save_json(self.args.destination / filename, content)
+
+    def test_preflight_credential_failure_prevents_wait_copy_and_delete(self):
+        events = []
+
+        def identity(args, config, action, timeout):
+            events.append(action)
+            self.assertEqual(action, 'identity')
+            return self.identity
+
+        def confirm(args, connected_identity):
+            events.append('confirm')
+            self.assertEqual(connected_identity, self.identity)
+            raise RuntimeError('Verda credentials unavailable')
+
+        with patch.object(controller, 'remote', side_effect=identity), \
+                patch.object(controller, 'confirm_instance_identity', side_effect=confirm), \
+                patch.object(controller, 'wait_for_runner') as wait, \
+                patch.object(controller, 'prepare_staging') as staging, \
+                patch.object(controller, 'invoke') as invoke, \
+                patch.object(controller, 'publish_archive') as publish:
+            with self.assertRaisesRegex(RuntimeError, 'Verda credentials unavailable'):
+                controller.run(self.args)
+        self.assertEqual(events, ['identity', 'confirm'])
+        wait.assert_not_called()
+        staging.assert_not_called()
+        invoke.assert_not_called()
+        publish.assert_not_called()
+
+    def test_resume_finish_validates_published_archive_before_delete_without_copy(self):
+        self.saved_archive()
+        responses = {'identity': self.identity, 'manifest': self.manifest}
+        events = []
+        with patch.object(controller, 'local_inventory', return_value=self.manifest) as inventory, \
+                patch.object(controller, 'remote', side_effect=lambda a, c, action, t: responses[action]) as remote, \
+                patch.object(controller, 'confirm_instance_identity',
+                             side_effect=lambda *a: events.append('confirm')) as confirm, \
+                patch.object(controller, 'delete_instance',
+                             side_effect=lambda *a: events.append('delete')) as delete, \
+                patch.object(controller, 'invoke') as invoke, \
+                patch.object(controller, 'wait_for_runner') as wait, \
+                patch.object(controller, 'publish_archive') as publish:
+            controller.resume_finish(self.args, self.config, self.args.destination)
+        inventory.assert_called_once_with(self.args.destination, self.args.operation_timeout)
+        self.assertEqual({call.args[2] for call in remote.call_args_list}, {'identity', 'manifest'})
+        confirm.assert_called_once_with(self.args, self.identity)
+        delete.assert_called_once_with(self.args, self.args.destination)
+        self.assertEqual(events, ['confirm', 'delete'])
+        invoke.assert_not_called()
+        wait.assert_not_called()
+        publish.assert_not_called()
+
+    def test_resume_finish_rejects_mismatched_completion_fields(self):
+        self.saved_archive()
+        for field in ('instance_id', 'ssh_target', 'remote_repo', 'remote_home'):
+            with self.subTest(field=field):
+                controller.save_json(self.args.destination / 'completion_manifest.json',
+                                     {**self.completion, field: 'different'})
+                with patch.object(controller, 'local_inventory', return_value=self.manifest), \
+                        patch.object(controller, 'remote') as remote, \
+                        patch.object(controller, 'confirm_instance_identity') as confirm, \
+                        patch.object(controller, 'delete_instance') as delete, \
+                        patch.object(controller, 'invoke') as invoke:
+                    with self.assertRaises(RuntimeError):
+                        controller.resume_finish(self.args, self.config, self.args.destination)
+                remote.assert_not_called()
+                confirm.assert_not_called()
+                delete.assert_not_called()
+                invoke.assert_not_called()
+
+    def test_resume_finish_rejects_inventory_identity_manifest_and_credential_changes(self):
+        for changed in ('saved_local', 'saved_remote', 'local_inventory',
+                        'remote_identity', 'remote_manifest', 'credentials'):
+            with self.subTest(changed=changed):
+                if not self.args.destination.exists():
+                    self.saved_archive()
+                wrong = {'repo/file': 'changed'}
+                for name in ('local', 'remote'):
+                    manifest = wrong if changed == f'saved_{name}' else self.manifest
+                    controller.save_json(self.args.destination / f'{name}_sha256_manifest.json', manifest)
+                responses = {
+                    'identity': {**self.identity, 'ip': '203.0.113.2'}
+                    if changed == 'remote_identity' else self.identity,
+                    'manifest': wrong if changed == 'remote_manifest' else self.manifest,
+                }
+                with patch.object(controller, 'local_inventory',
+                                  return_value=wrong if changed == 'local_inventory' else self.manifest), \
+                        patch.object(controller, 'remote',
+                                     side_effect=lambda a, c, action, t: responses[action]), \
+                        patch.object(controller, 'confirm_instance_identity',
+                                     side_effect=RuntimeError('Credentials unavailable')
+                                     if changed == 'credentials' else None), \
+                        patch.object(controller, 'delete_instance') as delete, \
+                        patch.object(controller, 'invoke') as invoke:
+                    with self.assertRaises(RuntimeError):
+                        controller.resume_finish(self.args, self.config, self.args.destination)
+                delete.assert_not_called()
+                invoke.assert_not_called()
+
+    def test_run_resume_finish_skips_wait_and_copy_for_existing_destination(self):
+        self.saved_archive()
+        self.args.resume_finish = True
+        with patch.object(controller, 'resume_finish') as resume, \
+                patch.object(controller, 'wait_for_runner') as wait, \
+                patch.object(controller, 'remote') as remote, \
+                patch.object(controller, 'invoke') as invoke:
+            controller.run(self.args)
+        resume.assert_called_once_with(self.args, self.config, self.args.destination.resolve())
+        wait.assert_not_called()
+        remote.assert_not_called()
+        invoke.assert_not_called()
+
+    def check_full_finish_path(self, fail_delete=False):
+        events = []
+        content = b'archived evidence\n'
+        self.manifest = {f'{name}/evidence': controller.hashlib.sha256(content).hexdigest()
+                         for name in controller.SOURCES}
+        original_invoke = controller.invoke
+        original_inventory = controller.local_inventory
+        original_publish = controller.publish_archive
+        deletion_error = controller.CommandFailure(['verda', 'vm', 'delete'], 1, 'API unavailable')
+
+        def remote(args, config, action, timeout):
+            events.append(action)
+            return {'identity': self.identity, 'verify': 'verified',
+                    'finish': 'summary\n', 'manifest': self.manifest}[action]
+
+        def invoke(command, timeout, input_data=None):
+            if command[0] == 'rsync':
+                target = Path(command[-1])
+                events.append(f'copy:{target.name}')
+                (target / 'evidence').write_bytes(content)
+                return b''
+            if command[0] == 'verda':
+                if 'describe' in command:
+                    events.append('confirm')
+                    return json.dumps({'id': self.args.instance_id, **self.identity}).encode()
+                self.assertEqual(command, ['verda', 'vm', 'delete', self.args.instance_id, '--yes'])
+                events.append('delete')
+                self.assertTrue((self.args.destination / 'completion_manifest.json').is_file())
+                self.assertFalse((self.directory / 'archives_staging/run').exists())
+                if fail_delete:
+                    raise deletion_error
+                return b''
+            return original_invoke(command, timeout, input_data)
+
+        def inventory(destination, timeout):
+            events.append('local_inventory')
+            return original_inventory(destination, timeout)
+
+        def publish(staging, destination):
+            events.append('publish')
+            for filename in ('remote_sha256_manifest.json', 'local_sha256_manifest.json'):
+                self.assertEqual(json.loads((staging / filename).read_text()), self.manifest)
+            completion = json.loads((staging / 'completion_manifest.json').read_text())
+            self.assertEqual(completion['connected_gpu_identity'], self.identity)
+            self.assertEqual(completion['file_count'], len(self.manifest))
+            original_publish(staging, destination)
+
+        with patch.object(controller, 'remote', side_effect=remote), \
+                patch.object(controller, 'invoke', side_effect=invoke), \
+                patch.object(controller, 'wait_for_runner',
+                             side_effect=lambda *a: events.append('wait')) as wait, \
+                patch.object(controller, 'local_inventory', side_effect=inventory), \
+                patch.object(controller, 'publish_archive', side_effect=publish) as publication, \
+                patch('sys.stdout', new_callable=io.StringIO):
+            if fail_delete:
+                with self.assertRaisesRegex(RuntimeError, 'Archive is verified.*deletion failed') as raised:
+                    controller.run(self.args)
+                self.assertIs(raised.exception.__cause__, deletion_error)
+                self.assertIn(str(self.args.destination), str(raised.exception))
+            else:
+                controller.run(self.args)
+            self.assertEqual(events, [
+                'identity', 'confirm', 'wait', 'verify', 'finish',
+                *[f'copy:{name}' for name in controller.SOURCES],
+                'manifest', 'local_inventory', 'manifest', 'identity', 'confirm', 'publish', 'delete',
+            ])
+            self.assertEqual(controller.inventory({name: self.args.destination / name
+                                                   for name in controller.SOURCES}), self.manifest)
+            completion = json.loads((self.args.destination / 'completion_manifest.json').read_text())
+            for field in ('instance_id', 'ssh_target', 'remote_home', 'remote_repo'):
+                self.assertEqual(completion[field], getattr(self.args, field))
+            if fail_delete:
+                saved_files = {path.relative_to(self.args.destination): path.read_bytes()
+                               for path in self.args.destination.rglob('*') if path.is_file()}
+                events.clear()
+                fail_delete = False
+                controller.resume_finish(self.args, self.config, self.args.destination)
+                self.assertEqual(events, ['local_inventory', 'identity', 'confirm', 'manifest', 'delete'])
+                self.assertEqual(saved_files, {
+                    path.relative_to(self.args.destination): path.read_bytes()
+                    for path in self.args.destination.rglob('*') if path.is_file()})
+            wait.assert_called_once_with(self.args, self.config)
+            publication.assert_called_once()
+
+    def test_full_finish_preflights_then_copies_verifies_publishes_and_deletes(self):
+        self.check_full_finish_path()
+
+    def test_delete_failure_preserves_published_archive_and_resume_revalidates_without_copy(self):
+        self.check_full_finish_path(fail_delete=True)
+
+    def test_cli_resume_finish_flag(self):
+        argv = ['controller', 'finish', '--ssh-target', self.args.ssh_target,
+                '--remote-home', self.args.remote_home, '--remote-repo', self.args.remote_repo,
+                '--instance-id', self.args.instance_id, '--destination', str(self.args.destination)]
+        for flags, expected in (([], False), (['--resume-finish'], True)):
+            with self.subTest(flags=flags), patch.object(sys, 'argv', argv + flags), \
+                    patch.object(controller, 'run') as run:
+                controller.main()
+            self.assertEqual(run.call_args.args[0].resume_finish, expected)
+
+
+class RemoteDispatchTests(TemporaryTests):
+    def setUp(self):
+        super().setUp()
+        self.config = {'repo': str(self.directory / 'repo'), 'home': str(self.directory)}
+        self.encoded = controller.base64.urlsafe_b64encode(json.dumps(self.config).encode()).decode()
+
+    def test_verify_and_finish_hold_exclusive_lock_and_release_it(self):
+        import fcntl
+
+        lock = self.directory / '.gaussian_noise_ablation_finish.lock'
+        for action, target in (('verify', 'mark_complete'), ('finish', 'finish_remote')):
+            for fails in (False, True):
+                with self.subTest(action=action, fails=fails):
+                    def operation(config):
+                        self.assertEqual(config, self.config)
+                        with lock.open('a') as stream:
+                            with self.assertRaises(BlockingIOError):
+                                fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        if fails:
+                            raise RuntimeError('Operation failed')
+                        return 'done'
+
+                    with patch.object(controller, target, side_effect=operation) as dispatch:
+                        if fails:
+                            with self.assertRaisesRegex(RuntimeError, 'Operation failed'):
+                                controller.remote_dispatch(action, self.encoded)
+                        else:
+                            self.assertEqual(controller.remote_dispatch(action, self.encoded), 'done')
+                    dispatch.assert_called_once_with(self.config)
+                    with lock.open('a') as stream:
+                        fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        fcntl.flock(stream, fcntl.LOCK_UN)
+
+    def test_repeated_verify_and_finish_do_not_duplicate_events_or_change_summary(self):
+        record = Path(self.config['repo']) / controller.RECORD
+        record.mkdir(parents=True)
+        self.write_rows(str((record / 'gpu_events.csv').relative_to(self.directory)), [
+            {'event': 'recording_started', 'utc': '2026-10-14T00:00:00+00:00'},
+            {'event': 'experiment_started', 'utc': '2026-10-14T00:01:00+00:00'},
+        ])
+        self.write_rows(str((record / 'gpu_rate.csv').relative_to(self.directory)),
+                        [{'hourly_rate_usd': '2.00'}])
+
+        def record_event(repo, name):
+            self.assertEqual(repo, Path(self.config['repo']))
+            timestamps = {'experiment_complete': '2026-10-14T00:10:00+00:00',
+                          'recording_ended': '2026-10-14T01:00:00+00:00'}
+            with (record / 'gpu_events.csv').open('a', newline='') as stream:
+                csv.writer(stream).writerow([name, timestamps[name]])
+
+        def tmux(command, **kwargs):
+            self.assertEqual(command[0], 'tmux')
+            self.assertEqual(command[2:], ['-t', '=gpu_usage'])
+            return subprocess.CompletedProcess(command, 0 if kwargs.get('check') else 1)
+
+        with patch.object(controller, 'verify',
+                          side_effect=lambda config: controller.events_at(record)), \
+                patch.object(controller, 'record_event', side_effect=record_event) as event, \
+                patch.object(controller.subprocess, 'run', side_effect=tmux) as run:
+            for _ in range(2):
+                self.assertEqual(controller.remote_dispatch('verify', self.encoded), 'verified')
+            summary = controller.remote_dispatch('finish', self.encoded)
+            saved_events = (record / 'gpu_events.csv').read_bytes()
+            self.assertEqual(controller.remote_dispatch('finish', self.encoded), summary)
+        self.assertEqual(summary, 'Observed hours: 1.000\nEstimated cost at $2.00/hour: $2.00\n')
+        self.assertEqual((record / 'gpu_usage_summary.txt').read_text(), summary)
+        self.assertEqual((record / 'gpu_events.csv').read_bytes(), saved_events)
+        self.assertEqual([call.args[1] for call in event.call_args_list],
+                         ['experiment_complete', 'recording_ended'])
+        self.assertEqual([call.args[0][1] for call in run.call_args_list],
+                         ['has-session', 'kill-session', 'has-session'])
 
 
 class BenchmarkTests(TemporaryTests):

@@ -548,10 +548,12 @@ def remote_dispatch(action, encoded):
         return status(Path(config['repo']))
     if action == 'identity':
         return ssh_identity()
-    if action == 'verify':
-        return mark_complete(config)
-    if action == 'finish':
-        return finish_remote(config)
+    if action in ('verify', 'finish'):
+        import fcntl
+        lock = Path(config['home']) / '.gaussian_noise_ablation_finish.lock'
+        with lock.open('a') as stream:
+            fcntl.flock(stream, fcntl.LOCK_EX)
+            return mark_complete(config) if action == 'verify' else finish_remote(config)
     if action == 'manifest':
         verify(config)
         require('recording_ended' in events_at(Path(config['repo']) / RECORD), 'Recording not finished')
@@ -562,14 +564,56 @@ def remote_dispatch(action, encoded):
     raise RuntimeError(f'Unknown remote action: {action}')
 
 
+class CommandFailure(RuntimeError):
+    def __init__(self, command, returncode, stderr):
+        self.command = command
+        self.returncode = returncode
+        self.stderr = stderr
+        super().__init__(f'{command[0]} failed (exit {returncode}): {stderr}')
+
+
+def transient_transport_error(error):
+    if not isinstance(error, CommandFailure):
+        return False
+    message = error.stderr.lower()
+    if any(text in message for text in ('permission denied', 'host key verification failed',
+                                        'remote host identification has changed', 'bad configuration',
+                                        'could not resolve hostname')):
+        return False
+    if error.command[0] == 'rsync' and error.returncode in (10, 12, 30, 35):
+        return True
+    return error.command[0] in ('ssh', 'rsync') and error.returncode == 255 and any(
+        text in message for text in ('connection reset', 'broken pipe', 'connection timed out',
+                                    'connection refused', 'connection closed', 'no route to host',
+                                    'network is unreachable', 'timeout'))
+
+
+def retry_transport(args, operation, timeout):
+    deadline = time.monotonic() + timeout
+    retries = getattr(args, 'ssh_retries', 3)
+    for attempt in range(retries + 1):
+        remaining = deadline - time.monotonic()
+        require(remaining > 0, 'Transport retry deadline exceeded')
+        try:
+            return operation(remaining)
+        except CommandFailure as error:
+            if not transient_transport_error(error) or attempt == retries:
+                raise
+            delay = min(getattr(args, 'retry_delay', 5) * (2 ** attempt), 60)
+            require(deadline - time.monotonic() > delay, 'Transport retry deadline exceeded')
+            print(f'Transient transport failure; retry {attempt + 1}/{retries} in {delay}s: {error}',
+                  file=sys.stderr, flush=True)
+            time.sleep(delay)
+
+
 def invoke(command, timeout, input_data=None):
     try:
         result = subprocess.run(command, input=input_data, capture_output=True, timeout=timeout, check=True)
     except subprocess.TimeoutExpired as error:
         raise RuntimeError(f'Command timed out after {timeout}s: {command[0]}') from error
     except subprocess.CalledProcessError as error:
-        raise RuntimeError(f'{command[0]} failed (exit {error.returncode}): '
-                           f'{error.stderr.decode(errors="replace").strip()}') from error
+        raise CommandFailure(command, error.returncode,
+                             error.stderr.decode(errors="replace").strip()) from error
     return result.stdout
 
 
@@ -581,7 +625,9 @@ def ssh_args(args):
 
 def remote(args, config, action, timeout):
     encoded = base64.urlsafe_b64encode(json.dumps(config).encode()).decode()
-    response = invoke(ssh_args(args) + ['python3', '-', action, encoded], timeout, Path(__file__).read_bytes())
+    command = ssh_args(args) + ['python3', '-', action, encoded]
+    script = Path(__file__).read_bytes()
+    response = retry_transport(args, lambda remaining: invoke(command, remaining, script), timeout)
     return json.loads(response)
 
 
@@ -638,6 +684,37 @@ def publish_archive(staging, destination):
     staging.rename(destination)
 
 
+def delete_instance(args, destination):
+    try:
+        invoke(['verda', 'vm', 'delete', args.instance_id, '--yes'], args.operation_timeout)
+    except RuntimeError as error:
+        raise RuntimeError(
+            f'Archive is verified at {destination}, but deletion failed or its outcome is unknown: {error}'
+        ) from error
+    print(f'Deleted instance {args.instance_id}', flush=True)
+
+
+def resume_finish(args, config, destination):
+    require(destination.is_dir() and not destination.is_symlink(), 'Missing or linked published archive')
+    for name in ('completion_manifest.json', 'remote_sha256_manifest.json', 'local_sha256_manifest.json'):
+        required_file(destination / name)
+    completion = json.loads((destination / 'completion_manifest.json').read_text())
+    for field in ('instance_id', 'ssh_target', 'remote_home', 'remote_repo'):
+        require(completion.get(field) == getattr(args, field), f'Archive {field} differs from invocation')
+    saved = json.loads((destination / 'remote_sha256_manifest.json').read_text())
+    require(isinstance(saved, dict) and saved, 'Empty archived manifest')
+    require(json.loads((destination / 'local_sha256_manifest.json').read_text()) == saved,
+            'Archived SHA-256 manifests differ')
+    require(local_inventory(destination, args.operation_timeout) == saved,
+            'Published archive SHA-256 inventory differs')
+    identity = remote(args, config, 'identity', args.operation_timeout)
+    require(identity == completion.get('connected_gpu_identity'), 'GPU identity differs from archive')
+    confirm_instance_identity(args, identity)
+    require(remote(args, config, 'manifest', args.operation_timeout) == saved,
+            'GPU files changed since archive publication')
+    delete_instance(args, destination)
+
+
 def run(args):
     require(re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9._-]*@[A-Za-z0-9][A-Za-z0-9._-]*', args.ssh_target),
             'SSH target must be user@host without shell metacharacters')
@@ -650,16 +727,23 @@ def run(args):
     require(all(value > 0 for value in (args.ssh_timeout, args.poll_interval,
                                        args.poll_max_seconds, args.operation_timeout)),
             'All timeouts and intervals must be positive')
+    require(getattr(args, 'ssh_retries', 3) >= 0 and getattr(args, 'retry_delay', 5) > 0,
+            'SSH retries must be nonnegative and retry delay must be positive')
     config = {'repo': args.remote_repo, 'home': args.remote_home}
     if args.command == 'finish':
         require(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', args.instance_id), 'Invalid Verda instance ID')
-        check_destination(args.destination)
+        require(not args.destination.is_symlink(), 'Destination must not be a symlink')
+        if not getattr(args, 'resume_finish', False):
+            check_destination(args.destination)
         destination = args.destination.resolve()
         require(not any(destination.is_relative_to(root) for root in source_paths(config).values()),
                 'Destination overlaps source')
-    wait_for_runner(args, config)
-    if args.command == 'finish':
+        if getattr(args, 'resume_finish', False):
+            resume_finish(args, config, destination)
+            return
         initial_identity = remote(args, config, 'identity', args.operation_timeout)
+        confirm_instance_identity(args, initial_identity)
+    wait_for_runner(args, config)
     print(remote(args, config, 'verify', args.operation_timeout), flush=True)
     if args.command == 'verify':
         return
@@ -674,8 +758,9 @@ def run(args):
         target.mkdir(exist_ok=True)
         ssh_command = ' '.join(shlex.quote(item) for item in ssh_args(args)[:-1])
         source = f'{args.ssh_target}:{shlex.quote(str(root) + "/")}'
-        invoke(['rsync', '-a', f'--timeout={args.ssh_timeout + 60}', '-e', ssh_command,
-                '--', source, str(target) + '/'], args.operation_timeout)
+        command = ['rsync', '-a', f'--timeout={args.ssh_timeout + 60}', '-e', ssh_command,
+                   '--', source, str(target) + '/']
+        retry_transport(args, lambda remaining: invoke(command, remaining), args.operation_timeout)
     remote_manifest = remote(args, config, 'manifest', args.operation_timeout)
     require(isinstance(remote_manifest, dict) and remote_manifest, 'Empty remote manifest')
     save_json(staging / 'remote_sha256_manifest.json', remote_manifest)
@@ -698,8 +783,7 @@ def run(args):
             'Could not persist completion manifest')
     publish_archive(staging, destination)
     print(f'Local copy verified: {len(local_manifest)} files. Deleting {args.instance_id}...', flush=True)
-    invoke(['verda', 'vm', 'delete', args.instance_id, '--yes'], args.operation_timeout)
-    print(f'Deleted instance {args.instance_id}', flush=True)
+    delete_instance(args, destination)
 
 
 def main():
@@ -717,9 +801,13 @@ def main():
         sub.add_argument('--poll-interval', type=int, default=60)
         sub.add_argument('--poll-max-seconds', type=int, default=172800)
         sub.add_argument('--operation-timeout', type=int, default=21600)
+        sub.add_argument('--ssh-retries', type=int, default=3, help='Retries per transient transport failure')
+        sub.add_argument('--retry-delay', type=float, default=5, help='Initial retry backoff in seconds')
         if name == 'finish':
             sub.add_argument('--instance-id', required=True, help='Verda VM ID; hostname and IP must match SSH')
-            sub.add_argument('--destination', type=Path, required=True, help='New or empty CPU backup directory')
+            sub.add_argument('--destination', type=Path, required=True, help='CPU backup directory')
+            sub.add_argument('--resume-finish', action='store_true',
+                             help='Reverify a published archive and retry deletion without recopying')
     args = parser.parse_args()
     try:
         if args.command == 'verify-local':
@@ -728,7 +816,7 @@ def main():
         else:
             run(args)
     except (RuntimeError, OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
-        parser.exit(1, f'ERROR: {error}\nGPU instance was not deleted by this invocation.\n')
+        parser.exit(1, f'ERROR: {error}\nAutomatic completion stopped; VM deletion is not confirmed.\n')
 
 
 if __name__ == '__main__':

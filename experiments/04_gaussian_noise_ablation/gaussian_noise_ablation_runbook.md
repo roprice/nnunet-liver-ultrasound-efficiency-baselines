@@ -319,6 +319,8 @@ python3 -B experiments/04_gaussian_noise_ablation/gaussian_noise_ablation_runner
   --destination archives/04_gaussian_noise_ablation
 ```
 
-  The controller waits for runner exit status `0`, verifies the experiment outputs, finishes recording, copies into `archives_staging/`, SHA-256-verifies the copy, confirms the GPU's identity, saves a completion manifest, publishes the immutable archive, and deletes the instance. No manual completion approval is required. Any failed check prevents publication and deletion.
+  The controller checks Verda credentials and the GPU's identity before waiting for runner exit status `0`, verifies the experiment outputs, finishes recording, copies into `archives_staging/`, SHA-256-verifies the copy, confirms the GPU's identity again, saves a completion manifest, publishes the immutable archive, and deletes the instance. No manual completion approval is required. Transient SSH and rsync failures receive up to three retries with backoff within the existing timeout; authentication, host-key, and verification failures stop immediately. Adjust retries with `--ssh-retries` and `--retry-delay`.
+
+  If interrupted before publication, rerun the same command to reuse staging. If deletion fails after publication, rerun with `--resume-finish` added. This rechecks both saved manifests, the local archive, the remote files, and the GPU's identity without copying or overwriting the archive. If a delete response is lost, its outcome is unknown; resume requires the VM to remain reachable and will not assume it was deleted.
   
   The deletion command has no volume-retention option. However, as of October 2026 deleted volumes on Verda can be "recovered from the trash" within 96 hours.
