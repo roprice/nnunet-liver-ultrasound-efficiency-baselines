@@ -1,0 +1,2 @@
+seed,fold,checkpoint,device,latency_repeats,model_load_seconds,preprocessing_seconds,warmup_seconds,parent_process_high_water_rss_mib,n_images,n_measurements,mean_seconds,median_seconds,stdev_seconds,p25_seconds,p75_seconds,p95_seconds,min_seconds,max_seconds
+42,4,checkpoint_final.pth,cpu,1,2.562598,2.262466,22.634769,3672.984375,147,147,8.700909,3.812162,5.492850,3.741182,14.860303,15.000152,3.669198,15.294443

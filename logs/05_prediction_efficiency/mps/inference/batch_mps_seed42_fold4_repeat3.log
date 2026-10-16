@@ -1,0 +1,756 @@
+/Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/.venv/lib/python3.14/site-packages/torch/jit/_script.py:1643: FutureWarning: `torch.jit.interface` is deprecated. Please use `torch.compile` instead.
+  warnings.warn(
+
+#######################################################################
+Please cite the following paper when using nnU-Net:
+Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211.
+#######################################################################
+
+perform_everything_on_device=True is only supported for cuda devices! Setting this to False
+Trainer 'nnUNetTrainer_dataSubsets_Seed42' not found in nnunetv2.training.nnUNetTrainer.
+Searching in external trainer paths from environment variable 'nnUNet_extTrainer'...
+Searching in: /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers
+Searching for class nnUNetTrainer_dataSubsets_Seed42 in folder /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers with current module None
+  Inspecting module: nnUNetTrainer_dataSubsets_Seed42
+Found class nnUNetTrainer_dataSubsets_Seed42 in nnUNetTrainer_dataSubsets_Seed42
+Using trainer 'nnUNetTrainer_dataSubsets_Seed42' from: /Users/rowin/Projects/AI cancer detection program/6. baselines-study-v3_Sep-27-2026/experiments/02_data_efficiency/custom_trainers
+There are 147 cases in the source folder
+I am process 0 out of 1 (max process ID is 0, we start counting with 0!)
+There are 147 cases that I would like to predict
+
+Predicting liver_0589:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0589
+
+Predicting liver_0590:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0590
+
+Predicting liver_0591:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0591
+
+Predicting liver_0592:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0592
+
+Predicting liver_0593:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0593
+
+Predicting liver_0594:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0594
+
+Predicting liver_0595:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0595
+
+Predicting liver_0596:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0596
+
+Predicting liver_0597:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0597
+
+Predicting liver_0598:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0598
+
+Predicting liver_0599:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0599
+
+Predicting liver_0600:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0600
+
+Predicting liver_0601:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0601
+
+Predicting liver_0602:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0602
+
+Predicting liver_0603:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0603
+
+Predicting liver_0604:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0604
+
+Predicting liver_0605:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0605
+
+Predicting liver_0606:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0606
+
+Predicting liver_0607:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0607
+
+Predicting liver_0608:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0608
+
+Predicting liver_0609:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0609
+
+Predicting liver_0610:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0610
+
+Predicting liver_0611:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0611
+
+Predicting liver_0612:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0612
+
+Predicting liver_0613:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0613
+
+Predicting liver_0614:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0614
+
+Predicting liver_0615:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0615
+
+Predicting liver_0616:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0616
+
+Predicting liver_0617:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0617
+
+Predicting liver_0618:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0618
+
+Predicting liver_0619:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0619
+
+Predicting liver_0620:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0620
+
+Predicting liver_0621:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0621
+
+Predicting liver_0622:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0622
+
+Predicting liver_0623:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0623
+
+Predicting liver_0624:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0624
+
+Predicting liver_0625:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0625
+
+Predicting liver_0626:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0626
+
+Predicting liver_0627:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0627
+
+Predicting liver_0628:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0628
+
+Predicting liver_0629:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0629
+
+Predicting liver_0630:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0630
+
+Predicting liver_0631:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0631
+
+Predicting liver_0632:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0632
+
+Predicting liver_0633:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0633
+
+Predicting liver_0634:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0634
+
+Predicting liver_0635:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0635
+
+Predicting liver_0636:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0636
+
+Predicting liver_0637:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0637
+
+Predicting liver_0638:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0638
+
+Predicting liver_0639:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0639
+
+Predicting liver_0640:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0640
+
+Predicting liver_0641:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0641
+
+Predicting liver_0642:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0642
+
+Predicting liver_0643:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0643
+
+Predicting liver_0644:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0644
+
+Predicting liver_0645:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0645
+
+Predicting liver_0646:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0646
+
+Predicting liver_0647:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0647
+
+Predicting liver_0648:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0648
+
+Predicting liver_0649:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0649
+
+Predicting liver_0650:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0650
+
+Predicting liver_0651:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0651
+
+Predicting liver_0652:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0652
+
+Predicting liver_0653:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0653
+
+Predicting liver_0654:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0654
+
+Predicting liver_0655:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0655
+
+Predicting liver_0656:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0656
+
+Predicting liver_0657:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0657
+
+Predicting liver_0658:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0658
+
+Predicting liver_0659:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0659
+
+Predicting liver_0660:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0660
+
+Predicting liver_0661:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0661
+
+Predicting liver_0662:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0662
+
+Predicting liver_0663:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0663
+
+Predicting liver_0664:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0664
+
+Predicting liver_0665:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0665
+
+Predicting liver_0666:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0666
+
+Predicting liver_0667:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0667
+
+Predicting liver_0668:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0668
+
+Predicting liver_0669:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0669
+
+Predicting liver_0670:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0670
+
+Predicting liver_0671:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0671
+
+Predicting liver_0672:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0672
+
+Predicting liver_0673:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0673
+
+Predicting liver_0674:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0674
+
+Predicting liver_0675:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0675
+
+Predicting liver_0676:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0676
+
+Predicting liver_0677:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0677
+
+Predicting liver_0678:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0678
+
+Predicting liver_0679:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0679
+
+Predicting liver_0680:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0680
+
+Predicting liver_0681:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0681
+
+Predicting liver_0682:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0682
+
+Predicting liver_0683:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0683
+
+Predicting liver_0684:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0684
+
+Predicting liver_0685:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0685
+
+Predicting liver_0686:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0686
+
+Predicting liver_0687:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0687
+
+Predicting liver_0688:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0688
+
+Predicting liver_0689:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0689
+
+Predicting liver_0690:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0690
+
+Predicting liver_0691:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0691
+
+Predicting liver_0692:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0692
+
+Predicting liver_0693:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0693
+
+Predicting liver_0694:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0694
+
+Predicting liver_0695:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0695
+
+Predicting liver_0696:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0696
+
+Predicting liver_0697:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0697
+
+Predicting liver_0698:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0698
+
+Predicting liver_0699:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0699
+
+Predicting liver_0700:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0700
+
+Predicting liver_0701:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0701
+
+Predicting liver_0702:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0702
+
+Predicting liver_0703:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0703
+
+Predicting liver_0704:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0704
+
+Predicting liver_0705:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0705
+
+Predicting liver_0706:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0706
+
+Predicting liver_0707:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0707
+
+Predicting liver_0708:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0708
+
+Predicting liver_0709:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0709
+
+Predicting liver_0710:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0710
+
+Predicting liver_0711:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0711
+
+Predicting liver_0712:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0712
+
+Predicting liver_0713:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0713
+
+Predicting liver_0714:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0714
+
+Predicting liver_0715:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0715
+
+Predicting liver_0716:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0716
+
+Predicting liver_0717:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0717
+
+Predicting liver_0718:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0718
+
+Predicting liver_0719:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0719
+
+Predicting liver_0720:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0720
+
+Predicting liver_0721:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0721
+
+Predicting liver_0722:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0722
+
+Predicting liver_0723:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0723
+
+Predicting liver_0724:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0724
+
+Predicting liver_0725:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0725
+
+Predicting liver_0726:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0726
+
+Predicting liver_0727:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0727
+
+Predicting liver_0728:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0728
+
+Predicting liver_0729:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0729
+
+Predicting liver_0730:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0730
+
+Predicting liver_0731:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0731
+
+Predicting liver_0732:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0732
+
+Predicting liver_0733:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0733
+
+Predicting liver_0734:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0734
+
+Predicting liver_0735:
+perform_everything_on_device: False
+sending off prediction to background worker for resampling and export
+done with liver_0735
+GPU prediction completed. Waiting for remaining segmentation exports to finish...
+Segmentation export complete.

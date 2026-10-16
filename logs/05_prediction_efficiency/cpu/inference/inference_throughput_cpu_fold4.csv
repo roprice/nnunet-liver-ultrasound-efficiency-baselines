@@ -1,0 +1,4 @@
+seed,fold,checkpoint,device,repeat,case_count,batch_wall_seconds,batch_average_seconds_per_image,images_per_second,preprocessing_workers,export_workers,process_tree_peak_rss_mib,process_tree_memory_status,process_tree_rss_samples,timing_json
+42,4,checkpoint_final.pth,cpu,1,147,1302.358315,8.859580,0.112872,1,1,,unavailable_psutil_not_installed,0,batch_cpu_seed42_fold4_repeat1.json
+42,4,checkpoint_final.pth,cpu,2,147,1296.097784,8.816992,0.113417,1,1,,unavailable_psutil_not_installed,0,batch_cpu_seed42_fold4_repeat2.json
+42,4,checkpoint_final.pth,cpu,3,147,1298.820612,8.835514,0.113180,1,1,,unavailable_psutil_not_installed,0,batch_cpu_seed42_fold4_repeat3.json
