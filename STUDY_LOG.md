@@ -1,13 +1,61 @@
 # Study log
 
+## 2026-10-16
+_Estimated development effort: 4 through today, 144 total_
+
+
+We designed the final experiment, external validation against the SMC-LUD dataset. After initially running it locally, we found it would take 170 hours to complete, and decided to run it on a GPU, in order to be able to move forward with the study more quickly.
+
+In reviewing the dataset, we found de facto annotation, size annotation and location annotation, in the form of calipers. Calipers are not as rigorous as segmentation annotation; they cannot be used for segmentation analysis. But they are reliable enough that we can do analysis of overlap detection views. This 
+represent a slight change in direction; we'd previously anticipated only being able to measure the performance of presence-based detection. We'll treat metrics based on overlap-based detections as exploratory rather than definitive.
+
+To facilitate this approach, we wrote a "caliper extraction" script that reads caliper marks to figure out where the lesion is and how large it is, then writes a proxy reference mask.
+
+It does this in a different way for the HCC images than for the Hemangioma images. Furthermore, these are really two different sets of images with respect to dimensions and possibly quality. We won't directly compare results from pathology type to the other.
+
+Before running the experiment, we'ee going to register a the 0.03 triage detection-rate threshold for relevance. That is, we'll consider the results of the experiment validating if they they come within 0.03 points for a given triage detection rate - presence-based, overlap IoU>0, overlap IoU>0.2. 
+
+We're going to attempt to validate 3 5-fold sets of models:
+
+- 588-images at 150 epochs, from experiment 02
+- 588-images at 150 epochs with increased brightness frequency, from experiment 03
+- 588-images at 150 epochs with Gaussian noise eliminated, from experiment 04
+
+
+
+
+## 2026-10-15
+_Estimated development effort: 5 through today, 145 total_
+
+We performed significant mass-size analysis to determine whether the difference in segmentation and detection rates from benign to malignant was down to size. 
+
+The answer seems to be mostly down to size, partly down to pathology, and a regression analysis reveals confidence intervals taht are too wide too firm up that statement.
+
+Looking masses by quartile, we see malignant-mass detection rates of 100% on several views of detection for the largest quartile. Yet benign mass detection never rises to 100%.
+
+Binning masses logarithmically tells a similar story but indicates that size plays an important role, with both benign and malignant-mass detection hitting 100% for the largest bin of mass sizes accross multiple views of detection.
+
+[Majority detection by annotated mass area](majority_detection_by_size.png)
+
+
+Most relevant to this study is how well malignant-mass detection holds up at small sizes, with malignant masses detection rates remaining high (78 to 91%) for two smallest mass-size bins.
+
+5034948311
+## 2026-10-14
+_Estimated development effort: 3 through today, 140 total_
+
+With respect to malignant-mass detection, the effect of the experiment in eliminating Gaussian noise augmentation had mixed results.
+
+As with the brightness frequency experiment, there are signs that adjusting nnU-Net's defaults could pay off. There's not clear-cut win (along the lines of dropping epoch budget from 1000 to 150) though that we encountered. It seems likely that find the pay off would take extensive experimentation, including testing variations, and probably falls outside the scope of this study.
+
+Were the subject to be explored, we'd want to test brightness multiplication, potentially pair that with frequency. We also want to test removing or reducing Gaussian blue and pair that with Gaussian noise. And then test pairs of those pairs, and on.
+
+What we do see are modest improvements related to both ablations. We'll test both in our external validation experiment, along with the control. 
+
+
 
 ## 2026-10-14
-
-With respect to malignant-mass detection, the effect of the experiment in eliminating Gaussian noise augmentation had mixed results. 
-
-
-
-## 2026-10-14
+_Estimated development effort: 9 through today, 137 total_
 
 Having reviewed and analyzed the brightness-frequency augmentation ablation tests, we have decided to pursue an additional augmentation ablation: removing Gaussian noise. Tupper & Gagné found Gaussian noise to be the most significant augmentation factor on ultrasound.
 
@@ -112,6 +160,7 @@ Other augmentation tests could potentially impact malignant mass detection on ul
 
 
 ## 2026-10-12
+_Estimated development effort: 2 through today, 128 total_
 
 The results of the data efficiency experiment show that smaller dataset models perform well in most views of malignant mass detection, but that smaller models perform badly with respect to triggering false alarms.
 
@@ -119,6 +168,7 @@ The results of the data efficiency experiment show that smaller dataset models p
 
 
 ## 2026-10-11
+_Estimated development effort: 6 through today, 126 total_
 
 Because Verda, as with many GPU cloud providers, frequently updates pricing and has varied availability, we chose to update the runbooks to be device agnostic. The initial dry runs and the training efficiency experiments ran on an older RTX A6000. Experiment 02, however, runs on an RTX 6000 Pro. The total cost should come to within 10% more of what was anticipated.
 
