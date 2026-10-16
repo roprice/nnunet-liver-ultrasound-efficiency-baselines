@@ -23,7 +23,7 @@ Python 3.11+ is needed here for `hashlib.file_digest`. Keep the environment outs
 
 ## 2. Transfer inputs from local
 
-Experiment 06 is currently untracked: **`git pull` alone will not transfer it or other uncommitted changes**. On the **local computer**, set the actual SSH target and absolute remote checkout path (the example assumes root), then copy the runtime source and prepared inputs:
+On the **local computer**, set the actual SSH target and absolute remote checkout path (the example assumes root), then copy the runtime source and prepared inputs:
 
 ```sh
 bash
