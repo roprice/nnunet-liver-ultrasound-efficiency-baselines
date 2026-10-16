@@ -16,6 +16,8 @@ This builder discovers prediction directories under each experiment archive in
 ``archives/`` and each amendment archive in ``archives_amendments/``.
 Experiment 02 includes nested best, final, and archived milestone predictions.
 Experiments 03 and 04 (Gaussian noise) include nested best and final predictions.
+Experiment 05 includes full-cohort CPU and MPS throughput repeats, using
+experiment 02's references and final pool-588 fold-4 model.
 Each prediction directory contributes one row per evaluated image.
 """
 
@@ -704,6 +706,49 @@ def discover_gaussian_noise_ablation_configurations(experiment_archive):
     return configurations
 
 
+def discover_prediction_efficiency_configurations(experiment_archive):
+    """Discover full benchmark repeats, excluding smoke and cold-start outputs."""
+    reference_archive = experiment_archive.parent / "02_data_efficiency"
+    metadata_path = (
+        reference_archive / "nnUNet_results/Dataset001_AUL"
+        / "nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d/fold_4/checkpoint_metadata.json"
+    )
+    configurations = []
+    for device in ("cpu", "mps"):
+        run_root = experiment_archive / "nnUNet_results/Dataset001_AUL" / device
+        for directory in sorted(run_root.glob("predictions_*")):
+            if not directory.is_dir():
+                continue
+            match = re.fullmatch(rf"predictions_{device}_seed42_fold4_repeat([1-9][0-9]*)", directory.name)
+            if not match:
+                raise InputValidationError(f"Unrecognized prediction path: {relative_path(directory)}")
+            if not metadata_path.is_file():
+                raise InputValidationError(f"Missing checkpoint metadata: {relative_path(metadata_path)}")
+            with open(metadata_path) as file:
+                record = json.load(file).get("checkpoints", {}).get("checkpoint_final.pth", {})
+            if (record.get("fold") != 4 or record.get("current_epoch") != 150
+                    or record.get("trainer_name") != "nnUNetTrainer_dataSubsets_Seed42"):
+                raise InputValidationError(f"Invalid final metadata: {relative_path(metadata_path)}")
+            configurations.append({
+                "experiment_name": "prediction_efficiency",
+                "evaluation_split": "test",
+                "configuration_id": (
+                    f"predictions_prediction_efficiency_588images_seed42_fold4_final_"
+                    f"{device}_repeat{match.group(1)}"
+                ),
+                "training_set_size": 588,
+                "seed": 42,
+                "fold": 4,
+                "epoch": 150,
+                "checkpoint": "final",
+                "encoder": read_encoder(directory),
+                "experiment_archive": experiment_archive,
+                "reference_archive": reference_archive,
+                "prediction_directory": directory,
+            })
+    return configurations
+
+
 def discover_configurations():
     """Discover top-level and supported nested prediction directories across experiment
     archives and amendment archives (dry-run archives and archives without
@@ -723,6 +768,8 @@ def discover_configurations():
             configurations.extend(discover_augmentation_ablation_configurations(experiment_archive))
         elif experiment_archive.name == "04_gaussian_noise_ablation":
             configurations.extend(discover_gaussian_noise_ablation_configurations(experiment_archive))
+        elif experiment_archive.name == "05_prediction_efficiency":
+            configurations.extend(discover_prediction_efficiency_configurations(experiment_archive))
         for directory in sorted(results_root.glob("predictions_*")):
             if not directory.is_dir():
                 continue
@@ -954,7 +1001,7 @@ def main():
     rows = []
     for config in configurations:
         print(f"Evaluating {config['configuration_id']}...")
-        experiment_archive = config["experiment_archive"]
+        experiment_archive = config.get("reference_archive", config["experiment_archive"])
         if experiment_archive not in cases_by_archive:
             cases_by_archive[experiment_archive] = load_test_cases(
                 experiment_archive

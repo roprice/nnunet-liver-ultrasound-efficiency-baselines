@@ -454,6 +454,55 @@ class GaussianNoiseAblationDiscoveryTests(ArchiveFixtureTests):
                 directory.rmdir()
 
 
+class PredictionEfficiencyDiscoveryTests(ArchiveFixtureTests):
+    def setUp(self):
+        super().setUp()
+        self.prediction_archive = self.project_root / "archives/05_prediction_efficiency"
+        self.metadata_path = (
+            self.archive / "nnUNet_results/Dataset001_AUL"
+            / "nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d/fold_4/checkpoint_metadata.json"
+        )
+        self.write_json(self.metadata_path, {"checkpoints": {"checkpoint_final.pth": {
+            "fold": 4, "current_epoch": 150, "trainer_name": "nnUNetTrainer_dataSubsets_Seed42"
+        }}})
+
+    def prediction_directory(self, run, name):
+        directory = self.prediction_archive / "nnUNet_results/Dataset001_AUL" / run / name
+        self.write_json(directory / "plans.json", {"configurations": {"2d": {
+            "architecture": {"network_class_name": "example.PlainConvUNet"}
+        }}})
+        return directory
+
+    def test_devices_and_repeats_are_distinct_and_use_training_archive_references(self):
+        for device in ("cpu", "mps"):
+            for repeat in range(1, 4):
+                self.prediction_directory(device, f"predictions_{device}_seed42_fold4_repeat{repeat}")
+            self.prediction_directory(device, f"single_case_{device}")
+        self.prediction_directory("smoke_cpu", "predictions_cpu_seed42_fold4_repeat1")
+        with patch.object(builder, "ARCHIVES_DIR", self.project_root / "archives"), \
+                patch.object(builder, "AMENDMENTS_DIR", self.project_root / "amendments"):
+            configurations = builder.discover_configurations()
+        self.assertEqual(len(configurations), 6)
+        self.assertEqual(len({config["configuration_id"] for config in configurations}), 6)
+        for config in configurations:
+            self.assertEqual(config["experiment_name"], "prediction_efficiency")
+            self.assertEqual(config["reference_archive"], self.archive)
+            self.assertEqual((config["training_set_size"], config["fold"], config["epoch"]), (588, 4, 150))
+            self.assertEqual(config["checkpoint"], "final")
+
+    def test_invalid_model_metadata_is_rejected(self):
+        self.prediction_directory("cpu", "predictions_cpu_seed42_fold4_repeat1")
+        self.write_json(self.metadata_path, {"checkpoints": {}})
+        with self.assertRaisesRegex(builder.InputValidationError, "Invalid final metadata"):
+            builder.discover_prediction_efficiency_configurations(self.prediction_archive)
+
+    def test_incomplete_cohort_is_rejected(self):
+        self.prediction_directory("cpu", "predictions_cpu_seed42_fold4_repeat1")
+        config = builder.discover_prediction_efficiency_configurations(self.prediction_archive)[0]
+        with self.assertRaisesRegex(builder.InputValidationError, "Prediction coverage mismatch"):
+            builder.validate_configuration(config, {"liver_0589.png", "liver_0590.png"})
+
+
 class DatasetDirectoryTests(ArchiveFixtureTests):
     def test_gaussian_noise_ablation_selects_primary_test_dataset(self):
         archive = self.project_root / "archives/04_gaussian_noise_ablation"
