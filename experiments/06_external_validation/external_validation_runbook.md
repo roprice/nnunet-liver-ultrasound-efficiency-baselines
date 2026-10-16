@@ -9,21 +9,32 @@ Run commands from the repository root unless stated otherwise.
 On the **GPU host** (Ubuntu, RTX A6000):
 
 ```sh
+# install python lest not be installed already
 python3 -c 'import sys; assert sys.version_info >= (3, 11), "Python 3.11+ required"'
 nvidia-smi
 apt update
 apt install python3-pip python3-venv python3-dev git tmux rsync -y
+
+# Optional: color the shell prompt
+cat >> ~/.bashrc << 'PROMPTEOF'
+PS1='\[\e[38;5;208m\]\u@\h:\w \t \[\e[0m\]\$ '
+PROMPTEOF
+source ~/.bashrc
 ```
 
 ```sh
+# clone the study's repo from github
 cd ~
 git clone https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines.git
 cd nnunet-liver-ultrasound-efficiency-baselines
 ```
 
 ```sh
+# create and start the virtual environment
 python3 -m venv "$HOME/.venv"
 . "$HOME/.venv/bin/activate"
+
+# install key dependences
 python -m pip install --upgrade pip
 python -m pip install 'nnunetv2==2.8.1' 'torch==2.14.1'
 python -c 'import torch, numpy, PIL; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
@@ -106,6 +117,7 @@ tmux new -s external_validation
 Inside tmux, from the repository root:
 
 ```bash
+# Once in tmux, start the run
 . "$HOME/.venv/bin/activate"
 export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
 set -o pipefail
