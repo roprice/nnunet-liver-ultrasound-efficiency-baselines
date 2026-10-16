@@ -1,0 +1,8 @@
+device,repeat,case_count,wall_seconds,seconds_per_image,images_per_second,process_tree_memory
+cpu,1,147,1302.358315,8.85958037414966,0.1128721629884169,"{""repeat"": 1, ""peak_rss_mib"": null, ""status"": ""unavailable_psutil_not_installed""}"
+cpu,2,147,1296.097784,8.816991727891157,0.1134173685154607,"{""repeat"": 2, ""peak_rss_mib"": null, ""status"": ""unavailable_psutil_not_installed""}"
+cpu,3,147,1298.820612,8.835514367346939,0.113179602049617,"{""repeat"": 3, ""peak_rss_mib"": null, ""status"": ""unavailable_psutil_not_installed""}"
+mps,1,147,154.06718,1.0480760544217687,0.954129231157473,"{""repeat"": 1, ""peak_rss_mib"": null, ""status"": ""unavailable_psutil_not_installed""}"
+mps,2,147,154.056207,1.0480014081632654,0.9541971911589385,"{""repeat"": 2, ""peak_rss_mib"": null, ""status"": ""unavailable_psutil_not_installed""}"
+mps,3,147,154.228823,1.0491756666666667,0.9531292344751927,"{""repeat"": 3, ""peak_rss_mib"": null, ""status"": ""unavailable_psutil_not_installed""}"
+cuda,1,147,30.024185,0.20424615646258504,4.8960529653011395,"{""repeat"": 1, ""peak_rss_mib"": null, ""status"": ""not_recorded""}"

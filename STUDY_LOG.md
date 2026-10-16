@@ -1,5 +1,12 @@
 # Study log
 
+
+## 2026-10-14
+
+With respect to malignant-mass detection, the effect of the experiment in eliminating Gaussian noise augmentation had mixed results. 
+
+
+
 ## 2026-10-14
 
 Having reviewed and analyzed the brightness-frequency augmentation ablation tests, we have decided to pursue an additional augmentation ablation: removing Gaussian noise. Tupper & Gagné found Gaussian noise to be the most significant augmentation factor on ultrasound.
