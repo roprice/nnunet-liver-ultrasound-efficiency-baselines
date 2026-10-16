@@ -53,28 +53,29 @@ On the **local computer**, prepare the cohort if needed:
 .venv/bin/python -B experiments/06_external_validation/prepare_external_data.py
 ```
 
-Transfer inputs from the **local computer**, using Bash. Replace the SSH target and remote path:
+On the **local computer**, from the repository root, replace `<gpu-ip>` before pasting:
 
-```bash
-bash
-GPU='root@<gpu-ip>'
-REMOTE_REPO=/root/nnunet-liver-ultrasound-efficiency-baselines
+```sh
 rsync -avR archives_staging/06_external_validation/smc_lud_prepared/ \
-  "$GPU:$REMOTE_REPO/"
+  "root@<gpu-ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 
-for entry in \
-  '02_data_efficiency nnUNetTrainer_dataSubsets_Seed42' \
-  '03_augmentation_ablation nnUNetTrainer_brightnessAugmentation' \
-  '04_gaussian_noise_ablation nnUNetTrainer_gaussianNoiseAugmentation'
-do
-  set -- $entry
-  model="archives/$1/nnUNet_results/Dataset001_AUL/$2"'__nnUNetPlans__2d'
-  rsync -avR "$model/plans.json" "$model/dataset.json" "$GPU:$REMOTE_REPO/"
-  for fold in 0 1 2 3 4; do
-    rsync -avR "$model/fold_$fold/checkpoint_final.pth" \
-      "$model/fold_$fold/checkpoint_metadata.json" "$GPU:$REMOTE_REPO/"
-  done
-done
+rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
+  --include='fold_[0-4]/checkpoint_final.pth' \
+  --include='fold_[0-4]/checkpoint_metadata.json' --exclude='*' \
+  archives/02_data_efficiency/nnUNet_results/Dataset001_AUL/nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d/ \
+  "root@<gpu-ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
+
+rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
+  --include='fold_[0-4]/checkpoint_final.pth' \
+  --include='fold_[0-4]/checkpoint_metadata.json' --exclude='*' \
+  archives/03_augmentation_ablation/nnUNet_results/Dataset001_AUL/nnUNetTrainer_brightnessAugmentation__nnUNetPlans__2d/ \
+  "root@<gpu-ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
+
+rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
+  --include='fold_[0-4]/checkpoint_final.pth' \
+  --include='fold_[0-4]/checkpoint_metadata.json' --exclude='*' \
+  archives/04_gaussian_noise_ablation/nnUNet_results/Dataset001_AUL/nnUNetTrainer_gaussianNoiseAugmentation__nnUNetPlans__2d/ \
+  "root@<gpu-ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 ```
 
 ## Check and run
@@ -154,15 +155,15 @@ print('Completed')
 PY
 ```
 
-On the **local computer**, in the Bash session with the transfer variables:
+On the **local computer**, from the repository root, replace `<gpu-ip>` before pasting:
 
-```bash
+```sh
 mkdir -p logs/06_external_validation_cuda
 rsync -av --exclude='merged_nnUNet_results/' \
-  "$GPU:$REMOTE_REPO/logs/06_external_validation/" \
+  "root@<gpu-ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
   logs/06_external_validation_cuda/
 rsync -avnc --exclude='merged_nnUNet_results/' \
-  "$GPU:$REMOTE_REPO/logs/06_external_validation/" \
+  "root@<gpu-ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
   logs/06_external_validation_cuda/
 ```
 
