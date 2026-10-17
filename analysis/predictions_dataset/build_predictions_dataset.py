@@ -18,6 +18,8 @@ Experiment 02 includes nested best, final, and archived milestone predictions.
 Experiments 03 and 04 (Gaussian noise) include nested best and final predictions.
 Experiment 05 includes full-cohort CPU and MPS throughput repeats, using
 experiment 02's references and final pool-588 fold-4 model.
+Experiment 06 includes external Clean-cohort presence predictions; metrics that
+require segmentation references remain null.
 Each prediction directory contributes one row per evaluated image.
 """
 
@@ -130,6 +132,10 @@ FIELDNAMES = (
     "centroid_detection_deq_100_flag",
     "normal_false_positive",
     "outcome_category",
+    "proxy_mass_available",
+    "proxy_mass_reference_path",
+    "proxy_mass_method",
+    "proxy_mass_area_px",
 )
 
 
@@ -343,6 +349,112 @@ def load_test_cases(experiment_archive):
         "test",
         require_exact_label_coverage=True,
     )
+
+
+def load_external_cases(experiment_archive):
+    """Load the classification-only SMC-LUD Clean cohort without inventing masks."""
+    manifest_path = experiment_archive / "smc_lud_prepared/smc_lud_manifest.json"
+    with open(manifest_path) as file:
+        manifest = json.load(file)
+    entries = manifest["cases"]
+    case_ids = [entry["case"] for entry in entries]
+    if not entries or len(case_ids) != len(set(case_ids)) or manifest["case_count"] != len(entries):
+        raise InputValidationError("Invalid external case count or duplicate case IDs")
+    source_root = (
+        PROJECT_ROOT / "experiments/06_external_validation"
+        / "SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)"
+    )
+    cases = []
+    for entry in sorted(entries, key=lambda entry: entry["case"]):
+        if entry["subset"] != "clean" or entry["pathology"] not in {"benign", "malignant"}:
+            raise InputValidationError(f"Unsupported external case: {entry['case']}")
+        if any(type(entry[field]) is not int or entry[field] <= 0 for field in ("height", "width")):
+            raise InputValidationError(f"Invalid external image dimensions: {entry['case']}")
+        cases.append({
+            "image_id": entry["case"],
+            "pathology": entry["pathology"],
+            "original_data_path": relative_path(source_root / entry["source_relative_path"]),
+            "reference_path": None,
+            "reference_shape": (entry["height"], entry["width"]),
+            "ground_truth_mass": None,
+            "ground_truth_liver": None,
+            "mass_present": True,
+        })
+    return cases
+
+
+def load_proxy_mass_references(experiment_archive, cases):
+    """Validate extraction outputs and match proxies only to the same clean frame."""
+    proxy_directory = experiment_archive / "proxy_masks"
+    if not proxy_directory.exists():
+        return {}
+    report_path = proxy_directory / "extraction_report.json"
+    if not report_path.is_file():
+        raise InputValidationError(f"Missing proxy extraction report: {relative_path(report_path)}")
+    with report_path.open() as file:
+        report = json.load(file)
+    records = report["proxy_cases"]
+    case_ids = [record["case"] for record in records]
+    if (len(case_ids) != len(set(case_ids)) or len(case_ids) != report["total_masks"]
+            or any(Path(case_id).name != case_id for case_id in case_ids)):
+        raise InputValidationError("Invalid proxy case count or duplicate case IDs")
+    if set(case_ids) != {path.stem for path in proxy_directory.glob("*.png")}:
+        raise InputValidationError("Proxy extraction report/mask coverage mismatch")
+    if set(case_ids) & set(report["hemangioma"]["contaminated_cases"]):
+        raise InputValidationError("Contaminated cases must not have usable proxies")
+    by_case_id = {case["image_id"]: case for case in cases}
+    references = {}
+    for record in records:
+        case_id = record["case"]
+        method = record["method"]
+        if (record["class"], method) not in {("Hemangioma", "twin_diff"), ("HCC", "chroma")}:
+            raise InputValidationError(f"Unsupported proxy extraction method for {case_id}")
+        if method == "chroma":
+            if case_id in by_case_id:
+                raise InputValidationError(f"HCC caliper proxy cannot reference a clean frame: {case_id}")
+            continue
+        case = by_case_id.get(case_id)
+        if case is None or case["pathology"] != "benign":
+            raise InputValidationError(f"Unknown or incompatible clean proxy case: {case_id}")
+        path = proxy_directory / f"{case_id}.png"
+        mask = read_mask(path)
+        area = int((mask == MASS_VALUE).sum())
+        if mask.shape != case["reference_shape"] or not area or not set(np.unique(mask)) <= {0, 2}:
+            raise InputValidationError(f"Invalid proxy mass mask: {relative_path(path)}")
+        references[case_id] = {
+            "proxy_mass_available": True,
+            "proxy_mass_reference_path": relative_path(path),
+            "proxy_mass_method": method,
+            "proxy_mass_area_px": area,
+        }
+    return references
+
+
+def add_proxy_mass_columns(rows):
+    """Attach proxy provenance without changing annotation-based measurements."""
+    external_rows = [row for row in rows if row["evaluation_split"] == "external_clean"]
+    references = {}
+    cases_by_id = {}
+    if external_rows:
+        archive = ARCHIVES_DIR / "06_external_validation"
+        cases = load_external_cases(archive)
+        cases_by_id = {case["image_id"]: case for case in cases}
+        references = load_proxy_mass_references(archive, cases)
+    for row in rows:
+        row.update({
+            "proxy_mass_available": False,
+            "proxy_mass_reference_path": None,
+            "proxy_mass_method": None,
+            "proxy_mass_area_px": None,
+        })
+        if row["evaluation_split"] != "external_clean":
+            continue
+        case = cases_by_id.get(row["image_id"])
+        shape = (int(row["image_height_px"]), int(row["image_width_px"]))
+        if case is None or row["pathology"] != case["pathology"] or shape != case["reference_shape"]:
+            raise InputValidationError(f"Prediction/proxy cohort mismatch for {row['image_id']}")
+        if row["image_id"] in references:
+            row.update(references[row["image_id"]])
 
 
 def fold_training_logs(experiment_archive, fold, seed):
@@ -749,6 +861,54 @@ def discover_prediction_efficiency_configurations(experiment_archive):
     return configurations
 
 
+def discover_external_validation_configurations(experiment_archive):
+    """Discover external runs with epochs from their source model archives."""
+    models = {
+        "data_efficiency": ("02_data_efficiency", "nnUNetTrainer_dataSubsets_Seed42"),
+        "augmentation_ablation": ("03_augmentation_ablation", "nnUNetTrainer_brightnessAugmentation"),
+        "gaussian_noise_ablation": ("04_gaussian_noise_ablation", "nnUNetTrainer_gaussianNoiseAugmentation"),
+    }
+    configurations = []
+    for directory in sorted((experiment_archive / "logs/predictions").iterdir()):
+        if not directory.is_dir():
+            continue
+        match = PREDICTION_DIR_PATTERN.fullmatch(f"predictions_{directory.name}")
+        if (not match or match.group("experiment") not in models
+                or match.group("training_set_size") != "588" or match.group("seed") != "42"
+                or match.group("fold") not in {"0", "1", "2", "3", "4"}
+                or match.group("checkpoint") != "final"):
+            raise InputValidationError(f"Unrecognized external prediction path: {relative_path(directory)}")
+        experiment_name = match.group("experiment")
+        fold = int(match.group("fold"))
+        archive_name, trainer = models[experiment_name]
+        metadata_path = (
+            experiment_archive.parent / archive_name / "nnUNet_results/Dataset001_AUL"
+            / f"{trainer}__nnUNetPlans__2d/fold_{fold}/checkpoint_metadata.json"
+        )
+        if not metadata_path.is_file():
+            raise InputValidationError(f"Missing checkpoint metadata: {relative_path(metadata_path)}")
+        with open(metadata_path) as file:
+            record = json.load(file).get("checkpoints", {}).get("checkpoint_final.pth", {})
+        epoch = record.get("current_epoch")
+        if (record.get("fold") != fold or record.get("trainer_name") != trainer
+                or type(epoch) is not int or epoch <= 0):
+            raise InputValidationError(f"Invalid final metadata: {relative_path(metadata_path)}")
+        configurations.append({
+            "experiment_name": experiment_name,
+            "evaluation_split": "external_clean",
+            "configuration_id": f"predictions_external_validation_{directory.name}",
+            "training_set_size": 588,
+            "seed": 42,
+            "fold": fold,
+            "epoch": epoch,
+            "checkpoint": "final",
+            "encoder": read_encoder(directory),
+            "experiment_archive": experiment_archive,
+            "prediction_directory": directory,
+        })
+    return configurations
+
+
 def discover_configurations():
     """Discover top-level and supported nested prediction directories across experiment
     archives and amendment archives (dry-run archives and archives without
@@ -759,6 +919,9 @@ def discover_configurations():
         archive_experiment_name = ARCHIVE_NAME_PATTERN.fullmatch(
             experiment_archive.name
         ).group("experiment_name")
+        if experiment_archive.name == "06_external_validation":
+            configurations.extend(discover_external_validation_configurations(experiment_archive))
+            continue
         results_root = experiment_archive / "nnUNet_results"
         if not results_root.is_dir():
             continue
@@ -820,6 +983,35 @@ def evaluate_case(config, case):
     raw_prediction = prediction == MASS_VALUE
     raw_liver_prediction = prediction >= 1
     retained_prediction = retained_mass_mask(raw_prediction)
+
+    row = dict.fromkeys(FIELDNAMES)
+    row.update({
+        "experiment_name": config["experiment_name"],
+        "evaluation_split": config["evaluation_split"],
+        "configuration_id": config["configuration_id"],
+        "training_set_size": config["training_set_size"],
+        "seed": config["seed"],
+        "fold": config["fold"],
+        "epoch": config["epoch"],
+        "checkpoint": config["checkpoint"],
+        "encoder": config["encoder"],
+        "prediction_path": relative_path(prediction_path),
+        "reference_path": case["reference_path"],
+        "image_id": case["image_id"],
+        "pathology": case["pathology"],
+        "original_data_path": case["original_data_path"],
+        "evaluation_unit": "image",
+        "mass_present": case["mass_present"],
+        "image_height_px": int(prediction.shape[0]),
+        "image_width_px": int(prediction.shape[1]),
+        "predicted_mass_area_raw_px": int(raw_prediction.sum()),
+        "predicted_mass_area_retained_px": int(retained_prediction.sum()),
+        "triage_detection_flag": bool(retained_prediction.any()),
+        "proxy_mass_available": False,
+    })
+    if ground_truth is None:
+        row["retained_component_count"] = int(label(retained_prediction, connectivity=CONNECTIVITY).max())
+        return row
 
     raw_intersection = int(np.logical_and(raw_prediction, ground_truth).sum())
     raw_union = int(np.logical_or(raw_prediction, ground_truth).sum())
@@ -897,28 +1089,8 @@ def evaluate_case(config, case):
     centroid_deq_050_fp = retained_components - sum(credited_centroid_050)
     centroid_deq_100_fp = retained_components - sum(credited_centroid_100)
 
-    return {
-        "experiment_name": config["experiment_name"],
-        "evaluation_split": config["evaluation_split"],
-        "configuration_id": config["configuration_id"],
-        "training_set_size": config["training_set_size"],
-        "seed": config["seed"],
-        "fold": config["fold"],
-        "epoch": config["epoch"],
-        "checkpoint": config["checkpoint"],
-        "encoder": config["encoder"],
-        "prediction_path": relative_path(prediction_path),
-        "reference_path": case["reference_path"],
-        "image_id": case["image_id"],
-        "pathology": case["pathology"],
-        "original_data_path": case["original_data_path"],
-        "evaluation_unit": "image",
-        "mass_present": case["mass_present"],
-        "image_height_px": int(case["reference_shape"][0]),
-        "image_width_px": int(case["reference_shape"][1]),
+    row.update({
         "ground_truth_mass_area_px": int(ground_truth.sum()),
-        "predicted_mass_area_raw_px": int(raw_prediction.sum()),
-        "predicted_mass_area_retained_px": int(retained_prediction.sum()),
         "raw_intersection_area_px": raw_intersection,
         "raw_union_area_px": raw_union,
         "retained_intersection_area_px": retained_intersection,
@@ -935,7 +1107,6 @@ def evaluate_case(config, case):
         "centroid_detection_deq_025_fp_count": centroid_deq_025_fp,
         "centroid_detection_deq_050_fp_count": centroid_deq_050_fp,
         "centroid_detection_deq_100_fp_count": centroid_deq_100_fp,
-        "triage_detection_flag": triage,
         "overlap_detection_iou_00_flag": overlap_iou_00,
         "overlap_detection_iou_02_flag": overlap_iou_02,
         "overlap_detection_iou_05_flag": overlap_iou_05,
@@ -944,7 +1115,8 @@ def evaluate_case(config, case):
         "centroid_detection_deq_100_flag": centroid_deq_100,
         "normal_false_positive": normal_false_positive,
         "outcome_category": outcome,
-    }
+    })
+    return row
 
 
 def write_rows(rows):
@@ -1003,9 +1175,10 @@ def main():
         print(f"Evaluating {config['configuration_id']}...")
         experiment_archive = config.get("reference_archive", config["experiment_archive"])
         if experiment_archive not in cases_by_archive:
-            cases_by_archive[experiment_archive] = load_test_cases(
-                experiment_archive
-            )
+            if config["evaluation_split"] == "external_clean":
+                cases_by_archive[experiment_archive] = load_external_cases(experiment_archive)
+            else:
+                cases_by_archive[experiment_archive] = load_test_cases(experiment_archive)
         cases = cases_by_archive[experiment_archive]
 
         expected_filenames = {f"{case['image_id']}.png" for case in cases}
@@ -1014,6 +1187,7 @@ def main():
             evaluate_case(config, case) for case in cases
         )
 
+    add_proxy_mass_columns(rows)
     write_rows(rows)
     write_manifest(rows)
     print(f"Wrote {relative_path(OUTPUT_PATH)} ({len(rows)} rows)")
