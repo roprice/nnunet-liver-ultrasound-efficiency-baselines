@@ -1,0 +1,916 @@
+snapshot_id,analysis,model,fold,bin,lower_inclusive,upper_exclusive,unit,metric,n,flagged,rate
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,overlap_iou_05,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,centroid_deq_025,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,overlap_iou_02,10,9,0.9
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,overlap_iou_05,10,6,0.6
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,overlap_iou_02,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,overlap_iou_05,23,15,0.6521739130434783
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,centroid_deq_050,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,data_efficiency,0,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,presence,48,48,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,overlap_iou_02,48,39,0.8125
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,overlap_iou_05,48,20,0.4166666666666667
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,centroid_deq_025,48,26,0.5416666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,centroid_deq_050,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,0,12k–25k,12000,25000,px,centroid_deq_100,48,44,0.9166666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,overlap_iou_00,68,59,0.8676470588235294
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,overlap_iou_02,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,overlap_iou_05,68,32,0.47058823529411764
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,centroid_deq_025,68,40,0.5882352941176471
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,centroid_deq_050,68,48,0.7058823529411765
+343555a0eca1,benign_proxy_area,data_efficiency,0,6k–12k,6000,12000,px,centroid_deq_100,68,60,0.8823529411764706
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,presence,88,86,0.9772727272727273
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,overlap_iou_00,88,64,0.7272727272727273
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,overlap_iou_02,88,48,0.5454545454545454
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,overlap_iou_05,88,24,0.2727272727272727
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,centroid_deq_025,88,35,0.3977272727272727
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,centroid_deq_050,88,43,0.48863636363636365
+343555a0eca1,benign_proxy_area,data_efficiency,0,3k–6k,3000,6000,px,centroid_deq_100,88,57,0.6477272727272727
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,presence,142,125,0.8802816901408451
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,overlap_iou_00,142,90,0.6338028169014085
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,overlap_iou_02,142,51,0.3591549295774648
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,overlap_iou_05,142,15,0.1056338028169014
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,centroid_deq_025,142,37,0.2605633802816901
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,centroid_deq_050,142,56,0.39436619718309857
+343555a0eca1,benign_proxy_area,data_efficiency,0,<3k,0,3000,px,centroid_deq_100,142,66,0.4647887323943662
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,overlap_iou_02,10,9,0.9
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,overlap_iou_05,10,5,0.5
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,overlap_iou_05,23,13,0.5652173913043478
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,centroid_deq_025,23,16,0.6956521739130435
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,centroid_deq_050,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,data_efficiency,1,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,overlap_iou_02,48,40,0.8333333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,overlap_iou_05,48,21,0.4375
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,centroid_deq_025,48,26,0.5416666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,centroid_deq_050,48,42,0.875
+343555a0eca1,benign_proxy_area,data_efficiency,1,12k–25k,12000,25000,px,centroid_deq_100,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,presence,68,65,0.9558823529411765
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,overlap_iou_00,68,59,0.8676470588235294
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,overlap_iou_02,68,51,0.75
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,overlap_iou_05,68,35,0.5147058823529411
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,centroid_deq_025,68,40,0.5882352941176471
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,centroid_deq_050,68,51,0.75
+343555a0eca1,benign_proxy_area,data_efficiency,1,6k–12k,6000,12000,px,centroid_deq_100,68,59,0.8676470588235294
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,presence,88,85,0.9659090909090909
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,overlap_iou_00,88,66,0.75
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,overlap_iou_02,88,49,0.5568181818181818
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,overlap_iou_05,88,24,0.2727272727272727
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,centroid_deq_025,88,36,0.4090909090909091
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,centroid_deq_050,88,48,0.5454545454545454
+343555a0eca1,benign_proxy_area,data_efficiency,1,3k–6k,3000,6000,px,centroid_deq_100,88,58,0.6590909090909091
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,presence,142,127,0.8943661971830986
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,overlap_iou_00,142,85,0.5985915492957746
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,overlap_iou_02,142,50,0.352112676056338
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,overlap_iou_05,142,16,0.11267605633802817
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,centroid_deq_025,142,41,0.2887323943661972
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,centroid_deq_050,142,50,0.352112676056338
+343555a0eca1,benign_proxy_area,data_efficiency,1,<3k,0,3000,px,centroid_deq_100,142,64,0.4507042253521127
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,overlap_iou_05,10,7,0.7
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,centroid_deq_025,10,8,0.8
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,overlap_iou_02,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,centroid_deq_050,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,presence,48,48,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,overlap_iou_02,48,38,0.7916666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,overlap_iou_05,48,23,0.4791666666666667
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,centroid_deq_025,48,30,0.625
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,centroid_deq_050,48,41,0.8541666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,2,12k–25k,12000,25000,px,centroid_deq_100,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,overlap_iou_00,68,57,0.8382352941176471
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,overlap_iou_02,68,43,0.6323529411764706
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,overlap_iou_05,68,24,0.35294117647058826
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,centroid_deq_025,68,29,0.4264705882352941
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,centroid_deq_050,68,49,0.7205882352941176
+343555a0eca1,benign_proxy_area,data_efficiency,2,6k–12k,6000,12000,px,centroid_deq_100,68,57,0.8382352941176471
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,presence,88,81,0.9204545454545454
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,overlap_iou_00,88,63,0.7159090909090909
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,overlap_iou_02,88,41,0.4659090909090909
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,overlap_iou_05,88,19,0.2159090909090909
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,centroid_deq_025,88,30,0.3409090909090909
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,centroid_deq_050,88,45,0.5113636363636364
+343555a0eca1,benign_proxy_area,data_efficiency,2,3k–6k,3000,6000,px,centroid_deq_100,88,53,0.6022727272727273
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,presence,142,127,0.8943661971830986
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,overlap_iou_00,142,78,0.5492957746478874
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,overlap_iou_02,142,44,0.30985915492957744
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,overlap_iou_05,142,11,0.07746478873239436
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,centroid_deq_025,142,28,0.19718309859154928
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,centroid_deq_050,142,43,0.3028169014084507
+343555a0eca1,benign_proxy_area,data_efficiency,2,<3k,0,3000,px,centroid_deq_100,142,54,0.38028169014084506
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,overlap_iou_05,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,centroid_deq_025,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,overlap_iou_02,10,9,0.9
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,overlap_iou_05,10,8,0.8
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,centroid_deq_025,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,presence,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,overlap_iou_00,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,overlap_iou_02,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,overlap_iou_05,23,12,0.5217391304347826
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,centroid_deq_025,23,16,0.6956521739130435
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,centroid_deq_050,23,20,0.8695652173913043
+343555a0eca1,benign_proxy_area,data_efficiency,3,25k–50k,25000,50000,px,centroid_deq_100,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,overlap_iou_00,48,44,0.9166666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,overlap_iou_02,48,39,0.8125
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,overlap_iou_05,48,19,0.3958333333333333
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,centroid_deq_025,48,28,0.5833333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,centroid_deq_050,48,41,0.8541666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,3,12k–25k,12000,25000,px,centroid_deq_100,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,presence,68,64,0.9411764705882353
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,overlap_iou_00,68,56,0.8235294117647058
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,overlap_iou_02,68,43,0.6323529411764706
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,overlap_iou_05,68,27,0.39705882352941174
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,centroid_deq_025,68,35,0.5147058823529411
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,centroid_deq_050,68,46,0.6764705882352942
+343555a0eca1,benign_proxy_area,data_efficiency,3,6k–12k,6000,12000,px,centroid_deq_100,68,54,0.7941176470588235
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,presence,88,83,0.9431818181818182
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,overlap_iou_00,88,64,0.7272727272727273
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,overlap_iou_02,88,44,0.5
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,overlap_iou_05,88,18,0.20454545454545456
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,centroid_deq_025,88,32,0.36363636363636365
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,centroid_deq_050,88,42,0.4772727272727273
+343555a0eca1,benign_proxy_area,data_efficiency,3,3k–6k,3000,6000,px,centroid_deq_100,88,53,0.6022727272727273
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,presence,142,127,0.8943661971830986
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,overlap_iou_00,142,91,0.6408450704225352
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,overlap_iou_02,142,50,0.352112676056338
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,overlap_iou_05,142,19,0.13380281690140844
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,centroid_deq_025,142,34,0.23943661971830985
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,centroid_deq_050,142,49,0.34507042253521125
+343555a0eca1,benign_proxy_area,data_efficiency,3,<3k,0,3000,px,centroid_deq_100,142,62,0.43661971830985913
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,overlap_iou_05,10,4,0.4
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,centroid_deq_025,10,8,0.8
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,overlap_iou_05,23,15,0.6521739130434783
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,centroid_deq_025,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,centroid_deq_050,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,overlap_iou_02,48,42,0.875
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,overlap_iou_05,48,21,0.4375
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,centroid_deq_025,48,25,0.5208333333333334
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,centroid_deq_050,48,41,0.8541666666666666
+343555a0eca1,benign_proxy_area,data_efficiency,4,12k–25k,12000,25000,px,centroid_deq_100,48,45,0.9375
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,overlap_iou_00,68,56,0.8235294117647058
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,overlap_iou_02,68,40,0.5882352941176471
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,overlap_iou_05,68,31,0.45588235294117646
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,centroid_deq_025,68,33,0.4852941176470588
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,centroid_deq_050,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,data_efficiency,4,6k–12k,6000,12000,px,centroid_deq_100,68,54,0.7941176470588235
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,presence,88,82,0.9318181818181818
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,overlap_iou_00,88,66,0.75
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,overlap_iou_02,88,45,0.5113636363636364
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,overlap_iou_05,88,23,0.26136363636363635
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,centroid_deq_025,88,38,0.4318181818181818
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,centroid_deq_050,88,47,0.5340909090909091
+343555a0eca1,benign_proxy_area,data_efficiency,4,3k–6k,3000,6000,px,centroid_deq_100,88,52,0.5909090909090909
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,presence,142,130,0.9154929577464789
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,overlap_iou_00,142,93,0.6549295774647887
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,overlap_iou_02,142,48,0.3380281690140845
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,overlap_iou_05,142,22,0.15492957746478872
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,centroid_deq_025,142,40,0.28169014084507044
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,centroid_deq_050,142,52,0.36619718309859156
+343555a0eca1,benign_proxy_area,data_efficiency,4,<3k,0,3000,px,centroid_deq_100,142,61,0.4295774647887324
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,overlap_iou_05,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,centroid_deq_025,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,overlap_iou_02,10,9,0.9
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,overlap_iou_05,10,6,0.6
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,overlap_iou_00,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,centroid_deq_025,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,centroid_deq_050,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,presence,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,overlap_iou_00,48,44,0.9166666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,overlap_iou_02,48,36,0.75
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,overlap_iou_05,48,21,0.4375
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,centroid_deq_025,48,26,0.5416666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,centroid_deq_050,48,39,0.8125
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,12k–25k,12000,25000,px,centroid_deq_100,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,presence,68,67,0.9852941176470589
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,overlap_iou_00,68,58,0.8529411764705882
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,overlap_iou_02,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,overlap_iou_05,68,37,0.5441176470588235
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,centroid_deq_025,68,40,0.5882352941176471
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,centroid_deq_050,68,50,0.7352941176470589
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,6k–12k,6000,12000,px,centroid_deq_100,68,56,0.8235294117647058
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,presence,88,83,0.9431818181818182
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,overlap_iou_00,88,65,0.7386363636363636
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,overlap_iou_02,88,51,0.5795454545454546
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,overlap_iou_05,88,23,0.26136363636363635
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,centroid_deq_025,88,37,0.42045454545454547
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,centroid_deq_050,88,50,0.5681818181818182
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,3k–6k,3000,6000,px,centroid_deq_100,88,58,0.6590909090909091
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,presence,142,128,0.9014084507042254
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,overlap_iou_00,142,87,0.6126760563380281
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,overlap_iou_02,142,46,0.323943661971831
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,overlap_iou_05,142,19,0.13380281690140844
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,centroid_deq_025,142,40,0.28169014084507044
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,centroid_deq_050,142,50,0.352112676056338
+343555a0eca1,benign_proxy_area,augmentation_ablation,0,<3k,0,3000,px,centroid_deq_100,142,61,0.4295774647887324
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,overlap_iou_05,10,6,0.6
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,centroid_deq_050,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,overlap_iou_00,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,overlap_iou_02,48,41,0.8541666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,overlap_iou_05,48,25,0.5208333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,centroid_deq_025,48,30,0.625
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,centroid_deq_050,48,42,0.875
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,12k–25k,12000,25000,px,centroid_deq_100,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,presence,68,65,0.9558823529411765
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,overlap_iou_00,68,55,0.8088235294117647
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,overlap_iou_02,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,overlap_iou_05,68,34,0.5
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,centroid_deq_025,68,41,0.6029411764705882
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,centroid_deq_050,68,48,0.7058823529411765
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,6k–12k,6000,12000,px,centroid_deq_100,68,55,0.8088235294117647
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,presence,88,85,0.9659090909090909
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,overlap_iou_00,88,61,0.6931818181818182
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,overlap_iou_02,88,46,0.5227272727272727
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,overlap_iou_05,88,23,0.26136363636363635
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,centroid_deq_025,88,37,0.42045454545454547
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,centroid_deq_050,88,44,0.5
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,3k–6k,3000,6000,px,centroid_deq_100,88,56,0.6363636363636364
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,presence,142,128,0.9014084507042254
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,overlap_iou_00,142,85,0.5985915492957746
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,overlap_iou_02,142,57,0.4014084507042254
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,overlap_iou_05,142,24,0.16901408450704225
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,centroid_deq_025,142,42,0.29577464788732394
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,centroid_deq_050,142,59,0.4154929577464789
+343555a0eca1,benign_proxy_area,augmentation_ablation,1,<3k,0,3000,px,centroid_deq_100,142,66,0.4647887323943662
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,overlap_iou_05,10,6,0.6
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,overlap_iou_05,23,13,0.5652173913043478
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,centroid_deq_025,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,centroid_deq_050,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,presence,48,48,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,overlap_iou_02,48,38,0.7916666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,overlap_iou_05,48,23,0.4791666666666667
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,centroid_deq_025,48,29,0.6041666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,centroid_deq_050,48,41,0.8541666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,12k–25k,12000,25000,px,centroid_deq_100,48,44,0.9166666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,presence,68,64,0.9411764705882353
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,overlap_iou_00,68,53,0.7794117647058824
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,overlap_iou_02,68,43,0.6323529411764706
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,overlap_iou_05,68,30,0.4411764705882353
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,centroid_deq_025,68,36,0.5294117647058824
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,centroid_deq_050,68,46,0.6764705882352942
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,6k–12k,6000,12000,px,centroid_deq_100,68,56,0.8235294117647058
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,presence,88,84,0.9545454545454546
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,overlap_iou_00,88,65,0.7386363636363636
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,overlap_iou_02,88,44,0.5
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,overlap_iou_05,88,24,0.2727272727272727
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,centroid_deq_025,88,36,0.4090909090909091
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,centroid_deq_050,88,47,0.5340909090909091
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,3k–6k,3000,6000,px,centroid_deq_100,88,57,0.6477272727272727
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,presence,142,125,0.8802816901408451
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,overlap_iou_00,142,80,0.5633802816901409
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,overlap_iou_02,142,41,0.2887323943661972
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,overlap_iou_05,142,15,0.1056338028169014
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,centroid_deq_025,142,31,0.21830985915492956
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,centroid_deq_050,142,45,0.31690140845070425
+343555a0eca1,benign_proxy_area,augmentation_ablation,2,<3k,0,3000,px,centroid_deq_100,142,58,0.4084507042253521
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,overlap_iou_05,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,centroid_deq_025,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,overlap_iou_05,10,8,0.8
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,presence,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,overlap_iou_00,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,centroid_deq_050,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,25k–50k,25000,50000,px,centroid_deq_100,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,presence,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,overlap_iou_00,48,44,0.9166666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,overlap_iou_02,48,39,0.8125
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,overlap_iou_05,48,23,0.4791666666666667
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,centroid_deq_025,48,32,0.6666666666666666
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,centroid_deq_050,48,40,0.8333333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,12k–25k,12000,25000,px,centroid_deq_100,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,overlap_iou_00,68,59,0.8676470588235294
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,overlap_iou_02,68,49,0.7205882352941176
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,overlap_iou_05,68,26,0.38235294117647056
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,centroid_deq_025,68,32,0.47058823529411764
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,centroid_deq_050,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,6k–12k,6000,12000,px,centroid_deq_100,68,59,0.8676470588235294
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,presence,88,79,0.8977272727272727
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,overlap_iou_00,88,62,0.7045454545454546
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,overlap_iou_02,88,41,0.4659090909090909
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,overlap_iou_05,88,20,0.22727272727272727
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,centroid_deq_025,88,32,0.36363636363636365
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,centroid_deq_050,88,41,0.4659090909090909
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,3k–6k,3000,6000,px,centroid_deq_100,88,47,0.5340909090909091
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,presence,142,133,0.9366197183098591
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,overlap_iou_00,142,90,0.6338028169014085
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,overlap_iou_02,142,55,0.3873239436619718
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,overlap_iou_05,142,20,0.14084507042253522
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,centroid_deq_025,142,38,0.2676056338028169
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,centroid_deq_050,142,59,0.4154929577464789
+343555a0eca1,benign_proxy_area,augmentation_ablation,3,<3k,0,3000,px,centroid_deq_100,142,70,0.49295774647887325
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,overlap_iou_05,10,7,0.7
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,presence,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,overlap_iou_00,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,overlap_iou_05,23,16,0.6956521739130435
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,centroid_deq_025,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,centroid_deq_050,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,25k–50k,25000,50000,px,centroid_deq_100,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,presence,48,48,1.0
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,overlap_iou_00,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,overlap_iou_02,48,39,0.8125
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,overlap_iou_05,48,19,0.3958333333333333
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,centroid_deq_025,48,28,0.5833333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,centroid_deq_050,48,42,0.875
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,12k–25k,12000,25000,px,centroid_deq_100,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,overlap_iou_00,68,59,0.8676470588235294
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,overlap_iou_02,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,overlap_iou_05,68,28,0.4117647058823529
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,centroid_deq_025,68,34,0.5
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,centroid_deq_050,68,49,0.7205882352941176
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,6k–12k,6000,12000,px,centroid_deq_100,68,54,0.7941176470588235
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,presence,88,81,0.9204545454545454
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,overlap_iou_00,88,64,0.7272727272727273
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,overlap_iou_02,88,47,0.5340909090909091
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,overlap_iou_05,88,30,0.3409090909090909
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,centroid_deq_025,88,43,0.48863636363636365
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,centroid_deq_050,88,47,0.5340909090909091
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,3k–6k,3000,6000,px,centroid_deq_100,88,50,0.5681818181818182
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,presence,142,130,0.9154929577464789
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,overlap_iou_00,142,89,0.6267605633802817
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,overlap_iou_02,142,49,0.34507042253521125
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,overlap_iou_05,142,15,0.1056338028169014
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,centroid_deq_025,142,39,0.2746478873239437
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,centroid_deq_050,142,52,0.36619718309859156
+343555a0eca1,benign_proxy_area,augmentation_ablation,4,<3k,0,3000,px,centroid_deq_100,142,63,0.44366197183098594
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,overlap_iou_02,10,9,0.9
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,overlap_iou_05,10,4,0.4
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,centroid_deq_025,10,8,0.8
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,presence,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,overlap_iou_00,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,overlap_iou_02,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,overlap_iou_05,23,15,0.6521739130434783
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,centroid_deq_025,23,16,0.6956521739130435
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,centroid_deq_050,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,25k–50k,25000,50000,px,centroid_deq_100,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,overlap_iou_00,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,overlap_iou_02,48,37,0.7708333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,overlap_iou_05,48,22,0.4583333333333333
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,centroid_deq_025,48,24,0.5
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,centroid_deq_050,48,40,0.8333333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,12k–25k,12000,25000,px,centroid_deq_100,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,presence,68,64,0.9411764705882353
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,overlap_iou_00,68,58,0.8529411764705882
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,overlap_iou_02,68,41,0.6029411764705882
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,overlap_iou_05,68,24,0.35294117647058826
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,centroid_deq_025,68,32,0.47058823529411764
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,centroid_deq_050,68,51,0.75
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,6k–12k,6000,12000,px,centroid_deq_100,68,56,0.8235294117647058
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,presence,88,82,0.9318181818181818
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,overlap_iou_00,88,66,0.75
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,overlap_iou_02,88,44,0.5
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,overlap_iou_05,88,22,0.25
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,centroid_deq_025,88,33,0.375
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,centroid_deq_050,88,46,0.5227272727272727
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,3k–6k,3000,6000,px,centroid_deq_100,88,55,0.625
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,presence,142,121,0.852112676056338
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,overlap_iou_00,142,81,0.5704225352112676
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,overlap_iou_02,142,42,0.29577464788732394
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,overlap_iou_05,142,18,0.1267605633802817
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,centroid_deq_025,142,32,0.22535211267605634
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,centroid_deq_050,142,47,0.33098591549295775
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,0,<3k,0,3000,px,centroid_deq_100,142,53,0.3732394366197183
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,overlap_iou_05,10,6,0.6
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,centroid_deq_025,10,9,0.9
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,presence,23,23,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,overlap_iou_00,23,23,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,overlap_iou_02,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,centroid_deq_050,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,25k–50k,25000,50000,px,centroid_deq_100,23,23,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,presence,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,overlap_iou_02,48,40,0.8333333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,overlap_iou_05,48,22,0.4583333333333333
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,centroid_deq_025,48,28,0.5833333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,centroid_deq_050,48,42,0.875
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,12k–25k,12000,25000,px,centroid_deq_100,48,45,0.9375
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,presence,68,67,0.9852941176470589
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,overlap_iou_00,68,56,0.8235294117647058
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,overlap_iou_02,68,49,0.7205882352941176
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,overlap_iou_05,68,31,0.45588235294117646
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,centroid_deq_025,68,38,0.5588235294117647
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,centroid_deq_050,68,46,0.6764705882352942
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,6k–12k,6000,12000,px,centroid_deq_100,68,55,0.8088235294117647
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,presence,88,88,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,overlap_iou_00,88,66,0.75
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,overlap_iou_02,88,43,0.48863636363636365
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,overlap_iou_05,88,24,0.2727272727272727
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,centroid_deq_025,88,32,0.36363636363636365
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,centroid_deq_050,88,45,0.5113636363636364
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,3k–6k,3000,6000,px,centroid_deq_100,88,55,0.625
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,presence,142,132,0.9295774647887324
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,overlap_iou_00,142,83,0.5845070422535211
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,overlap_iou_02,142,51,0.3591549295774648
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,overlap_iou_05,142,16,0.11267605633802817
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,centroid_deq_025,142,38,0.2676056338028169
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,centroid_deq_050,142,53,0.3732394366197183
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,1,<3k,0,3000,px,centroid_deq_100,142,63,0.44366197183098594
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,overlap_iou_05,10,5,0.5
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,centroid_deq_025,10,8,0.8
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,presence,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,overlap_iou_00,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,overlap_iou_02,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,centroid_deq_025,23,15,0.6521739130434783
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,centroid_deq_050,23,20,0.8695652173913043
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,25k–50k,25000,50000,px,centroid_deq_100,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,presence,48,48,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,overlap_iou_00,48,45,0.9375
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,overlap_iou_02,48,38,0.7916666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,overlap_iou_05,48,24,0.5
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,centroid_deq_025,48,29,0.6041666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,centroid_deq_050,48,41,0.8541666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,12k–25k,12000,25000,px,centroid_deq_100,48,45,0.9375
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,overlap_iou_00,68,55,0.8088235294117647
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,overlap_iou_02,68,45,0.6617647058823529
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,overlap_iou_05,68,30,0.4411764705882353
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,centroid_deq_025,68,33,0.4852941176470588
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,centroid_deq_050,68,49,0.7205882352941176
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,6k–12k,6000,12000,px,centroid_deq_100,68,55,0.8088235294117647
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,presence,88,82,0.9318181818181818
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,overlap_iou_00,88,60,0.6818181818181818
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,overlap_iou_02,88,40,0.45454545454545453
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,overlap_iou_05,88,21,0.23863636363636365
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,centroid_deq_025,88,32,0.36363636363636365
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,centroid_deq_050,88,41,0.4659090909090909
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,3k–6k,3000,6000,px,centroid_deq_100,88,51,0.5795454545454546
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,presence,142,128,0.9014084507042254
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,overlap_iou_00,142,73,0.5140845070422535
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,overlap_iou_02,142,45,0.31690140845070425
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,overlap_iou_05,142,12,0.08450704225352113
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,centroid_deq_025,142,30,0.2112676056338028
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,centroid_deq_050,142,47,0.33098591549295775
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,2,<3k,0,3000,px,centroid_deq_100,142,56,0.39436619718309857
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,overlap_iou_05,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,centroid_deq_025,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,overlap_iou_02,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,overlap_iou_05,10,5,0.5
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,centroid_deq_025,10,8,0.8
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,presence,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,overlap_iou_00,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,overlap_iou_02,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,overlap_iou_05,23,15,0.6521739130434783
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,centroid_deq_050,23,19,0.8260869565217391
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,25k–50k,25000,50000,px,centroid_deq_100,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,overlap_iou_00,48,44,0.9166666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,overlap_iou_02,48,39,0.8125
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,overlap_iou_05,48,23,0.4791666666666667
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,centroid_deq_025,48,31,0.6458333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,centroid_deq_050,48,40,0.8333333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,12k–25k,12000,25000,px,centroid_deq_100,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,presence,68,65,0.9558823529411765
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,overlap_iou_00,68,57,0.8382352941176471
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,overlap_iou_02,68,42,0.6176470588235294
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,overlap_iou_05,68,29,0.4264705882352941
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,centroid_deq_025,68,36,0.5294117647058824
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,centroid_deq_050,68,46,0.6764705882352942
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,6k–12k,6000,12000,px,centroid_deq_100,68,54,0.7941176470588235
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,presence,88,83,0.9431818181818182
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,overlap_iou_00,88,60,0.6818181818181818
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,overlap_iou_02,88,41,0.4659090909090909
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,overlap_iou_05,88,20,0.22727272727272727
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,centroid_deq_025,88,38,0.4318181818181818
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,centroid_deq_050,88,45,0.5113636363636364
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,3k–6k,3000,6000,px,centroid_deq_100,88,55,0.625
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,presence,142,128,0.9014084507042254
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,overlap_iou_00,142,84,0.5915492957746479
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,overlap_iou_02,142,52,0.36619718309859156
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,overlap_iou_05,142,21,0.14788732394366197
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,centroid_deq_025,142,41,0.2887323943661972
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,centroid_deq_050,142,52,0.36619718309859156
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,3,<3k,0,3000,px,centroid_deq_100,142,64,0.4507042253521127
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,presence,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,overlap_iou_00,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,overlap_iou_02,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,overlap_iou_05,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,centroid_deq_025,1,0,0.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,centroid_deq_050,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,100k+,100000,,px,centroid_deq_100,1,1,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,presence,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,overlap_iou_00,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,overlap_iou_02,10,9,0.9
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,overlap_iou_05,10,5,0.5
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,centroid_deq_025,10,7,0.7
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,centroid_deq_050,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,50k–100k,50000,100000,px,centroid_deq_100,10,10,1.0
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,presence,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,overlap_iou_00,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,overlap_iou_02,23,18,0.782608695652174
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,overlap_iou_05,23,14,0.6086956521739131
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,centroid_deq_025,23,17,0.7391304347826086
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,centroid_deq_050,23,21,0.9130434782608695
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,25k–50k,25000,50000,px,centroid_deq_100,23,22,0.9565217391304348
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,presence,48,47,0.9791666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,overlap_iou_00,48,46,0.9583333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,overlap_iou_02,48,37,0.7708333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,overlap_iou_05,48,26,0.5416666666666666
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,centroid_deq_025,48,31,0.6458333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,centroid_deq_050,48,43,0.8958333333333334
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,12k–25k,12000,25000,px,centroid_deq_100,48,45,0.9375
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,presence,68,66,0.9705882352941176
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,overlap_iou_00,68,57,0.8382352941176471
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,overlap_iou_02,68,47,0.6911764705882353
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,overlap_iou_05,68,29,0.4264705882352941
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,centroid_deq_025,68,36,0.5294117647058824
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,centroid_deq_050,68,50,0.7352941176470589
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,6k–12k,6000,12000,px,centroid_deq_100,68,55,0.8088235294117647
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,presence,88,83,0.9431818181818182
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,overlap_iou_00,88,65,0.7386363636363636
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,overlap_iou_02,88,46,0.5227272727272727
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,overlap_iou_05,88,26,0.29545454545454547
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,centroid_deq_025,88,40,0.45454545454545453
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,centroid_deq_050,88,47,0.5340909090909091
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,3k–6k,3000,6000,px,centroid_deq_100,88,52,0.5909090909090909
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,presence,142,130,0.9154929577464789
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,overlap_iou_00,142,92,0.647887323943662
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,overlap_iou_02,142,53,0.3732394366197183
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,overlap_iou_05,142,25,0.176056338028169
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,centroid_deq_025,142,38,0.2676056338028169
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,centroid_deq_050,142,53,0.3732394366197183
+343555a0eca1,benign_proxy_area,gaussian_noise_ablation,4,<3k,0,3000,px,centroid_deq_100,142,69,0.4859154929577465
+343555a0eca1,malignant_diameter,data_efficiency,0,8+ cm,8,,cm,image_presence,113,107,0.9469026548672567
+343555a0eca1,malignant_diameter,data_efficiency,0,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9792780748663101
+343555a0eca1,malignant_diameter,data_efficiency,0,4–8 cm,4,8,cm,image_presence,287,273,0.9512195121951219
+343555a0eca1,malignant_diameter,data_efficiency,0,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9601021785232312
+343555a0eca1,malignant_diameter,data_efficiency,0,2–4 cm,2,4,cm,image_presence,609,548,0.8998357963875205
+343555a0eca1,malignant_diameter,data_efficiency,0,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9208247660679011
+343555a0eca1,malignant_diameter,data_efficiency,0,1–2 cm,1,2,cm,image_presence,277,245,0.8844765342960289
+343555a0eca1,malignant_diameter,data_efficiency,0,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9217647331571382
+343555a0eca1,malignant_diameter,data_efficiency,0,<1 cm,0,1,cm,image_presence,39,24,0.6153846153846154
+343555a0eca1,malignant_diameter,data_efficiency,0,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.7951231774761186
+343555a0eca1,malignant_diameter,data_efficiency,0,missing size,,,cm,image_presence,64,53,0.828125
+343555a0eca1,malignant_diameter,data_efficiency,0,missing size,,,cm,patient_weighted_fraction,17,NA,0.831045751633987
+343555a0eca1,malignant_diameter,data_efficiency,1,8+ cm,8,,cm,image_presence,113,103,0.911504424778761
+343555a0eca1,malignant_diameter,data_efficiency,1,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9496434937611408
+343555a0eca1,malignant_diameter,data_efficiency,1,4–8 cm,4,8,cm,image_presence,287,262,0.9128919860627178
+343555a0eca1,malignant_diameter,data_efficiency,1,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9152650857914015
+343555a0eca1,malignant_diameter,data_efficiency,1,2–4 cm,2,4,cm,image_presence,609,540,0.8866995073891626
+343555a0eca1,malignant_diameter,data_efficiency,1,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9150130317178372
+343555a0eca1,malignant_diameter,data_efficiency,1,1–2 cm,1,2,cm,image_presence,277,238,0.8592057761732852
+343555a0eca1,malignant_diameter,data_efficiency,1,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9104441971530579
+343555a0eca1,malignant_diameter,data_efficiency,1,<1 cm,0,1,cm,image_presence,39,26,0.6666666666666666
+343555a0eca1,malignant_diameter,data_efficiency,1,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.7828682755153343
+343555a0eca1,malignant_diameter,data_efficiency,1,missing size,,,cm,image_presence,64,56,0.875
+343555a0eca1,malignant_diameter,data_efficiency,1,missing size,,,cm,patient_weighted_fraction,17,NA,0.896171802054155
+343555a0eca1,malignant_diameter,data_efficiency,2,8+ cm,8,,cm,image_presence,113,107,0.9469026548672567
+343555a0eca1,malignant_diameter,data_efficiency,2,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9672459893048129
+343555a0eca1,malignant_diameter,data_efficiency,2,4–8 cm,4,8,cm,image_presence,287,265,0.9233449477351916
+343555a0eca1,malignant_diameter,data_efficiency,2,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9331521110468479
+343555a0eca1,malignant_diameter,data_efficiency,2,2–4 cm,2,4,cm,image_presence,609,543,0.8916256157635468
+343555a0eca1,malignant_diameter,data_efficiency,2,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9171303851881655
+343555a0eca1,malignant_diameter,data_efficiency,2,1–2 cm,1,2,cm,image_presence,277,232,0.8375451263537906
+343555a0eca1,malignant_diameter,data_efficiency,2,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9138313163629619
+343555a0eca1,malignant_diameter,data_efficiency,2,<1 cm,0,1,cm,image_presence,39,28,0.717948717948718
+343555a0eca1,malignant_diameter,data_efficiency,2,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.6347410759175465
+343555a0eca1,malignant_diameter,data_efficiency,2,missing size,,,cm,image_presence,64,57,0.890625
+343555a0eca1,malignant_diameter,data_efficiency,2,missing size,,,cm,patient_weighted_fraction,17,NA,0.9062091503267974
+343555a0eca1,malignant_diameter,data_efficiency,3,8+ cm,8,,cm,image_presence,113,103,0.911504424778761
+343555a0eca1,malignant_diameter,data_efficiency,3,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9351604278074866
+343555a0eca1,malignant_diameter,data_efficiency,3,4–8 cm,4,8,cm,image_presence,287,265,0.9233449477351916
+343555a0eca1,malignant_diameter,data_efficiency,3,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9302294197031039
+343555a0eca1,malignant_diameter,data_efficiency,3,2–4 cm,2,4,cm,image_presence,609,544,0.8932676518883416
+343555a0eca1,malignant_diameter,data_efficiency,3,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9082546096161657
+343555a0eca1,malignant_diameter,data_efficiency,3,1–2 cm,1,2,cm,image_presence,277,239,0.8628158844765343
+343555a0eca1,malignant_diameter,data_efficiency,3,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9085245977651041
+343555a0eca1,malignant_diameter,data_efficiency,3,<1 cm,0,1,cm,image_presence,39,30,0.7692307692307693
+343555a0eca1,malignant_diameter,data_efficiency,3,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.8311337355455003
+343555a0eca1,malignant_diameter,data_efficiency,3,missing size,,,cm,image_presence,64,55,0.859375
+343555a0eca1,malignant_diameter,data_efficiency,3,missing size,,,cm,patient_weighted_fraction,17,NA,0.8428104575163399
+343555a0eca1,malignant_diameter,data_efficiency,4,8+ cm,8,,cm,image_presence,113,105,0.9292035398230089
+343555a0eca1,malignant_diameter,data_efficiency,4,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9498663101604278
+343555a0eca1,malignant_diameter,data_efficiency,4,4–8 cm,4,8,cm,image_presence,287,269,0.9372822299651568
+343555a0eca1,malignant_diameter,data_efficiency,4,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9536109504530557
+343555a0eca1,malignant_diameter,data_efficiency,4,2–4 cm,2,4,cm,image_presence,609,559,0.9178981937602627
+343555a0eca1,malignant_diameter,data_efficiency,4,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9455107110027019
+343555a0eca1,malignant_diameter,data_efficiency,4,1–2 cm,1,2,cm,image_presence,277,248,0.8953068592057761
+343555a0eca1,malignant_diameter,data_efficiency,4,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9317197570362127
+343555a0eca1,malignant_diameter,data_efficiency,4,<1 cm,0,1,cm,image_presence,39,28,0.717948717948718
+343555a0eca1,malignant_diameter,data_efficiency,4,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.8831070889894419
+343555a0eca1,malignant_diameter,data_efficiency,4,missing size,,,cm,image_presence,64,57,0.890625
+343555a0eca1,malignant_diameter,data_efficiency,4,missing size,,,cm,patient_weighted_fraction,17,NA,0.8885620915032679
+343555a0eca1,malignant_diameter,augmentation_ablation,0,8+ cm,8,,cm,image_presence,113,103,0.911504424778761
+343555a0eca1,malignant_diameter,augmentation_ablation,0,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9292780748663102
+343555a0eca1,malignant_diameter,augmentation_ablation,0,4–8 cm,4,8,cm,image_presence,287,270,0.9407665505226481
+343555a0eca1,malignant_diameter,augmentation_ablation,0,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9377289377289377
+343555a0eca1,malignant_diameter,augmentation_ablation,0,2–4 cm,2,4,cm,image_presence,609,547,0.8981937602627258
+343555a0eca1,malignant_diameter,augmentation_ablation,0,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9274689161588475
+343555a0eca1,malignant_diameter,augmentation_ablation,0,1–2 cm,1,2,cm,image_presence,277,236,0.851985559566787
+343555a0eca1,malignant_diameter,augmentation_ablation,0,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.8869546065748597
+343555a0eca1,malignant_diameter,augmentation_ablation,0,<1 cm,0,1,cm,image_presence,39,20,0.5128205128205128
+343555a0eca1,malignant_diameter,augmentation_ablation,0,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.6752765208647562
+343555a0eca1,malignant_diameter,augmentation_ablation,0,missing size,,,cm,image_presence,64,56,0.875
+343555a0eca1,malignant_diameter,augmentation_ablation,0,missing size,,,cm,patient_weighted_fraction,17,NA,0.8669934640522876
+343555a0eca1,malignant_diameter,augmentation_ablation,1,8+ cm,8,,cm,image_presence,113,105,0.9292035398230089
+343555a0eca1,malignant_diameter,augmentation_ablation,1,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9451871657754011
+343555a0eca1,malignant_diameter,augmentation_ablation,1,4–8 cm,4,8,cm,image_presence,287,263,0.9163763066202091
+343555a0eca1,malignant_diameter,augmentation_ablation,1,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9420339309812994
+343555a0eca1,malignant_diameter,augmentation_ablation,1,2–4 cm,2,4,cm,image_presence,609,554,0.909688013136289
+343555a0eca1,malignant_diameter,augmentation_ablation,1,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9312731579379177
+343555a0eca1,malignant_diameter,augmentation_ablation,1,1–2 cm,1,2,cm,image_presence,277,241,0.8700361010830325
+343555a0eca1,malignant_diameter,augmentation_ablation,1,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9057819817313488
+343555a0eca1,malignant_diameter,augmentation_ablation,1,<1 cm,0,1,cm,image_presence,39,21,0.5384615384615384
+343555a0eca1,malignant_diameter,augmentation_ablation,1,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.6959527400703871
+343555a0eca1,malignant_diameter,augmentation_ablation,1,missing size,,,cm,image_presence,64,59,0.921875
+343555a0eca1,malignant_diameter,augmentation_ablation,1,missing size,,,cm,patient_weighted_fraction,17,NA,0.9408496732026144
+343555a0eca1,malignant_diameter,augmentation_ablation,2,8+ cm,8,,cm,image_presence,113,108,0.9557522123893806
+343555a0eca1,malignant_diameter,augmentation_ablation,2,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.981951871657754
+343555a0eca1,malignant_diameter,augmentation_ablation,2,4–8 cm,4,8,cm,image_presence,287,265,0.9233449477351916
+343555a0eca1,malignant_diameter,augmentation_ablation,2,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9292269134374398
+343555a0eca1,malignant_diameter,augmentation_ablation,2,2–4 cm,2,4,cm,image_presence,609,549,0.9014778325123153
+343555a0eca1,malignant_diameter,augmentation_ablation,2,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9098603916424283
+343555a0eca1,malignant_diameter,augmentation_ablation,2,1–2 cm,1,2,cm,image_presence,277,236,0.851985559566787
+343555a0eca1,malignant_diameter,augmentation_ablation,2,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9309384708118885
+343555a0eca1,malignant_diameter,augmentation_ablation,2,<1 cm,0,1,cm,image_presence,39,27,0.6923076923076923
+343555a0eca1,malignant_diameter,augmentation_ablation,2,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.5930744092508798
+343555a0eca1,malignant_diameter,augmentation_ablation,2,missing size,,,cm,image_presence,64,59,0.921875
+343555a0eca1,malignant_diameter,augmentation_ablation,2,missing size,,,cm,patient_weighted_fraction,17,NA,0.9179738562091503
+343555a0eca1,malignant_diameter,augmentation_ablation,3,8+ cm,8,,cm,image_presence,113,103,0.911504424778761
+343555a0eca1,malignant_diameter,augmentation_ablation,3,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9524446142093201
+343555a0eca1,malignant_diameter,augmentation_ablation,3,4–8 cm,4,8,cm,image_presence,287,252,0.8780487804878049
+343555a0eca1,malignant_diameter,augmentation_ablation,3,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.8815750915750916
+343555a0eca1,malignant_diameter,augmentation_ablation,3,2–4 cm,2,4,cm,image_presence,609,531,0.8719211822660099
+343555a0eca1,malignant_diameter,augmentation_ablation,3,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.8849627212985337
+343555a0eca1,malignant_diameter,augmentation_ablation,3,1–2 cm,1,2,cm,image_presence,277,241,0.8700361010830325
+343555a0eca1,malignant_diameter,augmentation_ablation,3,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9231116984281541
+343555a0eca1,malignant_diameter,augmentation_ablation,3,<1 cm,0,1,cm,image_presence,39,23,0.5897435897435898
+343555a0eca1,malignant_diameter,augmentation_ablation,3,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.5219959778783309
+343555a0eca1,malignant_diameter,augmentation_ablation,3,missing size,,,cm,image_presence,64,55,0.859375
+343555a0eca1,malignant_diameter,augmentation_ablation,3,missing size,,,cm,patient_weighted_fraction,17,NA,0.8101307189542484
+343555a0eca1,malignant_diameter,augmentation_ablation,4,8+ cm,8,,cm,image_presence,113,109,0.9646017699115044
+343555a0eca1,malignant_diameter,augmentation_ablation,4,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9740641711229947
+343555a0eca1,malignant_diameter,augmentation_ablation,4,4–8 cm,4,8,cm,image_presence,287,266,0.926829268292683
+343555a0eca1,malignant_diameter,augmentation_ablation,4,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.950738384422595
+343555a0eca1,malignant_diameter,augmentation_ablation,4,2–4 cm,2,4,cm,image_presence,609,547,0.8981937602627258
+343555a0eca1,malignant_diameter,augmentation_ablation,4,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.923320732153684
+343555a0eca1,malignant_diameter,augmentation_ablation,4,1–2 cm,1,2,cm,image_presence,277,242,0.8736462093862816
+343555a0eca1,malignant_diameter,augmentation_ablation,4,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9418486576714424
+343555a0eca1,malignant_diameter,augmentation_ablation,4,<1 cm,0,1,cm,image_presence,39,27,0.6923076923076923
+343555a0eca1,malignant_diameter,augmentation_ablation,4,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.8444570135746606
+343555a0eca1,malignant_diameter,augmentation_ablation,4,missing size,,,cm,image_presence,64,60,0.9375
+343555a0eca1,malignant_diameter,augmentation_ablation,4,missing size,,,cm,patient_weighted_fraction,17,NA,0.9294117647058824
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,8+ cm,8,,cm,image_presence,113,105,0.9292035398230089
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9498663101604278
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,4–8 cm,4,8,cm,image_presence,287,261,0.9094076655052264
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9222344322344322
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,2–4 cm,2,4,cm,image_presence,609,544,0.8932676518883416
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9209802271844606
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,1–2 cm,1,2,cm,image_presence,277,237,0.855595667870036
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9004868549172347
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,<1 cm,0,1,cm,image_presence,39,22,0.5641025641025641
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.7267471091000502
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,missing size,,,cm,image_presence,64,54,0.84375
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,0,missing size,,,cm,patient_weighted_fraction,17,NA,0.8408496732026144
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,8+ cm,8,,cm,image_presence,113,102,0.9026548672566371
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9339572192513369
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,4–8 cm,4,8,cm,image_presence,287,269,0.9372822299651568
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9448139579718527
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,2–4 cm,2,4,cm,image_presence,609,559,0.9178981937602627
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9336629268265424
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,1–2 cm,1,2,cm,image_presence,277,240,0.8664259927797834
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9185306254926509
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,<1 cm,0,1,cm,image_presence,39,29,0.7435897435897436
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.8014077425842132
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,missing size,,,cm,image_presence,64,58,0.90625
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,1,missing size,,,cm,patient_weighted_fraction,17,NA,0.9179738562091503
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,8+ cm,8,,cm,image_presence,113,103,0.911504424778761
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9278074866310161
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,4–8 cm,4,8,cm,image_presence,287,258,0.8989547038327527
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9005301715828031
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,2–4 cm,2,4,cm,image_presence,609,542,0.8899835796387521
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9043154639664938
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,1–2 cm,1,2,cm,image_presence,277,230,0.8303249097472925
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9014350628274679
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,<1 cm,0,1,cm,image_presence,39,26,0.6666666666666666
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.6151332327802916
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,missing size,,,cm,image_presence,64,58,0.90625
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,2,missing size,,,cm,patient_weighted_fraction,17,NA,0.8738562091503268
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,8+ cm,8,,cm,image_presence,113,104,0.9203539823008849
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9393048128342246
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,4–8 cm,4,8,cm,image_presence,287,268,0.9337979094076655
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9416483516483517
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,2–4 cm,2,4,cm,image_presence,609,547,0.8981937602627258
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9155175167446334
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,1–2 cm,1,2,cm,image_presence,277,243,0.8772563176895307
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9280034311679881
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,<1 cm,0,1,cm,image_presence,39,26,0.6666666666666666
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.6608848667672197
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,missing size,,,cm,image_presence,64,56,0.875
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,3,missing size,,,cm,patient_weighted_fraction,17,NA,0.8232026143790849
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,8+ cm,8,,cm,image_presence,113,104,0.9203539823008849
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,8+ cm,8,,cm,patient_weighted_fraction,34,NA,0.9498663101604278
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,4–8 cm,4,8,cm,image_presence,287,264,0.9198606271777003
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,4–8 cm,4,8,cm,patient_weighted_fraction,95,NA,0.9369115095430884
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,2–4 cm,2,4,cm,image_presence,609,552,0.9064039408866995
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,2–4 cm,2,4,cm,patient_weighted_fraction,190,NA,0.9172998794366072
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,1–2 cm,1,2,cm,image_presence,277,248,0.8953068592057761
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,1–2 cm,1,2,cm,patient_weighted_fraction,79,NA,0.9431028886725089
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,<1 cm,0,1,cm,image_presence,39,24,0.6153846153846154
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,<1 cm,0,1,cm,patient_weighted_fraction,6,NA,0.7692936148818502
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,missing size,,,cm,image_presence,64,56,0.875
+343555a0eca1,malignant_diameter,gaussian_noise_ablation,4,missing size,,,cm,patient_weighted_fraction,17,NA,0.8869281045751634

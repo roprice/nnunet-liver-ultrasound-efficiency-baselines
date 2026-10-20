@@ -53,29 +53,29 @@ On the **local computer**, prepare the cohort if needed:
 .venv/bin/python -B experiments/06_external_validation/prepare_external_data.py
 ```
 
-While that process runs, on the **local computer**, from the repository root, replace `135.181.63.168` before pasting:
+While that process runs, on the **local computer**, from the repository root, replace `<gpu_ip>` before pasting:
 
 ```sh
 rsync -avR archives_staging/06_external_validation/smc_lud_prepared/ \
-  "root@135.181.63.168:/root/nnunet-liver-ultrasound-efficiency-baselines/"
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 
 rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
   --include='fold_[0-4]/checkpoint_final.pth' \
   --include='fold_[0-4]/checkpoint_metadata.json' --exclude='*' \
   archives/02_data_efficiency/nnUNet_results/Dataset001_AUL/nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d/ \
-  "root@135.181.63.168:/root/nnunet-liver-ultrasound-efficiency-baselines/"
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 
 rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
   --include='fold_[0-4]/checkpoint_final.pth' \
   --include='fold_[0-4]/checkpoint_metadata.json' --exclude='*' \
   archives/03_augmentation_ablation/nnUNet_results/Dataset001_AUL/nnUNetTrainer_brightnessAugmentation__nnUNetPlans__2d/ \
-  "root@135.181.63.168:/root/nnunet-liver-ultrasound-efficiency-baselines/"
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 
 rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
   --include='fold_[0-4]/checkpoint_final.pth' \
   --include='fold_[0-4]/checkpoint_metadata.json' --exclude='*' \
   archives/04_gaussian_noise_ablation/nnUNet_results/Dataset001_AUL/nnUNetTrainer_gaussianNoiseAugmentation__nnUNetPlans__2d/ \
-  "root@135.181.63.168:/root/nnunet-liver-ultrasound-efficiency-baselines/"
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 ```
 
 ## Check and run
@@ -155,15 +155,15 @@ print('Completed')
 PY
 ```
 
-On the **local computer**, from the repository root, replace `135.181.63.168` before pasting:
+On the **local computer**, from the repository root, replace `<gpu_ip>` before pasting:
 
 ```sh
 mkdir -p logs/06_external_validation_cuda
 rsync -av --exclude='merged_nnUNet_results/' \
-  "root@135.181.63.168:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
   logs/06_external_validation_cuda/
 rsync -avnc --exclude='merged_nnUNet_results/' \
-  "root@135.181.63.168:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
   logs/06_external_validation_cuda/
 ```
 
