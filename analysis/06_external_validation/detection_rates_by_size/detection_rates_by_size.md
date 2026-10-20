@@ -29,16 +29,16 @@ Patients can contribute images to more than one bin, so patient counts across bi
 
 ### Presence: AUL versus SMC
 
-Restricted to the observed range common to both datasets (0.095%–11.067% of image area, inclusive) so that neither dataset is compared where the other has no lesions; the full-sample row is unrestricted. The reference types differ (annotation versus circle), so only presence, which does not depend on the reference, is compared. Differences are SMC − AUL in percentage points.
+Restricted to the observed range common to both datasets (0.095%–11.067% of image area, inclusive) so that neither dataset is compared where the other has no lesions; the full-sample row is unrestricted. Presence without overlap is the share of all images with a retained prediction but no overlap with the AUL annotation or SMC proxy circle, respectively. The reference types differ; presence itself does not depend on the reference. Differences are SMC − AUL presence in percentage points.
 
-| bin | AUL images | SMC images | SMC patients | AUL presence % | SMC presence % | difference |
-|---|---:|---:|---:|---|---|---|
-| Q1 | 16 | 151 | 102 | 65.00 ± 9.48 | 90.07 ± 0.81 | 25.07 ± 9.40 |
-| Q2 | 12 | 91 | 57 | 80.00 ± 9.50 | 94.95 ± 1.67 | 14.95 ± 8.70 |
-| Q3 | 4 | 98 | 58 | 100.00 ± 0.00 | 97.55 ± 1.55 | -2.45 ± 1.55 |
-| Q4 | 5 | 24 | 17 | 96.00 ± 8.94 | 96.67 ± 3.49 | 0.67 ± 9.16 |
-| Common range | 37 | 364 | 188 | 77.84 ± 1.21 | 93.74 ± 0.60 | 15.90 ± 1.58 |
-| Full sample | 40 | 380 | 190 | 72.50 ± 1.77 | 94.00 ± 0.57 | 21.50 ± 2.11 |
+| bin | AUL images | SMC images | AUL presence % | SMC presence % | difference | AUL presence without overlap % | SMC presence without overlap % |
+|---|---:|---:|---|---|---|---|---|
+| Q1 | 16 | 151 | 65.00 ± 9.48 | 90.07 ± 0.81 | 25.07 ± 9.40 | 12.50 ± 4.42 | 30.60 ± 3.49 |
+| Q2 | 12 | 91 | 80.00 ± 9.50 | 94.95 ± 1.67 | 14.95 ± 8.70 | 1.67 ± 3.73 | 17.14 ± 1.84 |
+| Q3 | 4 | 98 | 100.00 ± 0.00 | 97.55 ± 1.55 | -2.45 ± 1.55 | 0.00 ± 0.00 | 6.94 ± 1.33 |
+| Q4 | 5 | 24 | 96.00 ± 8.94 | 96.67 ± 3.49 | 0.67 ± 9.16 | 0.00 ± 0.00 | 2.50 ± 2.28 |
+| Common range | 37 | 364 | 77.84 ± 1.21 | 93.74 ± 0.60 | 15.90 ± 1.58 | 5.95 ± 2.26 | 19.01 ± 1.56 |
+| Full sample | 40 | 380 | 72.50 ± 1.77 | 94.00 ± 0.57 | 21.50 ± 2.11 | 6.00 ± 2.24 | 18.21 ± 1.49 |
 
 AUL benign images are a different diagnostic mix from SMC hemangioma, and the SMC subset is selected. Rates are image-weighted with no patient-clustered intervals or hypothesis tests.
 

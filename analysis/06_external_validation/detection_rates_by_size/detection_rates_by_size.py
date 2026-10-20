@@ -199,29 +199,40 @@ def proxy_records(proxy_groups, masks, cuts):
     return records
 
 
-def presence_counts(rows, cuts):
-    counts = {label: [0, 0] for label in [*QUARTILES, "All"]}
+def presence_counts(rows, cuts, overlap_flags):
+    counts = {label: [0, 0, 0] for label in [*QUARTILES, "All"]}
     for row in rows:
         for label in (quartile_label(row, cuts), "All"):
             counts[label][0] += 1
             counts[label][1] += row.triage_detection_flag
+            counts[label][2] += row.triage_detection_flag and not overlap_flags[row.image_id]
     return counts
 
 
-def comparison_records(aul_benign, proxy_groups, cuts):
+def comparison_records(aul_benign, proxy_groups, cuts, masks):
     """AUL and SMC benign presence in shared bins, plus the full-sample rate."""
     lower, upper = common_range(aul_benign[0], proxy_groups[PRIMARY_MODEL, 0])
     records = []
     for fold in FOLDS:
         for dataset, rows in (("aul", aul_benign[fold]), ("smc", proxy_groups[PRIMARY_MODEL, fold])):
+            if dataset == "aul":
+                overlap_flags = {row.image_id: row.overlap_detection_iou_00_flag for row in rows}
+                if any(flag is None for flag in overlap_flags.values()):
+                    raise RuntimeError("AUL comparison requires annotation overlap flags")
+            else:
+                overlap_flags = {
+                    row.image_id: evaluate_prediction(row, masks[row.image_id]).detected["overlap_iou_00"]
+                    for row in rows
+                }
             common_rows = [row for row in rows if lower <= relative_size(row) <= upper]
-            for label, (n, flagged) in presence_counts(common_rows, cuts).items():
+            counts = presence_counts(common_rows, cuts, overlap_flags)
+            counts["Full sample"] = presence_counts(rows, cuts, overlap_flags)["All"]
+            for label, (n, flagged, without_overlap) in counts.items():
                 label = "Common range" if label == "All" else label
                 records.append(count_record(f"{dataset}_benign", PRIMARY_MODEL, fold, label,
                                             "presence", n, flagged))
-            n, flagged = presence_counts(rows, cuts)["All"]
-            records.append(count_record(f"{dataset}_benign", PRIMARY_MODEL, fold, "Full sample",
-                                        "presence", n, flagged))
+                records.append(count_record(f"{dataset}_benign", PRIMARY_MODEL, fold, label,
+                                            "presence_without_overlap", n, without_overlap))
     return records, (lower, upper)
 
 
@@ -259,7 +270,7 @@ def build_records(data, manifest, archived):
     proxy_groups = select_proxy_groups(groups)
     aul_benign, cuts = select_aul_benign(data.rows)
     masks = load_proxy_masks(proxy_groups[PRIMARY_MODEL, 0])
-    comparison, common = comparison_records(aul_benign, proxy_groups, cuts)
+    comparison, common = comparison_records(aul_benign, proxy_groups, cuts, masks)
     records = proxy_records(proxy_groups, masks, cuts) + comparison + hcc_records(data.rows, archived)
     common_rows = [row for row in proxy_groups[PRIMARY_MODEL, 0]
                    if common[0] <= relative_size(row) <= common[1]]
@@ -394,19 +405,23 @@ def build_report(data, manifest, archived_bytes, records, summary):
         "Restricted to the observed range common to both datasets "
         f"({100 * lower:.3f}%–{100 * upper:.3f}% of image area, inclusive) so that neither "
         "dataset is compared where the other has no lesions; the full-sample row is unrestricted. "
-        "The reference types differ (annotation versus circle), so only presence, which does not "
-        "depend on the reference, is compared. Differences are SMC − AUL in percentage points.",
+        "Presence without overlap is the share of all images with a retained prediction but no "
+        "overlap with the AUL annotation or SMC proxy circle, respectively. The reference types "
+        "differ; presence itself does not depend on the reference. Differences are SMC − AUL "
+        "presence in percentage points.",
         "",
-        "| bin | AUL images | SMC images | SMC patients | AUL presence % | SMC presence % | difference |",
-        "|---|---:|---:|---:|---|---|---|",
+        "| bin | AUL images | SMC images | AUL presence % | SMC presence % | difference | "
+        "AUL presence without overlap % | SMC presence without overlap % |",
+        "|---|---:|---:|---|---|---|---|---|",
     ])
     for label in [*QUARTILES, "Common range", "Full sample"]:
         lines.append(
             f"| {label} | {aul_images[label]} | {smc_images[label]} "
-            f"| {summary['comparison_patients'][label]} "
             f"| {format_cell(series, 'aul_benign', 'presence', label, digits=2)} "
             f"| {format_cell(series, 'smc_benign', 'presence', label, digits=2)} "
-            f"| {format_difference(series, label)} |")
+            f"| {format_difference(series, label)} "
+            f"| {format_cell(series, 'aul_benign', 'presence_without_overlap', label, digits=2)} "
+            f"| {format_cell(series, 'smc_benign', 'presence_without_overlap', label, digits=2)} |")
     lines.extend([
         "",
         "AUL benign images are a different diagnostic mix from SMC hemangioma, and the SMC "

@@ -600,65 +600,125 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,centroid_deq_100,380,254,0.6684210526315789
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,presence_without_overlap,380,66,0.1736842105263158
 343555a0eca1,aul_benign,data_efficiency,0,Q1,presence,16,8,0.5
+343555a0eca1,aul_benign,data_efficiency,0,Q1,presence_without_overlap,16,2,0.125
 343555a0eca1,aul_benign,data_efficiency,0,Q2,presence,12,11,0.9166666666666666
+343555a0eca1,aul_benign,data_efficiency,0,Q2,presence_without_overlap,12,0,0.0
 343555a0eca1,aul_benign,data_efficiency,0,Q3,presence,4,4,1.0
+343555a0eca1,aul_benign,data_efficiency,0,Q3,presence_without_overlap,4,0,0.0
 343555a0eca1,aul_benign,data_efficiency,0,Q4,presence,5,5,1.0
+343555a0eca1,aul_benign,data_efficiency,0,Q4,presence_without_overlap,5,0,0.0
 343555a0eca1,aul_benign,data_efficiency,0,Common range,presence,37,28,0.7567567567567568
+343555a0eca1,aul_benign,data_efficiency,0,Common range,presence_without_overlap,37,2,0.05405405405405406
 343555a0eca1,aul_benign,data_efficiency,0,Full sample,presence,40,28,0.7
+343555a0eca1,aul_benign,data_efficiency,0,Full sample,presence_without_overlap,40,2,0.05
 343555a0eca1,smc_benign,data_efficiency,0,Q1,presence,151,135,0.8940397350993378
+343555a0eca1,smc_benign,data_efficiency,0,Q1,presence_without_overlap,151,42,0.2781456953642384
 343555a0eca1,smc_benign,data_efficiency,0,Q2,presence,91,87,0.9560439560439561
+343555a0eca1,smc_benign,data_efficiency,0,Q2,presence_without_overlap,91,17,0.18681318681318682
 343555a0eca1,smc_benign,data_efficiency,0,Q3,presence,98,97,0.9897959183673469
+343555a0eca1,smc_benign,data_efficiency,0,Q3,presence_without_overlap,98,7,0.07142857142857142
 343555a0eca1,smc_benign,data_efficiency,0,Q4,presence,24,24,1.0
+343555a0eca1,smc_benign,data_efficiency,0,Q4,presence_without_overlap,24,1,0.041666666666666664
 343555a0eca1,smc_benign,data_efficiency,0,Common range,presence,364,343,0.9423076923076923
+343555a0eca1,smc_benign,data_efficiency,0,Common range,presence_without_overlap,364,67,0.18406593406593408
 343555a0eca1,smc_benign,data_efficiency,0,Full sample,presence,380,359,0.9447368421052632
+343555a0eca1,smc_benign,data_efficiency,0,Full sample,presence_without_overlap,380,67,0.1763157894736842
 343555a0eca1,aul_benign,data_efficiency,1,Q1,presence,16,11,0.6875
+343555a0eca1,aul_benign,data_efficiency,1,Q1,presence_without_overlap,16,2,0.125
 343555a0eca1,aul_benign,data_efficiency,1,Q2,presence,12,10,0.8333333333333334
+343555a0eca1,aul_benign,data_efficiency,1,Q2,presence_without_overlap,12,1,0.08333333333333333
 343555a0eca1,aul_benign,data_efficiency,1,Q3,presence,4,4,1.0
+343555a0eca1,aul_benign,data_efficiency,1,Q3,presence_without_overlap,4,0,0.0
 343555a0eca1,aul_benign,data_efficiency,1,Q4,presence,5,4,0.8
+343555a0eca1,aul_benign,data_efficiency,1,Q4,presence_without_overlap,5,0,0.0
 343555a0eca1,aul_benign,data_efficiency,1,Common range,presence,37,29,0.7837837837837838
+343555a0eca1,aul_benign,data_efficiency,1,Common range,presence_without_overlap,37,3,0.08108108108108109
 343555a0eca1,aul_benign,data_efficiency,1,Full sample,presence,40,29,0.725
+343555a0eca1,aul_benign,data_efficiency,1,Full sample,presence_without_overlap,40,3,0.075
 343555a0eca1,smc_benign,data_efficiency,1,Q1,presence,151,136,0.9006622516556292
+343555a0eca1,smc_benign,data_efficiency,1,Q1,presence_without_overlap,151,47,0.31125827814569534
 343555a0eca1,smc_benign,data_efficiency,1,Q2,presence,91,87,0.9560439560439561
+343555a0eca1,smc_benign,data_efficiency,1,Q2,presence_without_overlap,91,16,0.17582417582417584
 343555a0eca1,smc_benign,data_efficiency,1,Q3,presence,98,96,0.9795918367346939
+343555a0eca1,smc_benign,data_efficiency,1,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,smc_benign,data_efficiency,1,Q4,presence,24,23,0.9583333333333334
+343555a0eca1,smc_benign,data_efficiency,1,Q4,presence_without_overlap,24,0,0.0
 343555a0eca1,smc_benign,data_efficiency,1,Common range,presence,364,342,0.9395604395604396
+343555a0eca1,smc_benign,data_efficiency,1,Common range,presence_without_overlap,364,69,0.18956043956043955
 343555a0eca1,smc_benign,data_efficiency,1,Full sample,presence,380,358,0.9421052631578948
+343555a0eca1,smc_benign,data_efficiency,1,Full sample,presence_without_overlap,380,69,0.18157894736842106
 343555a0eca1,aul_benign,data_efficiency,2,Q1,presence,16,12,0.75
+343555a0eca1,aul_benign,data_efficiency,2,Q1,presence_without_overlap,16,2,0.125
 343555a0eca1,aul_benign,data_efficiency,2,Q2,presence,12,8,0.6666666666666666
+343555a0eca1,aul_benign,data_efficiency,2,Q2,presence_without_overlap,12,0,0.0
 343555a0eca1,aul_benign,data_efficiency,2,Q3,presence,4,4,1.0
+343555a0eca1,aul_benign,data_efficiency,2,Q3,presence_without_overlap,4,0,0.0
 343555a0eca1,aul_benign,data_efficiency,2,Q4,presence,5,5,1.0
+343555a0eca1,aul_benign,data_efficiency,2,Q4,presence_without_overlap,5,0,0.0
 343555a0eca1,aul_benign,data_efficiency,2,Common range,presence,37,29,0.7837837837837838
+343555a0eca1,aul_benign,data_efficiency,2,Common range,presence_without_overlap,37,2,0.05405405405405406
 343555a0eca1,aul_benign,data_efficiency,2,Full sample,presence,40,30,0.75
+343555a0eca1,aul_benign,data_efficiency,2,Full sample,presence_without_overlap,40,3,0.075
 343555a0eca1,smc_benign,data_efficiency,2,Q1,presence,151,136,0.9006622516556292
+343555a0eca1,smc_benign,data_efficiency,2,Q1,presence_without_overlap,151,55,0.36423841059602646
 343555a0eca1,smc_benign,data_efficiency,2,Q2,presence,91,84,0.9230769230769231
+343555a0eca1,smc_benign,data_efficiency,2,Q2,presence_without_overlap,91,17,0.18681318681318682
 343555a0eca1,smc_benign,data_efficiency,2,Q3,presence,98,96,0.9795918367346939
+343555a0eca1,smc_benign,data_efficiency,2,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,smc_benign,data_efficiency,2,Q4,presence,24,24,1.0
+343555a0eca1,smc_benign,data_efficiency,2,Q4,presence_without_overlap,24,1,0.041666666666666664
 343555a0eca1,smc_benign,data_efficiency,2,Common range,presence,364,340,0.9340659340659341
+343555a0eca1,smc_benign,data_efficiency,2,Common range,presence_without_overlap,364,79,0.21703296703296704
 343555a0eca1,smc_benign,data_efficiency,2,Full sample,presence,380,356,0.9368421052631579
+343555a0eca1,smc_benign,data_efficiency,2,Full sample,presence_without_overlap,380,79,0.20789473684210527
 343555a0eca1,aul_benign,data_efficiency,3,Q1,presence,16,11,0.6875
+343555a0eca1,aul_benign,data_efficiency,3,Q1,presence_without_overlap,16,3,0.1875
 343555a0eca1,aul_benign,data_efficiency,3,Q2,presence,12,9,0.75
+343555a0eca1,aul_benign,data_efficiency,3,Q2,presence_without_overlap,12,0,0.0
 343555a0eca1,aul_benign,data_efficiency,3,Q3,presence,4,4,1.0
+343555a0eca1,aul_benign,data_efficiency,3,Q3,presence_without_overlap,4,0,0.0
 343555a0eca1,aul_benign,data_efficiency,3,Q4,presence,5,5,1.0
+343555a0eca1,aul_benign,data_efficiency,3,Q4,presence_without_overlap,5,0,0.0
 343555a0eca1,aul_benign,data_efficiency,3,Common range,presence,37,29,0.7837837837837838
+343555a0eca1,aul_benign,data_efficiency,3,Common range,presence_without_overlap,37,3,0.08108108108108109
 343555a0eca1,aul_benign,data_efficiency,3,Full sample,presence,40,29,0.725
+343555a0eca1,aul_benign,data_efficiency,3,Full sample,presence_without_overlap,40,3,0.075
 343555a0eca1,smc_benign,data_efficiency,3,Q1,presence,151,135,0.8940397350993378
+343555a0eca1,smc_benign,data_efficiency,3,Q1,presence_without_overlap,151,44,0.2913907284768212
 343555a0eca1,smc_benign,data_efficiency,3,Q2,presence,91,88,0.967032967032967
+343555a0eca1,smc_benign,data_efficiency,3,Q2,presence_without_overlap,91,15,0.16483516483516483
 343555a0eca1,smc_benign,data_efficiency,3,Q3,presence,98,93,0.9489795918367347
+343555a0eca1,smc_benign,data_efficiency,3,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,smc_benign,data_efficiency,3,Q4,presence,24,22,0.9166666666666666
+343555a0eca1,smc_benign,data_efficiency,3,Q4,presence_without_overlap,24,1,0.041666666666666664
 343555a0eca1,smc_benign,data_efficiency,3,Common range,presence,364,338,0.9285714285714286
+343555a0eca1,smc_benign,data_efficiency,3,Common range,presence_without_overlap,364,66,0.1813186813186813
 343555a0eca1,smc_benign,data_efficiency,3,Full sample,presence,380,354,0.9315789473684211
+343555a0eca1,smc_benign,data_efficiency,3,Full sample,presence_without_overlap,380,66,0.1736842105263158
 343555a0eca1,aul_benign,data_efficiency,4,Q1,presence,16,10,0.625
+343555a0eca1,aul_benign,data_efficiency,4,Q1,presence_without_overlap,16,1,0.0625
 343555a0eca1,aul_benign,data_efficiency,4,Q2,presence,12,10,0.8333333333333334
+343555a0eca1,aul_benign,data_efficiency,4,Q2,presence_without_overlap,12,0,0.0
 343555a0eca1,aul_benign,data_efficiency,4,Q3,presence,4,4,1.0
+343555a0eca1,aul_benign,data_efficiency,4,Q3,presence_without_overlap,4,0,0.0
 343555a0eca1,aul_benign,data_efficiency,4,Q4,presence,5,5,1.0
+343555a0eca1,aul_benign,data_efficiency,4,Q4,presence_without_overlap,5,0,0.0
 343555a0eca1,aul_benign,data_efficiency,4,Common range,presence,37,29,0.7837837837837838
+343555a0eca1,aul_benign,data_efficiency,4,Common range,presence_without_overlap,37,1,0.02702702702702703
 343555a0eca1,aul_benign,data_efficiency,4,Full sample,presence,40,29,0.725
+343555a0eca1,aul_benign,data_efficiency,4,Full sample,presence_without_overlap,40,1,0.025
 343555a0eca1,smc_benign,data_efficiency,4,Q1,presence,151,138,0.9139072847682119
+343555a0eca1,smc_benign,data_efficiency,4,Q1,presence_without_overlap,151,43,0.2847682119205298
 343555a0eca1,smc_benign,data_efficiency,4,Q2,presence,91,86,0.945054945054945
+343555a0eca1,smc_benign,data_efficiency,4,Q2,presence_without_overlap,91,13,0.14285714285714285
 343555a0eca1,smc_benign,data_efficiency,4,Q3,presence,98,96,0.9795918367346939
+343555a0eca1,smc_benign,data_efficiency,4,Q3,presence_without_overlap,98,9,0.09183673469387756
 343555a0eca1,smc_benign,data_efficiency,4,Q4,presence,24,23,0.9583333333333334
+343555a0eca1,smc_benign,data_efficiency,4,Q4,presence_without_overlap,24,0,0.0
 343555a0eca1,smc_benign,data_efficiency,4,Common range,presence,364,343,0.9423076923076923
+343555a0eca1,smc_benign,data_efficiency,4,Common range,presence_without_overlap,364,65,0.17857142857142858
 343555a0eca1,smc_benign,data_efficiency,4,Full sample,presence,380,359,0.9447368421052632
+343555a0eca1,smc_benign,data_efficiency,4,Full sample,presence_without_overlap,380,65,0.17105263157894737
 343555a0eca1,hcc_diameter,data_efficiency,0,<2 cm,image_presence,316,269,0.8512658227848101
 343555a0eca1,hcc_diameter,data_efficiency,0,<2 cm,patient_weighted_fraction,85,NA,0.9128253292267133
 343555a0eca1,hcc_diameter,data_efficiency,0,2–4 cm,image_presence,609,548,0.8998357963875205

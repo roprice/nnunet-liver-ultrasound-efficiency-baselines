@@ -266,18 +266,38 @@ class ComparisonAndHccTests(unittest.TestCase):
         cuts = [0.02, 0.04, 0.06]
         aul_areas = [(5, False), (30, True), (50, True), (500, True)]
         smc_areas = [(30, True), (30, False), (50, True), (500, True), (900, True)]
-        aul = {fold: [size_row(area, flagged=flag) for area, flag in aul_areas] for fold in analysis.FOLDS}
-        smc = {("data_efficiency", fold): [size_row(area, "external_clean", flag) for area, flag in smc_areas]
+        aul = {fold: [size_row(area, flagged=flag, image_id=str(index))
+                      for index, (area, flag) in enumerate(aul_areas)] for fold in analysis.FOLDS}
+        for rows in aul.values():
+            for row in rows:
+                row.overlap_detection_iou_00_flag = row.image_id == "2"
+        smc = {("data_efficiency", fold): [size_row(area, "external_clean", flag, str(index))
+                                         for index, (area, flag) in enumerate(smc_areas)]
                for fold in analysis.FOLDS}
-        records, (lower, upper) = analysis.comparison_records(aul, smc, cuts)
+        def proxy_result(row, mask):
+            return analysis.ProxyResult(row.triage_detection_flag, 0,
+                                        {"overlap_iou_00": row.image_id == "3"})
+
+        with patch.object(analysis, "evaluate_prediction", side_effect=proxy_result):
+            records, (lower, upper) = analysis.comparison_records(
+                aul, smc, cuts, dict.fromkeys(map(str, range(5))))
         self.assertEqual((lower, upper), (0.03, 0.5))
-        fold_zero = {(r["analysis"], r["bin"]): (r["n"], r["count"]) for r in records if r["fold"] == 0}
+        fold_zero = {(r["analysis"], r["bin"]): (r["n"], r["count"]) for r in records
+                     if r["fold"] == 0 and r["metric"] == "presence"}
         self.assertEqual(fold_zero["aul_benign", "Common range"], (3, 3))
         self.assertEqual(fold_zero["aul_benign", "Full sample"], (4, 3))
         self.assertEqual(fold_zero["smc_benign", "Common range"], (4, 3))
         self.assertEqual(fold_zero["smc_benign", "Full sample"], (5, 4))
         self.assertEqual(fold_zero["smc_benign", "Q2"], (2, 1))
         self.assertEqual(fold_zero["smc_benign", "Q4"], (1, 1))
+        without_overlap = {(r["analysis"], r["bin"]): (r["n"], r["count"]) for r in records
+                           if r["fold"] == 0 and r["metric"] == "presence_without_overlap"}
+        self.assertEqual(without_overlap["aul_benign", "Common range"], (3, 2))
+        self.assertEqual(without_overlap["aul_benign", "Full sample"], (4, 2))
+        self.assertEqual(without_overlap["smc_benign", "Common range"], (4, 2))
+        self.assertEqual(without_overlap["smc_benign", "Full sample"], (5, 3))
+        self.assertEqual(without_overlap["smc_benign", "Q2"], (2, 1))
+        self.assertEqual(without_overlap["smc_benign", "Q4"], (1, 0))
 
     def test_hcc_records_use_patient_diameters_and_equal_patient_weights(self):
         counts = analysis.by_patient.PatientCounts
