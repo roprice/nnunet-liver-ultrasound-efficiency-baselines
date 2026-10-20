@@ -72,7 +72,6 @@ class ProxyComponentTests(unittest.TestCase):
             with self.subTest(area=area):
                 result = analysis.evaluate_proxy_mask(prediction, proxy)
                 self.assertEqual(tuple(int(result.detected[name]) for name in CRITERIA[:3]), expected)
-                self.assertEqual(result.unmatched_components, 1 - expected[0])
 
     def test_centroid_boundaries_are_inclusive_at_each_study_factor(self):
         proxy = np.zeros((20, 20), dtype=bool)
@@ -87,7 +86,7 @@ class ProxyComponentTests(unittest.TestCase):
                         result = analysis.evaluate_proxy_mask(proxy.copy(), proxy)
                     self.assertEqual(result.detected[name], expected)
 
-    def test_any_matching_fragment_detects_and_other_components_are_unmatched(self):
+    def test_any_matching_fragment_detects_despite_other_off_target_components(self):
         proxy = np.zeros((30, 30), dtype=bool)
         proxy[10:20, 10:20] = True
         prediction = np.zeros_like(proxy)
@@ -95,7 +94,7 @@ class ProxyComponentTests(unittest.TestCase):
         prediction[16:18, 14:16] = True
         prediction[0:2, 0:2] = True
         result = analysis.evaluate_proxy_mask(prediction, proxy)
-        self.assertEqual((result.presence, result.components, result.unmatched_components), (True, 3, 1))
+        self.assertEqual((result.presence, result.components), (True, 3))
         for name in ("overlap_iou_00", "centroid_deq_025", "centroid_deq_050", "centroid_deq_100"):
             self.assertTrue(result.detected[name], name)
         self.assertFalse(result.detected["overlap_iou_02"])
@@ -238,11 +237,28 @@ class ProxyCohortTests(unittest.TestCase):
                 for metric in analysis.BENIGN_METRICS:
                     record = lookup["data_efficiency", fold, label, metric]
                     self.assertEqual((record["n"], record["count"]), (2, detected), (fold, label, metric))
-                self.assertEqual(lookup["data_efficiency", fold, label, "unmatched_components"]["count"], 0)
+                self.assertEqual(lookup["data_efficiency", fold, label, "presence_without_overlap"]["count"], 0)
             for label in ("Q1", "Q3", "Q4"):
                 record = lookup["data_efficiency", fold, label, "presence"]
                 self.assertEqual((record["n"], record["count"], record["rate"]), (0, 0, None))
         self.assertEqual(len(records), 15 * 5 * 8)
+
+
+    def test_presence_without_overlap_ignores_extra_components_when_one_matches(self):
+        proxy_groups = {("data_efficiency", fold): [r for r in self.rows if r.proxy_mass_available
+                                                    and r.experiment_name == "data_efficiency"
+                                                    and r.fold == fold] for fold in analysis.FOLDS}
+        no_criteria = dict.fromkeys(CRITERIA, False)
+        results = {
+            "a": analysis.ProxyResult(True, 3, {**no_criteria, "overlap_iou_00": True}),
+            "b": analysis.ProxyResult(True, 4, no_criteria),
+        }
+        with patch.object(analysis, "evaluate_prediction", side_effect=lambda row, mask: results[row.image_id]):
+            records = analysis.proxy_records(proxy_groups, {"a": None, "b": None}, [0.007, 0.016, 0.05])
+        lookup = {(r["fold"], r["bin"], r["metric"]): r for r in records}
+        record = lookup[0, "All", "presence_without_overlap"]
+        self.assertEqual((record["n"], record["count"], record["rate"]), (2, 1, 0.5))
+        self.assertEqual(lookup[0, "All", "presence"]["count"] - lookup[0, "All", "overlap_iou_00"]["count"], 1)
 
 
 class ComparisonAndHccTests(unittest.TestCase):
@@ -295,8 +311,7 @@ class OutputTests(unittest.TestCase):
             {"analysis": "x", "model": model, "fold": fold, "bin": "Q1", "metric": "presence", "rate": rate}
             for model, rate in (("data_efficiency", 0.5), ("augmentation_ablation", 0.54),
                                 ("gaussian_noise_ablation", 0.51)) for fold in range(5)
-        ] + [{"analysis": "x", "model": "gaussian_noise_ablation", "fold": 0, "bin": "Q1",
-              "metric": "unmatched_components", "rate": 9.0}]
+        ]
         gap, cell = analysis.largest_family_gap(records)
         self.assertAlmostEqual(gap, 0.04)
         self.assertIn("Brightness augmentation", cell)

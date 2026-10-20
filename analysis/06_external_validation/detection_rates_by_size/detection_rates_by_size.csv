@@ -6,7 +6,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,0,Q1,centroid_deq_025,151,39,0.2582781456953642
 343555a0eca1,proxy_benign,data_efficiency,0,Q1,centroid_deq_050,151,57,0.37748344370860926
 343555a0eca1,proxy_benign,data_efficiency,0,Q1,centroid_deq_100,151,69,0.45695364238410596
-343555a0eca1,proxy_benign,data_efficiency,0,Q1,unmatched_components,151,182,1.205298013245033
+343555a0eca1,proxy_benign,data_efficiency,0,Q1,presence_without_overlap,151,42,0.2781456953642384
 343555a0eca1,proxy_benign,data_efficiency,0,Q2,presence,91,87,0.9560439560439561
 343555a0eca1,proxy_benign,data_efficiency,0,Q2,overlap_iou_00,91,70,0.7692307692307693
 343555a0eca1,proxy_benign,data_efficiency,0,Q2,overlap_iou_02,91,53,0.5824175824175825
@@ -14,7 +14,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,0,Q2,centroid_deq_025,91,41,0.45054945054945056
 343555a0eca1,proxy_benign,data_efficiency,0,Q2,centroid_deq_050,91,50,0.5494505494505495
 343555a0eca1,proxy_benign,data_efficiency,0,Q2,centroid_deq_100,91,62,0.6813186813186813
-343555a0eca1,proxy_benign,data_efficiency,0,Q2,unmatched_components,91,69,0.7582417582417582
+343555a0eca1,proxy_benign,data_efficiency,0,Q2,presence_without_overlap,91,17,0.18681318681318682
 343555a0eca1,proxy_benign,data_efficiency,0,Q3,presence,98,97,0.9897959183673469
 343555a0eca1,proxy_benign,data_efficiency,0,Q3,overlap_iou_00,98,90,0.9183673469387755
 343555a0eca1,proxy_benign,data_efficiency,0,Q3,overlap_iou_02,98,76,0.7755102040816326
@@ -22,7 +22,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,0,Q3,centroid_deq_025,98,56,0.5714285714285714
 343555a0eca1,proxy_benign,data_efficiency,0,Q3,centroid_deq_050,98,78,0.7959183673469388
 343555a0eca1,proxy_benign,data_efficiency,0,Q3,centroid_deq_100,98,91,0.9285714285714286
-343555a0eca1,proxy_benign,data_efficiency,0,Q3,unmatched_components,98,63,0.6428571428571429
+343555a0eca1,proxy_benign,data_efficiency,0,Q3,presence_without_overlap,98,7,0.07142857142857142
 343555a0eca1,proxy_benign,data_efficiency,0,Q4,presence,40,40,1.0
 343555a0eca1,proxy_benign,data_efficiency,0,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,0,Q4,overlap_iou_02,40,32,0.8
@@ -30,7 +30,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,0,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,data_efficiency,0,Q4,centroid_deq_050,40,37,0.925
 343555a0eca1,proxy_benign,data_efficiency,0,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,data_efficiency,0,Q4,unmatched_components,40,12,0.3
+343555a0eca1,proxy_benign,data_efficiency,0,Q4,presence_without_overlap,40,1,0.025
 343555a0eca1,proxy_benign,data_efficiency,0,All,presence,380,359,0.9447368421052632
 343555a0eca1,proxy_benign,data_efficiency,0,All,overlap_iou_00,380,292,0.7684210526315789
 343555a0eca1,proxy_benign,data_efficiency,0,All,overlap_iou_02,380,214,0.5631578947368421
@@ -38,7 +38,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,0,All,centroid_deq_025,380,165,0.4342105263157895
 343555a0eca1,proxy_benign,data_efficiency,0,All,centroid_deq_050,380,222,0.5842105263157895
 343555a0eca1,proxy_benign,data_efficiency,0,All,centroid_deq_100,380,261,0.6868421052631579
-343555a0eca1,proxy_benign,data_efficiency,0,All,unmatched_components,380,326,0.8578947368421053
+343555a0eca1,proxy_benign,data_efficiency,0,All,presence_without_overlap,380,67,0.1763157894736842
 343555a0eca1,proxy_benign,data_efficiency,1,Q1,presence,151,136,0.9006622516556292
 343555a0eca1,proxy_benign,data_efficiency,1,Q1,overlap_iou_00,151,89,0.5894039735099338
 343555a0eca1,proxy_benign,data_efficiency,1,Q1,overlap_iou_02,151,52,0.3443708609271523
@@ -46,7 +46,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,1,Q1,centroid_deq_025,151,44,0.2913907284768212
 343555a0eca1,proxy_benign,data_efficiency,1,Q1,centroid_deq_050,151,53,0.3509933774834437
 343555a0eca1,proxy_benign,data_efficiency,1,Q1,centroid_deq_100,151,68,0.4503311258278146
-343555a0eca1,proxy_benign,data_efficiency,1,Q1,unmatched_components,151,121,0.8013245033112583
+343555a0eca1,proxy_benign,data_efficiency,1,Q1,presence_without_overlap,151,47,0.31125827814569534
 343555a0eca1,proxy_benign,data_efficiency,1,Q2,presence,91,87,0.9560439560439561
 343555a0eca1,proxy_benign,data_efficiency,1,Q2,overlap_iou_00,91,71,0.7802197802197802
 343555a0eca1,proxy_benign,data_efficiency,1,Q2,overlap_iou_02,91,54,0.5934065934065934
@@ -54,7 +54,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,1,Q2,centroid_deq_025,91,39,0.42857142857142855
 343555a0eca1,proxy_benign,data_efficiency,1,Q2,centroid_deq_050,91,52,0.5714285714285714
 343555a0eca1,proxy_benign,data_efficiency,1,Q2,centroid_deq_100,91,62,0.6813186813186813
-343555a0eca1,proxy_benign,data_efficiency,1,Q2,unmatched_components,91,54,0.5934065934065934
+343555a0eca1,proxy_benign,data_efficiency,1,Q2,presence_without_overlap,91,16,0.17582417582417584
 343555a0eca1,proxy_benign,data_efficiency,1,Q3,presence,98,96,0.9795918367346939
 343555a0eca1,proxy_benign,data_efficiency,1,Q3,overlap_iou_00,98,90,0.9183673469387755
 343555a0eca1,proxy_benign,data_efficiency,1,Q3,overlap_iou_02,98,81,0.826530612244898
@@ -62,7 +62,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,1,Q3,centroid_deq_025,98,56,0.5714285714285714
 343555a0eca1,proxy_benign,data_efficiency,1,Q3,centroid_deq_050,98,81,0.826530612244898
 343555a0eca1,proxy_benign,data_efficiency,1,Q3,centroid_deq_100,98,92,0.9387755102040817
-343555a0eca1,proxy_benign,data_efficiency,1,Q3,unmatched_components,98,27,0.2755102040816326
+343555a0eca1,proxy_benign,data_efficiency,1,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,data_efficiency,1,Q4,presence,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,1,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,1,Q4,overlap_iou_02,40,31,0.775
@@ -70,7 +70,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,1,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,data_efficiency,1,Q4,centroid_deq_050,40,37,0.925
 343555a0eca1,proxy_benign,data_efficiency,1,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,data_efficiency,1,Q4,unmatched_components,40,6,0.15
+343555a0eca1,proxy_benign,data_efficiency,1,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,data_efficiency,1,All,presence,380,358,0.9421052631578948
 343555a0eca1,proxy_benign,data_efficiency,1,All,overlap_iou_00,380,289,0.7605263157894737
 343555a0eca1,proxy_benign,data_efficiency,1,All,overlap_iou_02,380,218,0.5736842105263158
@@ -78,7 +78,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,1,All,centroid_deq_025,380,168,0.4421052631578947
 343555a0eca1,proxy_benign,data_efficiency,1,All,centroid_deq_050,380,223,0.5868421052631579
 343555a0eca1,proxy_benign,data_efficiency,1,All,centroid_deq_100,380,261,0.6868421052631579
-343555a0eca1,proxy_benign,data_efficiency,1,All,unmatched_components,380,208,0.5473684210526316
+343555a0eca1,proxy_benign,data_efficiency,1,All,presence_without_overlap,380,69,0.18157894736842106
 343555a0eca1,proxy_benign,data_efficiency,2,Q1,presence,151,136,0.9006622516556292
 343555a0eca1,proxy_benign,data_efficiency,2,Q1,overlap_iou_00,151,81,0.5364238410596026
 343555a0eca1,proxy_benign,data_efficiency,2,Q1,overlap_iou_02,151,46,0.304635761589404
@@ -86,7 +86,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,2,Q1,centroid_deq_025,151,30,0.1986754966887417
 343555a0eca1,proxy_benign,data_efficiency,2,Q1,centroid_deq_050,151,46,0.304635761589404
 343555a0eca1,proxy_benign,data_efficiency,2,Q1,centroid_deq_100,151,56,0.3708609271523179
-343555a0eca1,proxy_benign,data_efficiency,2,Q1,unmatched_components,151,200,1.3245033112582782
+343555a0eca1,proxy_benign,data_efficiency,2,Q1,presence_without_overlap,151,55,0.36423841059602646
 343555a0eca1,proxy_benign,data_efficiency,2,Q2,presence,91,84,0.9230769230769231
 343555a0eca1,proxy_benign,data_efficiency,2,Q2,overlap_iou_00,91,67,0.7362637362637363
 343555a0eca1,proxy_benign,data_efficiency,2,Q2,overlap_iou_02,91,45,0.4945054945054945
@@ -94,7 +94,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,2,Q2,centroid_deq_025,91,34,0.37362637362637363
 343555a0eca1,proxy_benign,data_efficiency,2,Q2,centroid_deq_050,91,49,0.5384615384615384
 343555a0eca1,proxy_benign,data_efficiency,2,Q2,centroid_deq_100,91,58,0.6373626373626373
-343555a0eca1,proxy_benign,data_efficiency,2,Q2,unmatched_components,91,98,1.0769230769230769
+343555a0eca1,proxy_benign,data_efficiency,2,Q2,presence_without_overlap,91,17,0.18681318681318682
 343555a0eca1,proxy_benign,data_efficiency,2,Q3,presence,98,96,0.9795918367346939
 343555a0eca1,proxy_benign,data_efficiency,2,Q3,overlap_iou_00,98,90,0.9183673469387755
 343555a0eca1,proxy_benign,data_efficiency,2,Q3,overlap_iou_02,98,72,0.7346938775510204
@@ -102,7 +102,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,2,Q3,centroid_deq_025,98,50,0.5102040816326531
 343555a0eca1,proxy_benign,data_efficiency,2,Q3,centroid_deq_050,98,78,0.7959183673469388
 343555a0eca1,proxy_benign,data_efficiency,2,Q3,centroid_deq_100,98,90,0.9183673469387755
-343555a0eca1,proxy_benign,data_efficiency,2,Q3,unmatched_components,98,80,0.8163265306122449
+343555a0eca1,proxy_benign,data_efficiency,2,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,data_efficiency,2,Q4,presence,40,40,1.0
 343555a0eca1,proxy_benign,data_efficiency,2,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,2,Q4,overlap_iou_02,40,33,0.825
@@ -110,7 +110,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,2,Q4,centroid_deq_025,40,28,0.7
 343555a0eca1,proxy_benign,data_efficiency,2,Q4,centroid_deq_050,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,2,Q4,centroid_deq_100,40,40,1.0
-343555a0eca1,proxy_benign,data_efficiency,2,Q4,unmatched_components,40,10,0.25
+343555a0eca1,proxy_benign,data_efficiency,2,Q4,presence_without_overlap,40,1,0.025
 343555a0eca1,proxy_benign,data_efficiency,2,All,presence,380,356,0.9368421052631579
 343555a0eca1,proxy_benign,data_efficiency,2,All,overlap_iou_00,380,277,0.7289473684210527
 343555a0eca1,proxy_benign,data_efficiency,2,All,overlap_iou_02,380,196,0.5157894736842106
@@ -118,7 +118,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,2,All,centroid_deq_025,380,142,0.3736842105263158
 343555a0eca1,proxy_benign,data_efficiency,2,All,centroid_deq_050,380,212,0.5578947368421052
 343555a0eca1,proxy_benign,data_efficiency,2,All,centroid_deq_100,380,244,0.6421052631578947
-343555a0eca1,proxy_benign,data_efficiency,2,All,unmatched_components,380,388,1.0210526315789474
+343555a0eca1,proxy_benign,data_efficiency,2,All,presence_without_overlap,380,79,0.20789473684210527
 343555a0eca1,proxy_benign,data_efficiency,3,Q1,presence,151,135,0.8940397350993378
 343555a0eca1,proxy_benign,data_efficiency,3,Q1,overlap_iou_00,151,91,0.6026490066225165
 343555a0eca1,proxy_benign,data_efficiency,3,Q1,overlap_iou_02,151,52,0.3443708609271523
@@ -126,7 +126,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,3,Q1,centroid_deq_025,151,35,0.23178807947019867
 343555a0eca1,proxy_benign,data_efficiency,3,Q1,centroid_deq_050,151,51,0.33774834437086093
 343555a0eca1,proxy_benign,data_efficiency,3,Q1,centroid_deq_100,151,62,0.4105960264900662
-343555a0eca1,proxy_benign,data_efficiency,3,Q1,unmatched_components,151,118,0.7814569536423841
+343555a0eca1,proxy_benign,data_efficiency,3,Q1,presence_without_overlap,151,44,0.2913907284768212
 343555a0eca1,proxy_benign,data_efficiency,3,Q2,presence,91,88,0.967032967032967
 343555a0eca1,proxy_benign,data_efficiency,3,Q2,overlap_iou_00,91,73,0.8021978021978022
 343555a0eca1,proxy_benign,data_efficiency,3,Q2,overlap_iou_02,91,51,0.5604395604395604
@@ -134,7 +134,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,3,Q2,centroid_deq_025,91,39,0.42857142857142855
 343555a0eca1,proxy_benign,data_efficiency,3,Q2,centroid_deq_050,91,48,0.5274725274725275
 343555a0eca1,proxy_benign,data_efficiency,3,Q2,centroid_deq_100,91,62,0.6813186813186813
-343555a0eca1,proxy_benign,data_efficiency,3,Q2,unmatched_components,91,59,0.6483516483516484
+343555a0eca1,proxy_benign,data_efficiency,3,Q2,presence_without_overlap,91,15,0.16483516483516483
 343555a0eca1,proxy_benign,data_efficiency,3,Q3,presence,98,93,0.9489795918367347
 343555a0eca1,proxy_benign,data_efficiency,3,Q3,overlap_iou_00,98,87,0.8877551020408163
 343555a0eca1,proxy_benign,data_efficiency,3,Q3,overlap_iou_02,98,69,0.7040816326530612
@@ -142,7 +142,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,3,Q3,centroid_deq_025,98,53,0.5408163265306123
 343555a0eca1,proxy_benign,data_efficiency,3,Q3,centroid_deq_050,98,75,0.7653061224489796
 343555a0eca1,proxy_benign,data_efficiency,3,Q3,centroid_deq_100,98,84,0.8571428571428571
-343555a0eca1,proxy_benign,data_efficiency,3,Q3,unmatched_components,98,43,0.4387755102040816
+343555a0eca1,proxy_benign,data_efficiency,3,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,data_efficiency,3,Q4,presence,40,38,0.95
 343555a0eca1,proxy_benign,data_efficiency,3,Q4,overlap_iou_00,40,37,0.925
 343555a0eca1,proxy_benign,data_efficiency,3,Q4,overlap_iou_02,40,31,0.775
@@ -150,7 +150,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,3,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,data_efficiency,3,Q4,centroid_deq_050,40,35,0.875
 343555a0eca1,proxy_benign,data_efficiency,3,Q4,centroid_deq_100,40,37,0.925
-343555a0eca1,proxy_benign,data_efficiency,3,Q4,unmatched_components,40,7,0.175
+343555a0eca1,proxy_benign,data_efficiency,3,Q4,presence_without_overlap,40,1,0.025
 343555a0eca1,proxy_benign,data_efficiency,3,All,presence,380,354,0.9315789473684211
 343555a0eca1,proxy_benign,data_efficiency,3,All,overlap_iou_00,380,288,0.7578947368421053
 343555a0eca1,proxy_benign,data_efficiency,3,All,overlap_iou_02,380,203,0.5342105263157895
@@ -158,7 +158,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,3,All,centroid_deq_025,380,156,0.4105263157894737
 343555a0eca1,proxy_benign,data_efficiency,3,All,centroid_deq_050,380,209,0.55
 343555a0eca1,proxy_benign,data_efficiency,3,All,centroid_deq_100,380,245,0.6447368421052632
-343555a0eca1,proxy_benign,data_efficiency,3,All,unmatched_components,380,227,0.5973684210526315
+343555a0eca1,proxy_benign,data_efficiency,3,All,presence_without_overlap,380,66,0.1736842105263158
 343555a0eca1,proxy_benign,data_efficiency,4,Q1,presence,151,138,0.9139072847682119
 343555a0eca1,proxy_benign,data_efficiency,4,Q1,overlap_iou_00,151,95,0.6291390728476821
 343555a0eca1,proxy_benign,data_efficiency,4,Q1,overlap_iou_02,151,48,0.31788079470198677
@@ -166,7 +166,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,4,Q1,centroid_deq_025,151,41,0.271523178807947
 343555a0eca1,proxy_benign,data_efficiency,4,Q1,centroid_deq_050,151,52,0.3443708609271523
 343555a0eca1,proxy_benign,data_efficiency,4,Q1,centroid_deq_100,151,62,0.4105960264900662
-343555a0eca1,proxy_benign,data_efficiency,4,Q1,unmatched_components,151,102,0.6754966887417219
+343555a0eca1,proxy_benign,data_efficiency,4,Q1,presence_without_overlap,151,43,0.2847682119205298
 343555a0eca1,proxy_benign,data_efficiency,4,Q2,presence,91,86,0.945054945054945
 343555a0eca1,proxy_benign,data_efficiency,4,Q2,overlap_iou_00,91,73,0.8021978021978022
 343555a0eca1,proxy_benign,data_efficiency,4,Q2,overlap_iou_02,91,51,0.5604395604395604
@@ -174,7 +174,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,4,Q2,centroid_deq_025,91,44,0.4835164835164835
 343555a0eca1,proxy_benign,data_efficiency,4,Q2,centroid_deq_050,91,55,0.6043956043956044
 343555a0eca1,proxy_benign,data_efficiency,4,Q2,centroid_deq_100,91,60,0.6593406593406593
-343555a0eca1,proxy_benign,data_efficiency,4,Q2,unmatched_components,91,47,0.5164835164835165
+343555a0eca1,proxy_benign,data_efficiency,4,Q2,presence_without_overlap,91,13,0.14285714285714285
 343555a0eca1,proxy_benign,data_efficiency,4,Q3,presence,98,96,0.9795918367346939
 343555a0eca1,proxy_benign,data_efficiency,4,Q3,overlap_iou_00,98,87,0.8877551020408163
 343555a0eca1,proxy_benign,data_efficiency,4,Q3,overlap_iou_02,98,72,0.7346938775510204
@@ -182,7 +182,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,4,Q3,centroid_deq_025,98,49,0.5
 343555a0eca1,proxy_benign,data_efficiency,4,Q3,centroid_deq_050,98,75,0.7653061224489796
 343555a0eca1,proxy_benign,data_efficiency,4,Q3,centroid_deq_100,98,85,0.8673469387755102
-343555a0eca1,proxy_benign,data_efficiency,4,Q3,unmatched_components,98,40,0.40816326530612246
+343555a0eca1,proxy_benign,data_efficiency,4,Q3,presence_without_overlap,98,9,0.09183673469387756
 343555a0eca1,proxy_benign,data_efficiency,4,Q4,presence,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,4,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,4,Q4,overlap_iou_02,40,33,0.825
@@ -190,7 +190,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,4,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,data_efficiency,4,Q4,centroid_deq_050,40,39,0.975
 343555a0eca1,proxy_benign,data_efficiency,4,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,data_efficiency,4,Q4,unmatched_components,40,4,0.1
+343555a0eca1,proxy_benign,data_efficiency,4,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,data_efficiency,4,All,presence,380,359,0.9447368421052632
 343555a0eca1,proxy_benign,data_efficiency,4,All,overlap_iou_00,380,294,0.7736842105263158
 343555a0eca1,proxy_benign,data_efficiency,4,All,overlap_iou_02,380,204,0.5368421052631579
@@ -198,7 +198,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,data_efficiency,4,All,centroid_deq_025,380,163,0.42894736842105263
 343555a0eca1,proxy_benign,data_efficiency,4,All,centroid_deq_050,380,221,0.5815789473684211
 343555a0eca1,proxy_benign,data_efficiency,4,All,centroid_deq_100,380,246,0.6473684210526316
-343555a0eca1,proxy_benign,data_efficiency,4,All,unmatched_components,380,193,0.5078947368421053
+343555a0eca1,proxy_benign,data_efficiency,4,All,presence_without_overlap,380,65,0.17105263157894737
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,presence,151,138,0.9139072847682119
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,overlap_iou_00,151,91,0.6026490066225165
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,overlap_iou_02,151,50,0.33112582781456956
@@ -206,7 +206,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,centroid_deq_025,151,42,0.2781456953642384
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,centroid_deq_050,151,53,0.3509933774834437
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,centroid_deq_100,151,65,0.4304635761589404
-343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,unmatched_components,151,151,1.0
+343555a0eca1,proxy_benign,augmentation_ablation,0,Q1,presence_without_overlap,151,47,0.31125827814569534
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,presence,91,84,0.9230769230769231
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,overlap_iou_00,91,69,0.7582417582417582
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,overlap_iou_02,91,55,0.6043956043956044
@@ -214,7 +214,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,centroid_deq_025,91,41,0.45054945054945056
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,centroid_deq_050,91,55,0.6043956043956044
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,centroid_deq_100,91,62,0.6813186813186813
-343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,unmatched_components,91,62,0.6813186813186813
+343555a0eca1,proxy_benign,augmentation_ablation,0,Q2,presence_without_overlap,91,15,0.16483516483516483
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,presence,98,96,0.9795918367346939
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,overlap_iou_00,98,88,0.8979591836734694
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,overlap_iou_02,98,71,0.7244897959183674
@@ -222,7 +222,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,centroid_deq_025,98,57,0.5816326530612245
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,centroid_deq_050,98,75,0.7653061224489796
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,centroid_deq_100,98,85,0.8673469387755102
-343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,unmatched_components,98,30,0.30612244897959184
+343555a0eca1,proxy_benign,augmentation_ablation,0,Q3,presence_without_overlap,98,8,0.08163265306122448
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,presence,40,40,1.0
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,overlap_iou_02,40,32,0.8
@@ -230,7 +230,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,centroid_deq_025,40,32,0.8
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,centroid_deq_050,40,38,0.95
 343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,centroid_deq_100,40,40,1.0
-343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,unmatched_components,40,3,0.075
+343555a0eca1,proxy_benign,augmentation_ablation,0,Q4,presence_without_overlap,40,1,0.025
 343555a0eca1,proxy_benign,augmentation_ablation,0,All,presence,380,358,0.9421052631578948
 343555a0eca1,proxy_benign,augmentation_ablation,0,All,overlap_iou_00,380,287,0.7552631578947369
 343555a0eca1,proxy_benign,augmentation_ablation,0,All,overlap_iou_02,380,208,0.5473684210526316
@@ -238,7 +238,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,0,All,centroid_deq_025,380,172,0.45263157894736844
 343555a0eca1,proxy_benign,augmentation_ablation,0,All,centroid_deq_050,380,221,0.5815789473684211
 343555a0eca1,proxy_benign,augmentation_ablation,0,All,centroid_deq_100,380,252,0.6631578947368421
-343555a0eca1,proxy_benign,augmentation_ablation,0,All,unmatched_components,380,246,0.6473684210526316
+343555a0eca1,proxy_benign,augmentation_ablation,0,All,presence_without_overlap,380,71,0.1868421052631579
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,presence,151,137,0.9072847682119205
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,overlap_iou_00,151,87,0.5761589403973509
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,overlap_iou_02,151,56,0.3708609271523179
@@ -246,7 +246,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,centroid_deq_025,151,43,0.2847682119205298
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,centroid_deq_050,151,60,0.3973509933774834
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,centroid_deq_100,151,68,0.4503311258278146
-343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,unmatched_components,151,178,1.1788079470198676
+343555a0eca1,proxy_benign,augmentation_ablation,1,Q1,presence_without_overlap,151,50,0.33112582781456956
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,presence,91,88,0.967032967032967
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,overlap_iou_00,91,66,0.7252747252747253
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,overlap_iou_02,91,54,0.5934065934065934
@@ -254,7 +254,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,centroid_deq_025,91,42,0.46153846153846156
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,centroid_deq_050,91,50,0.5494505494505495
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,centroid_deq_100,91,61,0.6703296703296703
-343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,unmatched_components,91,100,1.098901098901099
+343555a0eca1,proxy_benign,augmentation_ablation,1,Q2,presence_without_overlap,91,22,0.24175824175824176
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,presence,98,95,0.9693877551020408
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,overlap_iou_00,98,89,0.9081632653061225
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,overlap_iou_02,98,78,0.7959183673469388
@@ -262,7 +262,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,centroid_deq_025,98,62,0.6326530612244898
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,centroid_deq_050,98,78,0.7959183673469388
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,centroid_deq_100,98,89,0.9081632653061225
-343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,unmatched_components,98,67,0.6836734693877551
+343555a0eca1,proxy_benign,augmentation_ablation,1,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,presence,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,overlap_iou_02,40,32,0.8
@@ -270,7 +270,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,centroid_deq_050,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,unmatched_components,40,9,0.225
+343555a0eca1,proxy_benign,augmentation_ablation,1,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,augmentation_ablation,1,All,presence,380,359,0.9447368421052632
 343555a0eca1,proxy_benign,augmentation_ablation,1,All,overlap_iou_00,380,281,0.7394736842105263
 343555a0eca1,proxy_benign,augmentation_ablation,1,All,overlap_iou_02,380,220,0.5789473684210527
@@ -278,7 +278,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,1,All,centroid_deq_025,380,176,0.4631578947368421
 343555a0eca1,proxy_benign,augmentation_ablation,1,All,centroid_deq_050,380,227,0.5973684210526315
 343555a0eca1,proxy_benign,augmentation_ablation,1,All,centroid_deq_100,380,257,0.6763157894736842
-343555a0eca1,proxy_benign,augmentation_ablation,1,All,unmatched_components,380,354,0.9315789473684211
+343555a0eca1,proxy_benign,augmentation_ablation,1,All,presence_without_overlap,380,78,0.20526315789473684
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,presence,151,133,0.8807947019867549
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,overlap_iou_00,151,81,0.5364238410596026
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,overlap_iou_02,151,43,0.2847682119205298
@@ -286,7 +286,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,centroid_deq_025,151,33,0.2185430463576159
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,centroid_deq_050,151,47,0.31125827814569534
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,centroid_deq_100,151,59,0.39072847682119205
-343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,unmatched_components,151,101,0.6688741721854304
+343555a0eca1,proxy_benign,augmentation_ablation,2,Q1,presence_without_overlap,151,52,0.3443708609271523
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,presence,91,87,0.9560439560439561
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,overlap_iou_00,91,71,0.7802197802197802
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,overlap_iou_02,91,48,0.5274725274725275
@@ -294,7 +294,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,centroid_deq_025,91,41,0.45054945054945056
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,centroid_deq_050,91,52,0.5714285714285714
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,centroid_deq_100,91,63,0.6923076923076923
-343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,unmatched_components,91,54,0.5934065934065934
+343555a0eca1,proxy_benign,augmentation_ablation,2,Q2,presence_without_overlap,91,16,0.17582417582417584
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,presence,98,95,0.9693877551020408
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,overlap_iou_00,98,86,0.8775510204081632
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,overlap_iou_02,98,72,0.7346938775510204
@@ -302,7 +302,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,centroid_deq_025,98,56,0.5714285714285714
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,centroid_deq_050,98,75,0.7653061224489796
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,centroid_deq_100,98,88,0.8979591836734694
-343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,unmatched_components,98,28,0.2857142857142857
+343555a0eca1,proxy_benign,augmentation_ablation,2,Q3,presence_without_overlap,98,9,0.09183673469387756
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,presence,40,40,1.0
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,overlap_iou_02,40,32,0.8
@@ -310,7 +310,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,centroid_deq_050,40,38,0.95
 343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,unmatched_components,40,5,0.125
+343555a0eca1,proxy_benign,augmentation_ablation,2,Q4,presence_without_overlap,40,1,0.025
 343555a0eca1,proxy_benign,augmentation_ablation,2,All,presence,380,355,0.9342105263157895
 343555a0eca1,proxy_benign,augmentation_ablation,2,All,overlap_iou_00,380,277,0.7289473684210527
 343555a0eca1,proxy_benign,augmentation_ablation,2,All,overlap_iou_02,380,195,0.5131578947368421
@@ -318,7 +318,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,2,All,centroid_deq_025,380,159,0.41842105263157897
 343555a0eca1,proxy_benign,augmentation_ablation,2,All,centroid_deq_050,380,212,0.5578947368421052
 343555a0eca1,proxy_benign,augmentation_ablation,2,All,centroid_deq_100,380,249,0.6552631578947369
-343555a0eca1,proxy_benign,augmentation_ablation,2,All,unmatched_components,380,188,0.49473684210526314
+343555a0eca1,proxy_benign,augmentation_ablation,2,All,presence_without_overlap,380,78,0.20526315789473684
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,presence,151,139,0.9205298013245033
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,overlap_iou_00,151,90,0.5960264900662252
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,overlap_iou_02,151,54,0.3576158940397351
@@ -326,7 +326,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,centroid_deq_025,151,37,0.24503311258278146
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,centroid_deq_050,151,57,0.37748344370860926
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,centroid_deq_100,151,67,0.44370860927152317
-343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,unmatched_components,151,120,0.7947019867549668
+343555a0eca1,proxy_benign,augmentation_ablation,3,Q1,presence_without_overlap,151,49,0.32450331125827814
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,presence,91,86,0.945054945054945
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,overlap_iou_00,91,72,0.7912087912087912
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,overlap_iou_02,91,51,0.5604395604395604
@@ -334,7 +334,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,centroid_deq_025,91,39,0.42857142857142855
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,centroid_deq_050,91,53,0.5824175824175825
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,centroid_deq_100,91,60,0.6593406593406593
-343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,unmatched_components,91,55,0.6043956043956044
+343555a0eca1,proxy_benign,augmentation_ablation,3,Q2,presence_without_overlap,91,14,0.15384615384615385
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,presence,98,94,0.9591836734693877
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,overlap_iou_00,98,88,0.8979591836734694
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,overlap_iou_02,98,75,0.7653061224489796
@@ -342,7 +342,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,centroid_deq_025,98,54,0.5510204081632653
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,centroid_deq_050,98,72,0.7346938775510204
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,centroid_deq_100,98,87,0.8877551020408163
-343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,unmatched_components,98,37,0.37755102040816324
+343555a0eca1,proxy_benign,augmentation_ablation,3,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,presence,40,38,0.95
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,overlap_iou_00,40,38,0.95
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,overlap_iou_02,40,33,0.825
@@ -350,7 +350,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,centroid_deq_025,40,31,0.775
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,centroid_deq_050,40,37,0.925
 343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,centroid_deq_100,40,38,0.95
-343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,unmatched_components,40,6,0.15
+343555a0eca1,proxy_benign,augmentation_ablation,3,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,augmentation_ablation,3,All,presence,380,357,0.9394736842105263
 343555a0eca1,proxy_benign,augmentation_ablation,3,All,overlap_iou_00,380,288,0.7578947368421053
 343555a0eca1,proxy_benign,augmentation_ablation,3,All,overlap_iou_02,380,213,0.5605263157894737
@@ -358,7 +358,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,3,All,centroid_deq_025,380,161,0.4236842105263158
 343555a0eca1,proxy_benign,augmentation_ablation,3,All,centroid_deq_050,380,219,0.5763157894736842
 343555a0eca1,proxy_benign,augmentation_ablation,3,All,centroid_deq_100,380,252,0.6631578947368421
-343555a0eca1,proxy_benign,augmentation_ablation,3,All,unmatched_components,380,218,0.5736842105263158
+343555a0eca1,proxy_benign,augmentation_ablation,3,All,presence_without_overlap,380,69,0.18157894736842106
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,presence,151,138,0.9139072847682119
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,overlap_iou_00,151,91,0.6026490066225165
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,overlap_iou_02,151,51,0.33774834437086093
@@ -366,7 +366,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,centroid_deq_025,151,42,0.2781456953642384
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,centroid_deq_050,151,53,0.3509933774834437
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,centroid_deq_100,151,63,0.41721854304635764
-343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,unmatched_components,151,139,0.9205298013245033
+343555a0eca1,proxy_benign,augmentation_ablation,4,Q1,presence_without_overlap,151,47,0.31125827814569534
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,presence,91,84,0.9230769230769231
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,overlap_iou_00,91,70,0.7692307692307693
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,overlap_iou_02,91,52,0.5714285714285714
@@ -374,7 +374,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,centroid_deq_025,91,46,0.5054945054945055
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,centroid_deq_050,91,53,0.5824175824175825
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,centroid_deq_100,91,57,0.6263736263736264
-343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,unmatched_components,91,63,0.6923076923076923
+343555a0eca1,proxy_benign,augmentation_ablation,4,Q2,presence_without_overlap,91,14,0.15384615384615385
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,presence,98,97,0.9897959183673469
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,overlap_iou_00,98,91,0.9285714285714286
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,overlap_iou_02,98,76,0.7755102040816326
@@ -382,7 +382,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,centroid_deq_025,98,54,0.5510204081632653
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,centroid_deq_050,98,78,0.7959183673469388
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,centroid_deq_100,98,87,0.8877551020408163
-343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,unmatched_components,98,38,0.3877551020408163
+343555a0eca1,proxy_benign,augmentation_ablation,4,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,presence,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,overlap_iou_02,40,32,0.8
@@ -390,7 +390,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,centroid_deq_050,40,38,0.95
 343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,unmatched_components,40,3,0.075
+343555a0eca1,proxy_benign,augmentation_ablation,4,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,augmentation_ablation,4,All,presence,380,358,0.9421052631578948
 343555a0eca1,proxy_benign,augmentation_ablation,4,All,overlap_iou_00,380,291,0.7657894736842106
 343555a0eca1,proxy_benign,augmentation_ablation,4,All,overlap_iou_02,380,211,0.5552631578947368
@@ -398,7 +398,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,augmentation_ablation,4,All,centroid_deq_025,380,171,0.45
 343555a0eca1,proxy_benign,augmentation_ablation,4,All,centroid_deq_050,380,222,0.5842105263157895
 343555a0eca1,proxy_benign,augmentation_ablation,4,All,centroid_deq_100,380,246,0.6473684210526316
-343555a0eca1,proxy_benign,augmentation_ablation,4,All,unmatched_components,380,243,0.6394736842105263
+343555a0eca1,proxy_benign,augmentation_ablation,4,All,presence_without_overlap,380,67,0.1763157894736842
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,presence,151,129,0.8543046357615894
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,overlap_iou_00,151,84,0.5562913907284768
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,overlap_iou_02,151,43,0.2847682119205298
@@ -406,7 +406,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,centroid_deq_025,151,33,0.2185430463576159
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,centroid_deq_050,151,48,0.31788079470198677
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,centroid_deq_100,151,54,0.3576158940397351
-343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,unmatched_components,151,126,0.8344370860927153
+343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q1,presence_without_overlap,151,45,0.2980132450331126
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,presence,91,85,0.9340659340659341
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,overlap_iou_00,91,71,0.7802197802197802
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,overlap_iou_02,91,49,0.5384615384615384
@@ -414,7 +414,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,centroid_deq_025,91,38,0.4175824175824176
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,centroid_deq_050,91,53,0.5824175824175825
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,centroid_deq_100,91,62,0.6813186813186813
-343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,unmatched_components,91,62,0.6813186813186813
+343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q2,presence_without_overlap,91,14,0.15384615384615385
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,presence,98,94,0.9591836734693877
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,overlap_iou_00,98,87,0.8877551020408163
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,overlap_iou_02,98,69,0.7040816326530612
@@ -422,7 +422,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,centroid_deq_025,98,47,0.47959183673469385
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,centroid_deq_050,98,78,0.7959183673469388
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,centroid_deq_100,98,85,0.8673469387755102
-343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,unmatched_components,98,43,0.4387755102040816
+343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q3,presence_without_overlap,98,7,0.07142857142857142
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,presence,40,39,0.975
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,overlap_iou_00,40,39,0.975
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,overlap_iou_02,40,30,0.75
@@ -430,7 +430,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,centroid_deq_025,40,27,0.675
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,centroid_deq_050,40,35,0.875
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,centroid_deq_100,40,39,0.975
-343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,unmatched_components,40,7,0.175
+343555a0eca1,proxy_benign,gaussian_noise_ablation,0,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,presence,380,347,0.9131578947368421
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,overlap_iou_00,380,281,0.7394736842105263
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,overlap_iou_02,380,191,0.5026315789473684
@@ -438,7 +438,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,centroid_deq_025,380,145,0.3815789473684211
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,centroid_deq_050,380,214,0.5631578947368421
 343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,centroid_deq_100,380,240,0.631578947368421
-343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,unmatched_components,380,238,0.6263157894736842
+343555a0eca1,proxy_benign,gaussian_noise_ablation,0,All,presence_without_overlap,380,66,0.1736842105263158
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,presence,151,141,0.9337748344370861
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,overlap_iou_00,151,86,0.5695364238410596
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,overlap_iou_02,151,53,0.3509933774834437
@@ -446,7 +446,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,centroid_deq_025,151,39,0.2582781456953642
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,centroid_deq_050,151,56,0.3708609271523179
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,centroid_deq_100,151,65,0.4304635761589404
-343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,unmatched_components,151,288,1.9072847682119205
+343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q1,presence_without_overlap,151,55,0.36423841059602646
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,presence,91,91,1.0
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,overlap_iou_00,91,71,0.7802197802197802
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,overlap_iou_02,91,48,0.5274725274725275
@@ -454,7 +454,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,centroid_deq_025,91,38,0.4175824175824176
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,centroid_deq_050,91,49,0.5384615384615384
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,centroid_deq_100,91,60,0.6593406593406593
-343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,unmatched_components,91,141,1.5494505494505495
+343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q2,presence_without_overlap,91,20,0.21978021978021978
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,presence,98,97,0.9897959183673469
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,overlap_iou_00,98,89,0.9081632653061225
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,overlap_iou_02,98,79,0.8061224489795918
@@ -462,7 +462,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,centroid_deq_025,98,58,0.5918367346938775
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,centroid_deq_050,98,77,0.7857142857142857
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,centroid_deq_100,98,89,0.9081632653061225
-343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,unmatched_components,98,107,1.0918367346938775
+343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q3,presence_without_overlap,98,8,0.08163265306122448
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,presence,40,38,0.95
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,overlap_iou_00,40,38,0.95
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,overlap_iou_02,40,33,0.825
@@ -470,7 +470,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,centroid_deq_025,40,27,0.675
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,centroid_deq_050,40,37,0.925
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,centroid_deq_100,40,38,0.95
-343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,unmatched_components,40,9,0.225
+343555a0eca1,proxy_benign,gaussian_noise_ablation,1,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,presence,380,367,0.9657894736842105
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,overlap_iou_00,380,284,0.7473684210526316
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,overlap_iou_02,380,213,0.5605263157894737
@@ -478,7 +478,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,centroid_deq_025,380,162,0.4263157894736842
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,centroid_deq_050,380,219,0.5763157894736842
 343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,centroid_deq_100,380,252,0.6631578947368421
-343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,unmatched_components,380,545,1.4342105263157894
+343555a0eca1,proxy_benign,gaussian_noise_ablation,1,All,presence_without_overlap,380,83,0.21842105263157896
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,presence,151,137,0.9072847682119205
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,overlap_iou_00,151,76,0.5033112582781457
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,overlap_iou_02,151,46,0.304635761589404
@@ -486,7 +486,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,centroid_deq_025,151,32,0.2119205298013245
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,centroid_deq_050,151,48,0.31788079470198677
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,centroid_deq_100,151,57,0.37748344370860926
-343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,unmatched_components,151,138,0.9139072847682119
+343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q1,presence_without_overlap,151,61,0.40397350993377484
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,presence,91,86,0.945054945054945
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,overlap_iou_00,91,65,0.7142857142857143
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,overlap_iou_02,91,46,0.5054945054945055
@@ -494,7 +494,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,centroid_deq_025,91,36,0.3956043956043956
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,centroid_deq_050,91,48,0.5274725274725275
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,centroid_deq_100,91,58,0.6373626373626373
-343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,unmatched_components,91,68,0.7472527472527473
+343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q2,presence_without_overlap,91,21,0.23076923076923078
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,presence,98,95,0.9693877551020408
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,overlap_iou_00,98,87,0.8877551020408163
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,overlap_iou_02,98,72,0.7346938775510204
@@ -502,7 +502,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,centroid_deq_025,98,53,0.5408163265306123
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,centroid_deq_050,98,77,0.7857142857142857
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,centroid_deq_100,98,87,0.8877551020408163
-343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,unmatched_components,98,49,0.5
+343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q3,presence_without_overlap,98,8,0.08163265306122448
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,presence,40,39,0.975
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,overlap_iou_00,40,37,0.925
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,overlap_iou_02,40,32,0.8
@@ -510,7 +510,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,centroid_deq_025,40,26,0.65
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,centroid_deq_050,40,36,0.9
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,centroid_deq_100,40,38,0.95
-343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,unmatched_components,40,8,0.2
+343555a0eca1,proxy_benign,gaussian_noise_ablation,2,Q4,presence_without_overlap,40,2,0.05
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,presence,380,357,0.9394736842105263
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,overlap_iou_00,380,265,0.6973684210526315
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,overlap_iou_02,380,196,0.5157894736842106
@@ -518,7 +518,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,centroid_deq_025,380,147,0.3868421052631579
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,centroid_deq_050,380,209,0.55
 343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,centroid_deq_100,380,240,0.631578947368421
-343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,unmatched_components,380,263,0.6921052631578948
+343555a0eca1,proxy_benign,gaussian_noise_ablation,2,All,presence_without_overlap,380,92,0.24210526315789474
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,presence,151,135,0.8940397350993378
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,overlap_iou_00,151,86,0.5695364238410596
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,overlap_iou_02,151,53,0.3509933774834437
@@ -526,7 +526,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,centroid_deq_025,151,45,0.2980132450331126
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,centroid_deq_050,151,56,0.3708609271523179
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,centroid_deq_100,151,67,0.44370860927152317
-343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,unmatched_components,151,175,1.1589403973509933
+343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q1,presence_without_overlap,151,49,0.32450331125827814
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,presence,91,88,0.967032967032967
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,overlap_iou_00,91,66,0.7252747252747253
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,overlap_iou_02,91,47,0.5164835164835165
@@ -534,7 +534,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,centroid_deq_025,91,42,0.46153846153846156
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,centroid_deq_050,91,49,0.5384615384615384
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,centroid_deq_100,91,59,0.6483516483516484
-343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,unmatched_components,91,70,0.7692307692307693
+343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q2,presence_without_overlap,91,22,0.24175824175824176
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,presence,98,95,0.9693877551020408
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,overlap_iou_00,98,89,0.9081632653061225
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,overlap_iou_02,98,71,0.7244897959183674
@@ -542,7 +542,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,centroid_deq_025,98,56,0.5714285714285714
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,centroid_deq_050,98,74,0.7551020408163265
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,centroid_deq_100,98,86,0.8775510204081632
-343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,unmatched_components,98,53,0.5408163265306123
+343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q3,presence_without_overlap,98,6,0.061224489795918366
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,presence,40,37,0.925
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,overlap_iou_00,40,36,0.9
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,overlap_iou_02,40,31,0.775
@@ -550,7 +550,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,centroid_deq_025,40,29,0.725
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,centroid_deq_050,40,34,0.85
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,centroid_deq_100,40,36,0.9
-343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,unmatched_components,40,10,0.25
+343555a0eca1,proxy_benign,gaussian_noise_ablation,3,Q4,presence_without_overlap,40,1,0.025
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,presence,380,355,0.9342105263157895
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,overlap_iou_00,380,277,0.7289473684210527
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,overlap_iou_02,380,202,0.531578947368421
@@ -558,7 +558,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,centroid_deq_025,380,172,0.45263157894736844
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,centroid_deq_050,380,213,0.5605263157894737
 343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,centroid_deq_100,380,248,0.6526315789473685
-343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,unmatched_components,380,308,0.8105263157894737
+343555a0eca1,proxy_benign,gaussian_noise_ablation,3,All,presence_without_overlap,380,78,0.20526315789473684
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,presence,151,138,0.9139072847682119
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,overlap_iou_00,151,94,0.6225165562913907
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,overlap_iou_02,151,53,0.3509933774834437
@@ -566,7 +566,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,centroid_deq_025,151,39,0.2582781456953642
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,centroid_deq_050,151,54,0.3576158940397351
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,centroid_deq_100,151,70,0.46357615894039733
-343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,unmatched_components,151,119,0.7880794701986755
+343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q1,presence_without_overlap,151,44,0.2913907284768212
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,presence,91,87,0.9560439560439561
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,overlap_iou_00,91,72,0.7912087912087912
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,overlap_iou_02,91,55,0.6043956043956044
@@ -574,7 +574,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,centroid_deq_025,91,47,0.5164835164835165
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,centroid_deq_050,91,55,0.6043956043956044
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,centroid_deq_100,91,60,0.6593406593406593
-343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,unmatched_components,91,47,0.5164835164835165
+343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q2,presence_without_overlap,91,15,0.16483516483516483
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,presence,98,96,0.9795918367346939
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,overlap_iou_00,98,89,0.9081632653061225
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,overlap_iou_02,98,72,0.7346938775510204
@@ -582,7 +582,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,centroid_deq_025,98,55,0.5612244897959183
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,centroid_deq_050,98,79,0.8061224489795918
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,centroid_deq_100,98,86,0.8775510204081632
-343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,unmatched_components,98,34,0.3469387755102041
+343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q3,presence_without_overlap,98,7,0.07142857142857142
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,presence,40,38,0.95
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,overlap_iou_00,40,38,0.95
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,overlap_iou_02,40,31,0.775
@@ -590,7 +590,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,centroid_deq_025,40,28,0.7
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,centroid_deq_050,40,37,0.925
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,centroid_deq_100,40,38,0.95
-343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,unmatched_components,40,3,0.075
+343555a0eca1,proxy_benign,gaussian_noise_ablation,4,Q4,presence_without_overlap,40,0,0.0
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,presence,380,359,0.9447368421052632
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,overlap_iou_00,380,293,0.7710526315789473
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,overlap_iou_02,380,211,0.5552631578947368
@@ -598,7 +598,7 @@ snapshot_id,analysis,model,fold,bin,metric,n,count,rate
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,centroid_deq_025,380,169,0.44473684210526315
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,centroid_deq_050,380,225,0.5921052631578947
 343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,centroid_deq_100,380,254,0.6684210526315789
-343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,unmatched_components,380,203,0.5342105263157895
+343555a0eca1,proxy_benign,gaussian_noise_ablation,4,All,presence_without_overlap,380,66,0.1736842105263158
 343555a0eca1,aul_benign,data_efficiency,0,Q1,presence,16,8,0.5
 343555a0eca1,aul_benign,data_efficiency,0,Q2,presence,12,11,0.9166666666666666
 343555a0eca1,aul_benign,data_efficiency,0,Q3,presence,4,4,1.0

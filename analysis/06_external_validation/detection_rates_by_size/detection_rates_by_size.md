@@ -10,7 +10,7 @@ Size is reference mass area divided by whole-image area. For SMC the reference i
 
 ### SMC localization against proxy circles
 
-Overlap uses each retained component's IoU against the proxy (> 0, > 0.2, > 0.5); centroid criteria use distance ≤ 0.25, 0.5 or 1.0 proxy equivalent diameters. An image is detected when any retained component matches. Unmatched components are retained components with no pixel overlap with the proxy, per image; they are not clinical false-positive diagnoses.
+Overlap uses each retained component's IoU against the proxy (> 0, > 0.2, > 0.5); centroid criteria use distance ≤ 0.25, 0.5 or 1.0 proxy equivalent diameters. An image is detected when any retained component matches. Presence without overlap is the share of images with at least one retained component where no component overlaps the proxy (presence minus overlap_iou_00): an off-target firing, not a clinical false-positive diagnosis. An image with any overlapping component is not counted, whatever its other components do.
 
 | | Q1 | Q2 | Q3 | Q4 | All |
 |---|---|---|---|---|---|
@@ -23,7 +23,7 @@ Overlap uses each retained component's IoU against the proxy (> 0, > 0.2, > 0.5)
 | centroid_deq_025 % | 25.0 ± 3.6 | 43.3 ± 4.0 | 53.9 ± 3.3 | 72.0 ± 1.1 | 41.8 ± 2.7 |
 | centroid_deq_050 % | 34.3 ± 2.6 | 55.8 ± 3.0 | 79.0 ± 2.6 | 93.5 ± 4.2 | 57.2 ± 1.7 |
 | centroid_deq_100 % | 42.0 ± 3.5 | 66.8 ± 2.0 | 90.2 ± 3.7 | 97.0 ± 2.7 | 66.2 ± 2.3 |
-| unmatched components per image | 0.96 ± 0.29 | 0.72 ± 0.22 | 0.52 ± 0.21 | 0.20 ± 0.08 | 0.71 ± 0.22 |
+| presence without overlap % | 30.6 ± 3.5 | 17.1 ± 1.8 | 6.9 ± 1.3 | 1.5 ± 1.4 | 18.2 ± 1.5 |
 
 Patients can contribute images to more than one bin, so patient counts across bins must not be added.
 

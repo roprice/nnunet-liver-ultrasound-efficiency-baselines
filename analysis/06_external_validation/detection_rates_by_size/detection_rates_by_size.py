@@ -47,7 +47,6 @@ CSV_FIELDS = ("snapshot_id", "analysis", "model", "fold", "bin", "metric", "n", 
 class ProxyResult:
     presence: bool
     components: int
-    unmatched_components: int
     detected: dict[str, bool]
 
 
@@ -159,7 +158,6 @@ def evaluate_proxy_mask(retained_prediction, proxy):
     return ProxyResult(
         presence=bool(retained_prediction.any()),
         components=len(ious),
-        unmatched_components=sum(iou == 0 for iou in ious),
         detected=detected,
     )
 
@@ -182,18 +180,20 @@ def evaluate_prediction(row, proxy):
 def proxy_records(proxy_groups, masks, cuts):
     records = []
     for (model, fold), rows in proxy_groups.items():
-        totals = {label: dict.fromkeys(["n", "unmatched_components", *BENIGN_METRICS], 0)
+        print(f"Evaluating {model}, fold {fold} ({len(rows)} images)", flush=True)
+        totals = {label: dict.fromkeys(["n", "presence_without_overlap", *BENIGN_METRICS], 0)
                   for label in [*QUARTILES, "All"]}
         for row in rows:
             result = evaluate_prediction(row, masks[row.image_id])
             for label in (quartile_label(row, cuts), "All"):
                 totals[label]["n"] += 1
-                totals[label]["unmatched_components"] += result.unmatched_components
                 totals[label]["presence"] += result.presence
+                totals[label]["presence_without_overlap"] += (
+                    result.presence and not result.detected["overlap_iou_00"])
                 for criterion in LOCALIZATION_CRITERIA:
                     totals[label][criterion] += result.detected[criterion]
         for label, total in totals.items():
-            for metric in [*BENIGN_METRICS, "unmatched_components"]:
+            for metric in [*BENIGN_METRICS, "presence_without_overlap"]:
                 records.append(count_record("proxy_benign", model, fold, label, metric,
                                             total["n"], total[metric]))
     return records
@@ -313,7 +313,7 @@ def largest_family_gap(records):
     """Largest cell difference between any other model family and the primary family."""
     means = {}
     for record in records:
-        if record["rate"] is not None and record["metric"] != "unmatched_components":
+        if record["rate"] is not None:
             key = (record["analysis"], record["metric"], record["bin"], record["model"])
             means.setdefault(key, []).append(record["rate"])
     largest = (0.0, None)
@@ -367,9 +367,11 @@ def build_report(data, manifest, archived_bytes, records, summary):
         "",
         "Overlap uses each retained component's IoU against the proxy (> 0, > 0.2, > 0.5); "
         "centroid criteria use distance ≤ 0.25, 0.5 or 1.0 proxy equivalent diameters. An image is "
-        "detected when any retained component matches. Unmatched components are retained "
-        "components with no pixel overlap with the proxy, per image; they are not clinical "
-        "false-positive diagnoses.",
+        "detected when any retained component matches. Presence without overlap is the share of "
+        "images with at least one retained component where no component overlaps the proxy "
+        "(presence minus overlap_iou_00): an off-target firing, not a clinical false-positive "
+        "diagnosis. An image with any overlapping component is not counted, whatever its other "
+        "components do.",
         "",
         "| | " + " | ".join(bin_labels) + " |",
         "|---|" + "---|" * len(bin_labels),
@@ -379,9 +381,9 @@ def build_report(data, manifest, archived_bytes, records, summary):
     for metric in BENIGN_METRICS:
         cells = [format_cell(series, "proxy_benign", metric, label) for label in bin_labels]
         lines.append(f"| {metric} % | " + " | ".join(cells) + " |")
-    cells = [format_cell(series, "proxy_benign", "unmatched_components", label, scale=1, digits=2)
+    cells = [format_cell(series, "proxy_benign", "presence_without_overlap", label)
              for label in bin_labels]
-    lines.append("| unmatched components per image | " + " | ".join(cells) + " |")
+    lines.append("| presence without overlap % | " + " | ".join(cells) + " |")
     lines.extend([
         "",
         "Patients can contribute images to more than one bin, so patient counts across bins "
