@@ -83,9 +83,58 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         self.assertEqual([result["any_image_rate"] for result in results], [0.75, 0.5, 0.75, 0.5, 0.75])
         self.assertEqual([result["all_image_rate"] for result in results], [0.5, 0.25, 0.5, 0.25, 0.5])
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
-        self.assertIn("| Combined | Data efficiency | 0.525000 ± 0.136931 | 0.533333 ± 0.182574 | "
-                      "0.650000 ± 0.136931 | 0.400000 ± 0.136931 |", report)
         self.assertIn("| 1 | 1 | 1 | 0.600 ± 0.548 / 0.600 ± 0.548 |", report)
+
+    def test_view_tables_separate_cohorts_and_handle_empty_bins(self):
+        report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
+        self.assertNotIn("## Model summaries", report)
+        self.assertNotIn("## View-count effects: combined cohort", report)
+        _, hcc, hemangioma = report.split("## View-count effects: ")
+        self.assertTrue(hemangioma.startswith("hemangioma cohort\n"))
+        self.assertTrue(hcc.startswith("HCC cohort\n"))
+        self.assertIn("| 6+ | 1 | 6 | 0.600 ± 0.548 / 0.600 ± 0.548 |", hemangioma)
+        self.assertIn("| 1 | 0 | 0 | NA / NA | NA / NA | NA / NA |", hemangioma)
+        self.assertIn("| 1 | 1 | 1 | 0.600 ± 0.548 / 0.600 ± 0.548 |", hcc)
+        self.assertIn("| 2 | 1 | 2 | 1.000 ± 0.000 / 0.000 ± 0.000 |", hcc)
+        self.assertIn("| 3 | 1 | 3 | 0.400 ± 0.548 / 0.400 ± 0.548 |", hcc)
+        self.assertIn("| 4 | 0 | 0 | NA / NA | NA / NA | NA / NA |", hcc)
+        self.assertIn("| 5 | 0 | 0 | NA / NA | NA / NA | NA / NA |", hcc)
+        self.assertIn("| 6+ | 0 | 0 | NA / NA | NA / NA | NA / NA |", hcc)
+
+    def test_report_table_and_view_bin_order(self):
+        report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
+        headings = [line for line in report.splitlines() if line.startswith("## ")]
+        self.assertEqual(headings, ["## View-count effects: HCC cohort",
+                                    "## View-count effects: hemangioma cohort",
+                                    "## Cohort and view counts"])
+        self.assertNotIn("| Combined |", report)
+        counts_section = report.split("## Cohort and view counts\n", 1)[1]
+        cohorts = [line.split("|")[1].strip() for line in counts_section.splitlines()
+                   if line.startswith("| ")][1:]
+        self.assertEqual(cohorts, ["HCC", "Hemangioma"])
+        for section in report.split("## View-count effects: ")[1:]:
+            labels = [line.split("|")[1].strip() for line in section.splitlines()
+                      if line.startswith(("| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |", "| 6+ |"))]
+            self.assertEqual(labels, ["6+", "5", "4", "3", "2", "1"])
+        self.assertNotIn("| 3–5 |", report)
+
+    def test_report_title_labels_and_paragraphs(self):
+        report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
+        self.assertTrue(report.startswith("# External-validation patient presence-based detection rates\n"))
+        self.assertEqual(report.count("| nnU-Net default augmentation |"), 2)
+        self.assertNotIn("| Data efficiency |", report)
+        self.assertEqual(analysis.external.MODELS["data_efficiency"], "Data efficiency")
+        self.assertNotIn("For each patient, n is", report)
+        self.assertIn(
+            "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, for nnUnet default "
+            "augmentation and two augmentation ablations.\n\n"
+            "Patients are joined by manifest case ID; every model/fold is checked against the full "
+            "Clean cohort. Hem_87 is included.\n\n", report)
+        self.assertTrue(report.endswith(
+            "\n\nAll cases are mass-positive; flags do not confirm lesion localization or cancer, and "
+            "specificity is not estimable. More views give any-image detection more opportunities "
+            "and make all-image detection harder; comparisons are descriptive, not longitudinal. "
+            "HCC size is the patient-table maximum diameter; missing sizes are separate.\n"))
 
     def test_manifest_integrity_is_validated(self):
         for field, value in (("schema_version", 2), ("subsets", ["clean", "caliper"]),
@@ -147,6 +196,19 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
     def test_current_report_matches_inputs(self):
         self.assertEqual(analysis.OUTPUT_PATH.read_text(),
                          analysis.build_report(self.data, self.manifest, self.raw))
+
+    def test_view_tables_partition_each_cohort(self):
+        report = analysis.build_report(self.data, self.manifest, self.raw)
+        for section, (patients, images) in zip(
+                report.split("## View-count effects: ")[1:], ((421, 1389), (323, 1267))):
+            rows = [line.split("|") for line in section.splitlines()
+                    if line.startswith(("| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |", "| 6+ |"))]
+            self.assertEqual(len(rows), 6)
+            self.assertEqual(sum(int(row[2]) for row in rows), patients)
+            self.assertEqual(sum(int(row[3]) for row in rows), images)
+            expected_counts = [(29, 145), (43, 172), (67, 201)] if patients == 421 else [
+                (21, 105), (21, 84), (34, 102)]
+            self.assertEqual([(int(row[2]), int(row[3])) for row in rows[1:4]], expected_counts)
 
     def test_current_counts_views_and_baseline_rates(self):
         expected = {"all": (744, 2656), "HCC": (421, 1389), "hemangioma": (323, 1267),

@@ -1,9 +1,12 @@
-"""Report external presence-based detection rates across the five fold models.
+"""Report external presence and proxy-based detection across the five fold models.
 
 Run from the repository root:
     python3 -m analysis.06_external_validation.detection_rates.detection_rates
 """
 
+import csv
+import importlib
+import io
 import json
 import statistics
 from collections import Counter
@@ -12,19 +15,21 @@ from pathlib import Path
 from analysis.predictions_dataset.constants import MIN_PRED_AREA_FRACTION, SCHEMA_VERSION
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
 
+proxy_detection = importlib.import_module("analysis.06_external_validation.proxy_detection")
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent.parent
 OUTPUT_PATH = SCRIPT_DIR / "detection_rates.md"
+CSV_PATH = SCRIPT_DIR / "detection_rates.csv"
 MANIFEST_PATH = SCRIPT_DIR.parent.parent / "predictions_dataset/predictions_dataset_manifest.json"
 COHORT_MANIFEST_PATH = PROJECT_ROOT / "archives/06_external_validation/smc_lud_prepared/smc_lud_manifest.json"
 MODELS = {
-    "data_efficiency": "Data efficiency",
+    "data_efficiency": "nnU-Net default augmentation",
     "augmentation_ablation": "Brightness augmentation",
     "gaussian_noise_ablation": "Gaussian-noise augmentation",
 }
 FOLDS = [0, 1, 2, 3, 4]
-COHORTS = [("malignant", "Malignant (HCC)"), ("benign", "Benign (hemangioma)"),
-           (None, "Combined")]
+COHORTS = [("malignant", "Malignant (HCC)"), ("benign", "Benign (hemangioma)")]
 
 
 def select_groups(rows):
@@ -101,6 +106,45 @@ def validate_report_inputs(data, manifest, groups, cohort_manifest=None):
             raise RuntimeError(f"{key}: predictions do not match the full clean cohort manifest")
 
 
+def proxy_tables(groups):
+    proxy_groups = proxy_detection.select_proxy_groups(groups)
+    masks = proxy_detection.load_proxy_masks(proxy_groups["data_efficiency", 0])
+    evaluations = {
+        key: [proxy_detection.evaluate_prediction(row, masks[row.image_id]) for row in rows]
+        for key, rows in proxy_groups.items()
+    }
+    lines = [
+        "",
+        "Spatial detection uses twin-derived circular proxy masks, available only on a selected "
+        "subset of benign Clean images with usable caliper twins. Proxies are heuristic circles, "
+        "not manual annotations; circles fitted to elongated lesions overstate their area. "
+        "Zoom, depth, cropping and proxy error are uncontrolled. Malignant results are unavailable "
+        "(NA), not zero. These rates describe agreement with proxies, not verified localization.",
+    ]
+    criteria = [
+        ("overlap_iou_00", "Overlap-based detection at IoU > 0",
+         "An image is detected if any retained component overlaps the proxy."),
+        ("centroid_deq_100", "Centroid-based detection within 1.0 equivalent diameter",
+         "An image is detected if any retained component centroid is within ≤ 1.0 proxy equivalent "
+         "diameter of the proxy centroid (diameter = 2√(proxy area/π))."),
+    ]
+    for metric, title, explanation in criteria:
+        lines.extend([
+            "", f"## {title}", "", explanation, "",
+            "| cohort | images per fold model | " + " | ".join(MODELS.values()) + " |",
+            "|---|---|---|---|---|",
+            "| Malignant (HCC) | NA | NA | NA | NA |",
+        ])
+        cells = []
+        for model in MODELS:
+            rates = [sum(result.detected[metric] for result in evaluations[model, fold])
+                     / len(evaluations[model, fold]) for fold in FOLDS]
+            cells.append(f"{statistics.mean(rates):.3f} ± {statistics.stdev(rates):.3f}")
+        count = len(proxy_groups["data_efficiency", 0])
+        lines.append(f"| Benign (hemangioma), proxy subset | {count} | " + " | ".join(cells) + " |")
+    return lines
+
+
 def build_report(data, manifest, cohort_manifest=None):
     groups = select_groups(data.rows)
     validate_report_inputs(data, manifest, groups, cohort_manifest)
@@ -112,23 +156,19 @@ def build_report(data, manifest, cohort_manifest=None):
         f"SMC-LUD Clean cohort, {len(cohort)} unique images, {row_count} image-model rows, "
         f"dataset snapshot {data.snapshot_id} (schema version {manifest['schema_version']}).",
         "",
-        "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, "
-        "PlainConvUNet, folds 0–4. Rates are mean ± sample SD across the five fold models, "
-        "each evaluated on the same external images.",
+        "PlainConvUNet final checkpoints: 588 AUL training images, seed 42, 150 epochs, "
+        "folds 0–4. Rates are mean ± sample SD across five models tested on the same images.",
         "",
-        "Presence-based detection is the fraction of mass-present images with any retained "
-        "predicted mass component. Components use 8-connectivity and retain areas at least "
-        f"int({MIN_PRED_AREA_FRACTION} × image area), the study's "
-        f"{MIN_PRED_AREA_FRACTION:.2%} relative noise floor.",
+        "Presence-based detection means any predicted mass component remains after filtering "
+        f"(8-connectivity; minimum area int({MIN_PRED_AREA_FRACTION} × image area), "
+        f"a {MIN_PRED_AREA_FRACTION:.2%} noise floor).",
         "",
-        "All images contain a mass; benign images are positive mass cases, not normal "
-        "controls. FP/normal image and specificity are not estimable. No segmentation "
-        "references are available, so proximity-based detection and component FP/image "
-        "are not estimable. A presence flag does not establish correct lesion localization "
-        "or HCC-versus-hemangioma classification.",
+        "All images contain a mass; benign cases are not normal controls. Specificity and "
+        "FP/normal image are not estimable. Manual segmentation references are unavailable; "
+        "spatial rates below use proxies only. Detection does not distinguish HCC from hemangioma.",
         "",
-        "Rates are image-weighted; patients may contribute multiple images. Fold SD "
-        "describes model variability, not a confidence interval or independent patient-level evidence.",
+        "Rates are image-weighted; patients may contribute multiple images. SD reflects "
+        "model variability, not a confidence interval or independent patient-level evidence.",
         "",
         "## Presence-based detection",
         "",
@@ -142,15 +182,16 @@ def build_report(data, manifest, cohort_manifest=None):
             cells.append(f"{statistics.mean(rates):.3f} ± {statistics.stdev(rates):.3f}")
         count = len(cohort_rows(cohort, pathology))
         lines.append(f"| {label} | {count} | " + " | ".join(cells) + " |")
-    lines.extend([
-        "",
-        "## Per-fold presence-based detection",
-        "",
-        "Cells show flagged images / evaluated images (rate).",
-        "",
-        "| model | fold | malignant | benign | combined |",
-        "|---|---|---|---|---|",
-    ])
+    lines.extend(proxy_tables(groups))
+    return "\n".join(lines) + "\n"
+
+
+def build_csv(data, manifest, cohort_manifest=None):
+    groups = select_groups(data.rows)
+    validate_report_inputs(data, manifest, groups, cohort_manifest)
+    output = io.StringIO(newline="")
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(["model", "fold", "malignant", "benign"])
     for model, label in MODELS.items():
         for fold in FOLDS:
             cells = []
@@ -158,8 +199,8 @@ def build_report(data, manifest, cohort_manifest=None):
                 rows = cohort_rows(groups[model, fold], pathology)
                 flagged = sum(row.triage_detection_flag for row in rows)
                 cells.append(f"{flagged}/{len(rows)} ({detection_rate(rows):.3f})")
-            lines.append(f"| {label} | {fold} | " + " | ".join(cells) + " |")
-    return "\n".join(lines) + "\n"
+            writer.writerow([label, fold, *cells])
+    return output.getvalue()
 
 
 def main():
@@ -167,7 +208,9 @@ def main():
     with MANIFEST_PATH.open() as file:
         manifest = json.load(file)
     OUTPUT_PATH.write_text(build_report(data, manifest))
+    CSV_PATH.write_text(build_csv(data, manifest))
     print(f"Wrote {OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
+    print(f"Wrote {CSV_PATH.relative_to(PROJECT_ROOT).as_posix()}")
 
 
 if __name__ == "__main__":

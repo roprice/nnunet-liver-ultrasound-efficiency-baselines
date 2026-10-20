@@ -2,43 +2,65 @@
 
 SMC-LUD Clean; prediction snapshot `343555a0eca1` (schema 4); SMC patient manifest SHA-256 `379d7a561b0d0840526bf6cacfe8b43c3c8e280c1086dac95612c8c9f185a7f3`.
 
-Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, PlainConvUNet, folds 0–4. Tables show the data-efficiency family as mean ± sample SD across its five fold models on the same images; SD describes model variation, not a confidence interval. The largest cell difference for the other two families is 4.0 points (proxy_benign, centroid_deq_050, Q4, Gaussian-noise augmentation); all families are in the CSV. All images are mass-positive: presence is not clinical cancer detection and specificity is not estimable.
+Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, PlainConvUNet, folds 0–4.
 
 ## Hemangioma by relative lesion size
 
 Size is reference mass area divided by whole-image area. For SMC the reference is the twin-derived circular proxy mask, available on a selected subset of benign Clean images with usable caliper twins; for AUL it is the annotated mass. Bins are the AUL test-set quartile cuts of that fraction, applied unchanged to both datasets (0.735%, 1.639%, 5.125%); values equal to a cut fall in the lower bin. Proxies are heuristic circles, not manual annotations, and a circle fitted to an elongated lesion overstates its area, which caps the strict criteria (overlap_iou_05, centroid_deq_025). Image occupancy is not physical lesion size: zoom, depth, cropping and proxy error are uncontrolled.
 
-### SMC localization against proxy circles
+### Triage-level detection rates against SMC proxy circles
 
-Overlap uses each retained component's IoU against the proxy (> 0, > 0.2, > 0.5); centroid criteria use distance ≤ 0.25, 0.5 or 1.0 proxy equivalent diameters. An image is detected when any retained component matches. Presence without overlap is the share of images with at least one retained component where no component overlaps the proxy (presence minus overlap_iou_00): an off-target firing, not a clinical false-positive diagnosis. An image with any overlapping component is not counted, whatever its other components do.
+An image is detected when any retained component matches. Presence without overlap is the share of images with at least one retained component where no component overlaps the proxy (presence minus overlap_iou_00): an off-target firing, not a clinical false-positive diagnosis. An image with any overlapping component is not counted, whatever its other components do.
 
 | | Q1 | Q2 | Q3 | Q4 | All |
 |---|---|---|---|---|---|
 | images | 151 | 91 | 98 | 40 | 380 |
-| patients | 102 | 57 | 58 | 20 | 190 |
-| presence % | 90.1 ± 0.8 | 94.9 ± 1.7 | 97.6 ± 1.5 | 98.0 ± 2.1 | 94.0 ± 0.6 |
-| overlap_iou_00 % | 59.5 ± 3.6 | 77.8 ± 2.7 | 90.6 ± 1.7 | 96.5 ± 2.2 | 75.8 ± 1.7 |
-| overlap_iou_02 % | 33.2 ± 2.0 | 55.8 ± 3.8 | 75.5 ± 4.7 | 80.0 ± 2.5 | 54.5 ± 2.3 |
-| overlap_iou_05 % | 11.4 ± 2.5 | 28.6 ± 3.7 | 45.3 ± 4.1 | 53.5 ± 4.9 | 28.7 ± 2.0 |
-| centroid_deq_025 % | 25.0 ± 3.6 | 43.3 ± 4.0 | 53.9 ± 3.3 | 72.0 ± 1.1 | 41.8 ± 2.7 |
-| centroid_deq_050 % | 34.3 ± 2.6 | 55.8 ± 3.0 | 79.0 ± 2.6 | 93.5 ± 4.2 | 57.2 ± 1.7 |
-| centroid_deq_100 % | 42.0 ± 3.5 | 66.8 ± 2.0 | 90.2 ± 3.7 | 97.0 ± 2.7 | 66.2 ± 2.3 |
-| presence without overlap % | 30.6 ± 3.5 | 17.1 ± 1.8 | 6.9 ± 1.3 | 1.5 ± 1.4 | 18.2 ± 1.5 |
+| presence rate | 0.901 ± 0.008 | 0.949 ± 0.017 | 0.976 ± 0.015 | 0.980 ± 0.021 | 0.940 ± 0.006 |
+| overlap_iou_00 rate | 0.595 ± 0.036 | 0.778 ± 0.027 | 0.906 ± 0.017 | 0.965 ± 0.022 | 0.758 ± 0.017 |
+| centroid_deq_100 rate | 0.420 ± 0.035 | 0.668 ± 0.020 | 0.902 ± 0.037 | 0.970 ± 0.027 | 0.662 ± 0.023 |
+| presence without overlap rate | 0.306 ± 0.035 | 0.171 ± 0.018 | 0.069 ± 0.013 | 0.015 ± 0.014 | 0.182 ± 0.015 |
 
-Patients can contribute images to more than one bin, so patient counts across bins must not be added.
+### Patient-level, multiple-pass triage-level detection rates against SMC proxy circles
 
-### Presence: AUL versus SMC
+Patients must have 4+ proxy-eligible images overall, before size binning. Each quartile uses only that patient's images in that bin, so it may contain fewer than 4 images per patient. Patients can appear in multiple quartiles; All counts each patient once across all their proxy-eligible images. Bin patient counts must not be added. Passes here are selected still images, not verified independent acquisitions.
 
-Restricted to the observed range common to both datasets (0.095%–11.067% of image area, inclusive) so that neither dataset is compared where the other has no lesions; the full-sample row is unrestricted. Presence without overlap is the share of all images with a retained prediction but no overlap with the AUL annotation or SMC proxy circle, respectively. The reference types differ; presence itself does not depend on the reference. Differences are SMC − AUL presence in percentage points.
+Rates are fractions of patients with any applicable image meeting the criterion. Presence without overlap requires at least one presence flag and no overlap on any applicable image; an overlap on another image in the same bin excludes that patient from this outcome.
 
-| bin | AUL images | SMC images | AUL presence % | SMC presence % | difference | AUL presence without overlap % | SMC presence without overlap % |
-|---|---:|---:|---|---|---|---|---|
-| Q1 | 16 | 151 | 65.00 ± 9.48 | 90.07 ± 0.81 | 25.07 ± 9.40 | 12.50 ± 4.42 | 30.60 ± 3.49 |
-| Q2 | 12 | 91 | 80.00 ± 9.50 | 94.95 ± 1.67 | 14.95 ± 8.70 | 1.67 ± 3.73 | 17.14 ± 1.84 |
-| Q3 | 4 | 98 | 100.00 ± 0.00 | 97.55 ± 1.55 | -2.45 ± 1.55 | 0.00 ± 0.00 | 6.94 ± 1.33 |
-| Q4 | 5 | 24 | 96.00 ± 8.94 | 96.67 ± 3.49 | 0.67 ± 9.16 | 0.00 ± 0.00 | 2.50 ± 2.28 |
-| Common range | 37 | 364 | 77.84 ± 1.21 | 93.74 ± 0.60 | 15.90 ± 1.58 | 5.95 ± 2.26 | 19.01 ± 1.56 |
-| Full sample | 40 | 380 | 72.50 ± 1.77 | 94.00 ± 0.57 | 21.50 ± 2.11 | 6.00 ± 2.24 | 18.21 ± 1.49 |
+| | Q1 | Q2 | Q3 | Q4 | All |
+|---|---|---|---|---|---|
+| patients | 19 | 14 | 17 | 7 | 28 |
+| presence rate | 0.895 ± 0.064 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 |
+| overlap_iou_00 rate | 0.642 ± 0.044 | 0.929 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 |
+| centroid_deq_100 rate | 0.432 ± 0.094 | 0.829 ± 0.039 | 1.000 ± 0.000 | 1.000 ± 0.000 | 0.943 ± 0.032 |
+| presence without overlap rate | 0.253 ± 0.044 | 0.071 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 |
+
+### Presence-based detection: AUL versus SMC
+
+Restricted to the observed range common to both datasets (0.095%–11.067% of image area, inclusive) so that neither dataset is compared where the other has no lesions; the full-sample row is unrestricted. Presence without overlap is the share of all images with a retained prediction but no overlap with the AUL annotation or SMC proxy circle, respectively. The reference types differ; presence itself does not depend on the reference.
+
+| bin | AUL images | SMC images | AUL presence rate | SMC presence rate | AUL presence without overlap rate | SMC presence without overlap rate |
+|---|---:|---:|---|---|---|---|
+| Q1 | 16 | 151 | 0.650 ± 0.095 | 0.901 ± 0.008 | 0.125 ± 0.044 | 0.306 ± 0.035 |
+| Q2 | 12 | 91 | 0.800 ± 0.095 | 0.949 ± 0.017 | 0.017 ± 0.037 | 0.171 ± 0.018 |
+| Q3 | 4 | 98 | 1.000 ± 0.000 | 0.976 ± 0.015 | 0.000 ± 0.000 | 0.069 ± 0.013 |
+| Q4 | 5 | 24 | 0.960 ± 0.089 | 0.967 ± 0.035 | 0.000 ± 0.000 | 0.025 ± 0.023 |
+| Common range | 37 | 364 | 0.778 ± 0.012 | 0.937 ± 0.006 | 0.059 ± 0.023 | 0.190 ± 0.016 |
+| Full sample | 40 | 380 | 0.725 ± 0.018 | 0.940 ± 0.006 | 0.060 ± 0.022 | 0.182 ± 0.015 |
+
+### Presence-based detection at one image per patient: AUL versus SMC
+
+One image is sampled uniformly from each SMC patient's proxy-eligible images (seed 42; sorted patient and image IDs), independently of predictions, and reused across models and folds. AUL's full sample is unchanged. Sampling precedes size filtering; the same AUL quartile cuts apply, with a recomputed common observed range (0.095%–11.067% of image area, inclusive). The full-sample row includes every sampled image.
+
+This is not the SMC singleton-patient subset. Patients without eligible proxies are excluded. AUL's original image-selection procedure is unknown; this matches image counts per patient, not acquisition or selection procedures. Results describe one fixed image sample; fold SD does not measure image-selection uncertainty.
+
+| bin | AUL images | SMC images | AUL presence rate | SMC presence rate | AUL presence without overlap rate | SMC presence without overlap rate |
+|---|---:|---:|---|---|---|---|
+| Q1 | 16 | 84 | 0.650 ± 0.095 | 0.919 ± 0.018 | 0.125 ± 0.044 | 0.264 ± 0.047 |
+| Q2 | 12 | 42 | 0.800 ± 0.095 | 0.933 ± 0.039 | 0.017 ± 0.037 | 0.195 ± 0.039 |
+| Q3 | 4 | 45 | 1.000 ± 0.000 | 0.973 ± 0.010 | 0.000 ± 0.000 | 0.080 ± 0.025 |
+| Q4 | 5 | 14 | 0.960 ± 0.089 | 0.971 ± 0.039 | 0.000 ± 0.000 | 0.029 ± 0.039 |
+| Common range | 37 | 185 | 0.778 ± 0.012 | 0.939 ± 0.008 | 0.059 ± 0.023 | 0.186 ± 0.020 |
+| Full sample | 40 | 190 | 0.725 ± 0.018 | 0.941 ± 0.008 | 0.060 ± 0.022 | 0.181 ± 0.019 |
 
 AUL benign images are a different diagnostic mix from SMC hemangioma, and the SMC subset is selected. Rates are image-weighted with no patient-clustered intervals or hypothesis tests.
 
@@ -52,3 +74,5 @@ Size is the patient-table maximum tumor diameter in centimeters: patient-level m
 | images | 316 | 609 | 287 | 113 | 64 |
 | image presence % | 84.7 ± 1.9 | 89.8 ± 1.2 | 93.0 ± 1.5 | 92.9 ± 1.8 | 86.9 ± 2.6 |
 | patient-weighted fraction | 0.9079 ± 0.0132 | 0.9213 ± 0.0143 | 0.9385 ± 0.0182 | 0.9562 ± 0.0172 | 0.8730 ± 0.0337 |
+
+Tables show the data-efficiency family as mean ± sample SD across its five fold models on the same images; SD describes model variation, not a confidence interval. All images are mass-positive: presence is not clinical cancer detection and specificity is not estimable.

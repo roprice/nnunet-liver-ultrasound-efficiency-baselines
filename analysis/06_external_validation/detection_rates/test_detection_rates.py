@@ -1,8 +1,10 @@
 import csv
 import importlib
+import io
 import json
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 analysis = importlib.import_module(
     "analysis.06_external_validation.detection_rates.detection_rates"
@@ -27,6 +29,10 @@ class DetectionRatesTests(unittest.TestCase):
                         triage_detection_flag=flagged,
                         evaluation_unit="image", retained_component_count=int(flagged),
                         predicted_mass_area_retained_px=100 * int(flagged),
+                        proxy_mass_available=pathology == "benign",
+                        proxy_mass_method="twin_diff" if pathology == "benign" else None,
+                        proxy_mass_reference_path=f"proxies/{image}.png" if pathology == "benign" else None,
+                        proxy_mass_area_px=100 if pathology == "benign" else None,
                     ))
         self.data = SimpleNamespace(rows=self.rows, snapshot_id="test")
         self.manifest = {"snapshot_id": "test", "schema_version": analysis.SCHEMA_VERSION,
@@ -38,7 +44,17 @@ class DetectionRatesTests(unittest.TestCase):
         ]}
 
     def build_report(self):
-        return analysis.build_report(self.data, self.manifest, self.cohort_manifest)
+        def evaluate(row, mask):
+            if row.experiment_name == "data_efficiency":
+                overlap, centroid = row.fold == 4, row.fold >= 3
+            else:
+                overlap = centroid = row.experiment_name == "augmentation_ablation"
+            return SimpleNamespace(detected={"overlap_iou_00": overlap,
+                                             "centroid_deq_100": centroid})
+
+        with patch.object(analysis.proxy_detection, "load_proxy_masks", return_value={"2": None}), \
+                patch.object(analysis.proxy_detection, "evaluate_prediction", side_effect=evaluate):
+            return analysis.build_report(self.data, self.manifest, self.cohort_manifest)
 
     def test_image_weighted_rates_and_fold_sample_sd(self):
         text = self.build_report()
@@ -46,11 +62,41 @@ class DetectionRatesTests(unittest.TestCase):
         self.assertIn(f"snapshot test (schema version {analysis.SCHEMA_VERSION})", text)
         self.assertIn("| Malignant (HCC) | 2 | 0.400 ± 0.548 | 1.000 ± 0.000 | 0.000 ± 0.000 |", text)
         self.assertIn("| Benign (hemangioma) | 1 | 0.600 ± 0.548 | 1.000 ± 0.000 | 0.000 ± 0.000 |", text)
-        self.assertIn("| Combined | 3 | 0.467 ± 0.183 | 1.000 ± 0.000 | 0.000 ± 0.000 |", text)
-        self.assertIn("| Data efficiency | 0 | 2/2 (1.000) | 0/1 (0.000) | 2/3 (0.667) |", text)
-        self.assertIn("| Data efficiency | 2 | 0/2 (0.000) | 1/1 (1.000) | 1/3 (0.333) |", text)
+        self.assertIn("| nnU-Net default augmentation |", text)
+        self.assertNotIn("Data efficiency", text)
+        self.assertNotIn("Combined", text)
+        self.assertNotIn("Per-fold presence-based detection", text)
         self.assertIn("not normal controls", text)
-        self.assertIn("proximity-based detection and component FP/image are not estimable", text)
+        self.assertIn("spatial rates below use proxies only", text)
+
+    def test_proxy_tables_use_spatial_flags_and_subset_denominator(self):
+        text = self.build_report()
+        overlap, centroid = text.split("## Overlap-based detection at IoU > 0\n")[1].split(
+            "## Centroid-based detection within 1.0 equivalent diameter\n")
+        self.assertIn("| Benign (hemangioma), proxy subset | 1 | 0.200 ± 0.447 | "
+                      "1.000 ± 0.000 | 0.000 ± 0.000 |", overlap)
+        self.assertIn("| Benign (hemangioma), proxy subset | 1 | 0.400 ± 0.548 | "
+                      "1.000 ± 0.000 | 0.000 ± 0.000 |", centroid)
+        for table in (overlap, centroid):
+            self.assertIn("| Malignant (HCC) | NA | NA | NA | NA |", table)
+        self.assertIn("selected subset of benign Clean images", text)
+        self.assertIn("not manual annotations", text)
+        self.assertIn("≤ 1.0 proxy equivalent diameter", text)
+
+    def test_per_fold_csv(self):
+        text = analysis.build_csv(self.data, self.manifest, self.cohort_manifest)
+        reader = csv.DictReader(io.StringIO(text))
+        self.assertEqual(reader.fieldnames, ["model", "fold", "malignant", "benign"])
+        rows = list(reader)
+        self.assertEqual(len(rows), 15)
+        self.assertEqual(rows[0], {
+            "model": "nnU-Net default augmentation", "fold": "0",
+            "malignant": "2/2 (1.000)", "benign": "0/1 (0.000)",
+        })
+        self.assertEqual(rows[2]["malignant"], "0/2 (0.000)")
+        self.assertEqual(rows[2]["benign"], "1/1 (1.000)")
+        self.assertNotIn("combined", text.lower())
+        self.assertNotIn("Data efficiency", text)
 
     def test_other_evaluation_splits_are_excluded(self):
         expected = self.build_report()
@@ -139,7 +185,12 @@ class DetectionRatesTests(unittest.TestCase):
     def test_real_report_and_archived_counts(self):
         data = analysis.load_predictions_dataset()
         manifest = json.loads(analysis.MANIFEST_PATH.read_text())
-        self.assertEqual(analysis.OUTPUT_PATH.read_text(), analysis.build_report(data, manifest))
+        text = analysis.build_report(data, manifest)
+        self.assertEqual(analysis.OUTPUT_PATH.read_text(), text)
+        self.assertEqual(text.count("| Benign (hemangioma), proxy subset | 380 |"), 2)
+        self.assertIn("| Benign (hemangioma), proxy subset | 380 | 0.758 ± 0.017 |", text)
+        self.assertIn("| Benign (hemangioma), proxy subset | 380 | 0.662 ± 0.023 |", text)
+        self.assertEqual(analysis.CSV_PATH.read_text(), analysis.build_csv(data, manifest))
         groups = analysis.select_groups(data.rows)
         self.assertEqual(len(groups), 15)
         self.assertEqual({len(rows) for rows in groups.values()}, {2656})

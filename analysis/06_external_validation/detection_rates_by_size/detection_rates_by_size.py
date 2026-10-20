@@ -12,22 +12,19 @@ import csv
 import hashlib
 import importlib
 import json
+import random
 import statistics
 from bisect import bisect_left
-from dataclasses import dataclass
 from pathlib import Path
 
-import numpy as np
-
-from analysis.predictions_dataset import build_predictions_dataset as builder
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
 
+proxy_detection = importlib.import_module("analysis.06_external_validation.proxy_detection")
 external = importlib.import_module("analysis.06_external_validation.detection_rates.detection_rates")
 by_patient = importlib.import_module(
     "analysis.06_external_validation.detection_rates_by_patient.detection_rates_by_patient"
 )
 aul = importlib.import_module("analysis.02_data_efficiency.detection_rates_by_size.detection_rates_by_size")
-internal = importlib.import_module("analysis.02_data_efficiency.detection_rates.detection_rates")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 OUTPUT_PATH = SCRIPT_DIR / "detection_rates_by_size.md"
@@ -36,18 +33,22 @@ PROJECT_ROOT = external.PROJECT_ROOT
 MODELS = external.MODELS
 FOLDS = external.FOLDS
 PRIMARY_MODEL = "data_efficiency"
-LOCALIZATION_CRITERIA = [name for name, _, _ in internal.DETECTION_CRITERIA]
+IMAGE_SELECTION_SEED = 42
+MIN_PATIENT_PROXY_IMAGES = 4
+PATIENT_PROXY_ANALYSIS = f"proxy_benign_patient_{MIN_PATIENT_PROXY_IMAGES}plus"
+LOCALIZATION_CRITERIA = proxy_detection.LOCALIZATION_CRITERIA
 BENIGN_METRICS = ["presence", *LOCALIZATION_CRITERIA]
 QUARTILES = ["Q1", "Q2", "Q3", "Q4"]
 DIAMETER_LABELS = ["<2 cm", "2–4 cm", "4–8 cm", "8+ cm", "missing size"]
 CSV_FIELDS = ("snapshot_id", "analysis", "model", "fold", "bin", "metric", "n", "count", "rate")
 
 
-@dataclass
-class ProxyResult:
-    presence: bool
-    components: int
-    detected: dict[str, bool]
+ProxyResult = proxy_detection.ProxyResult
+select_proxy_groups = proxy_detection.select_proxy_groups
+case_mask_path = proxy_detection.case_mask_path
+load_proxy_masks = proxy_detection.load_proxy_masks
+evaluate_proxy_mask = proxy_detection.evaluate_proxy_mask
+evaluate_prediction = proxy_detection.evaluate_prediction
 
 
 def relative_size(row):
@@ -95,25 +96,6 @@ def count_record(analysis, model, fold, label, metric, n, count):
     return make_record(analysis, model, fold, label, metric, n, count, count / n if n else None)
 
 
-def select_proxy_groups(groups):
-    proxy_groups = {}
-    for key, rows in groups.items():
-        proxy_rows = [row for row in rows if row.proxy_mass_available]
-        for row in proxy_rows:
-            if (row.pathology != "benign" or row.proxy_mass_method != "twin_diff"
-                    or not row.proxy_mass_reference_path
-                    or type(row.proxy_mass_area_px) is not int or row.proxy_mass_area_px <= 0):
-                raise RuntimeError(f"{row.image_id}: invalid available clean proxy metadata")
-        proxy_groups[key] = proxy_rows
-    reference = {row.image_id: row.proxy_mass_area_px for row in proxy_groups[PRIMARY_MODEL, 0]}
-    if not reference:
-        raise RuntimeError("No available proxy cohort")
-    for key, proxy_rows in proxy_groups.items():
-        if {row.image_id: row.proxy_mass_area_px for row in proxy_rows} != reference:
-            raise RuntimeError(f"{key}: mismatched proxy cohort")
-    return proxy_groups
-
-
 def select_aul_benign(rows):
     aul_rows = [row for row in aul.select_rows(rows) if row.checkpoint == "final"]
     cuts, _ = aul.assign_quartiles(aul_rows, "area_fraction")
@@ -122,69 +104,44 @@ def select_aul_benign(rows):
     return benign, cuts
 
 
-def case_mask_path(reference, image_id):
-    path = Path(reference)
-    if path.is_absolute() or ".." in path.parts or path.stem != image_id:
-        raise RuntimeError(f"{image_id}: mask path must have an exact case stem: {reference}")
-    path = PROJECT_ROOT / path
-    if not path.is_file():
-        raise RuntimeError(f"{image_id}: missing mask: {reference}")
-    return path
-
-
-def load_proxy_masks(rows):
-    masks = {}
+def patient_proxy_records(model, fold, rows, evaluations, cuts, cases):
+    patient_rows = {}
     for row in rows:
-        mask = builder.read_mask(case_mask_path(row.proxy_mass_reference_path, row.image_id))
-        mass = mask == builder.MASS_VALUE
-        if (mask.shape != (row.image_height_px, row.image_width_px)
-                or not set(np.unique(mask)) <= {0, builder.MASS_VALUE}
-                or int(mass.sum()) != row.proxy_mass_area_px):
-            raise RuntimeError(f"{row.image_id}: invalid proxy dimensions, labels, or area")
-        masks[row.image_id] = mass
-    return masks
+        patient_rows.setdefault(cases[row.image_id]["patient"], []).append(row)
+    by_bin = {label: {} for label in [*QUARTILES, "All"]}
+    for patient, images in patient_rows.items():
+        if len(images) < MIN_PATIENT_PROXY_IMAGES:
+            continue
+        for row in images:
+            result = evaluations[row.image_id]
+            for label in (quartile_label(row, cuts), "All"):
+                flags = by_bin[label].setdefault(patient, dict.fromkeys(BENIGN_METRICS, False))
+                flags["presence"] = flags["presence"] or result.presence
+                for criterion in LOCALIZATION_CRITERIA:
+                    flags[criterion] = flags[criterion] or result.detected[criterion]
+    records = []
+    for label, patients in by_bin.items():
+        totals = dict.fromkeys([*BENIGN_METRICS, "presence_without_overlap"], 0)
+        for flags in patients.values():
+            for metric in BENIGN_METRICS:
+                totals[metric] += flags[metric]
+            totals["presence_without_overlap"] += flags["presence"] and not flags["overlap_iou_00"]
+        for metric, count in totals.items():
+            records.append(count_record(PATIENT_PROXY_ANALYSIS, model, fold, label,
+                                        metric, len(patients), count))
+    return records
 
 
-def evaluate_proxy_mask(retained_prediction, proxy):
-    """Credit every retained component that matches the proxy under each criterion."""
-    if retained_prediction.shape != proxy.shape or not proxy.any():
-        raise RuntimeError("Proxy must be nonempty and match prediction dimensions")
-    ious = builder.component_ious(retained_prediction, proxy)
-    detected = {}
-    for name, threshold in zip(LOCALIZATION_CRITERIA[:3], (0.0, 0.2, 0.5)):
-        detected[name] = any(iou > threshold for iou in ious)
-    for name, factor in zip(LOCALIZATION_CRITERIA[3:], (0.25, 0.5, 1.0)):
-        detected[name] = any(builder.component_centroid_matches(proxy, retained_prediction, factor))
-    return ProxyResult(
-        presence=bool(retained_prediction.any()),
-        components=len(ious),
-        detected=detected,
-    )
-
-
-def evaluate_prediction(row, proxy):
-    prediction = builder.read_mask(case_mask_path(row.prediction_path, row.image_id))
-    if prediction.shape != (row.image_height_px, row.image_width_px):
-        raise RuntimeError(f"{row.image_id}: invalid prediction dimensions")
-    raw = prediction == builder.MASS_VALUE
-    retained = builder.retained_mass_mask(raw)
-    result = evaluate_proxy_mask(retained, proxy)
-    if (int(raw.sum()) != row.predicted_mass_area_raw_px
-            or int(retained.sum()) != row.predicted_mass_area_retained_px
-            or result.components != row.retained_component_count
-            or result.presence != row.triage_detection_flag):
-        raise RuntimeError(f"{row.image_id}: prediction does not match canonical retained facts")
-    return result
-
-
-def proxy_records(proxy_groups, masks, cuts):
+def proxy_records(proxy_groups, masks, cuts, cases=None):
     records = []
     for (model, fold), rows in proxy_groups.items():
         print(f"Evaluating {model}, fold {fold} ({len(rows)} images)", flush=True)
         totals = {label: dict.fromkeys(["n", "presence_without_overlap", *BENIGN_METRICS], 0)
                   for label in [*QUARTILES, "All"]}
+        evaluations = {}
         for row in rows:
             result = evaluate_prediction(row, masks[row.image_id])
+            evaluations[row.image_id] = result
             for label in (quartile_label(row, cuts), "All"):
                 totals[label]["n"] += 1
                 totals[label]["presence"] += result.presence
@@ -196,6 +153,8 @@ def proxy_records(proxy_groups, masks, cuts):
             for metric in [*BENIGN_METRICS, "presence_without_overlap"]:
                 records.append(count_record("proxy_benign", model, fold, label, metric,
                                             total["n"], total[metric]))
+        if cases is not None:
+            records.extend(patient_proxy_records(model, fold, rows, evaluations, cuts, cases))
     return records
 
 
@@ -209,7 +168,17 @@ def presence_counts(rows, cuts, overlap_flags):
     return counts
 
 
-def comparison_records(aul_benign, proxy_groups, cuts, masks):
+def select_one_image_per_patient(proxy_groups, cases):
+    patient_images = {}
+    for row in proxy_groups[PRIMARY_MODEL, 0]:
+        patient_images.setdefault(cases[row.image_id]["patient"], []).append(row.image_id)
+    rng = random.Random(IMAGE_SELECTION_SEED)
+    selected = {rng.choice(sorted(patient_images[patient])) for patient in sorted(patient_images)}
+    return {key: [row for row in rows if row.image_id in selected]
+            for key, rows in proxy_groups.items()}
+
+
+def comparison_records(aul_benign, proxy_groups, cuts, masks, analysis_suffix=""):
     """AUL and SMC benign presence in shared bins, plus the full-sample rate."""
     lower, upper = common_range(aul_benign[0], proxy_groups[PRIMARY_MODEL, 0])
     records = []
@@ -229,9 +198,9 @@ def comparison_records(aul_benign, proxy_groups, cuts, masks):
             counts["Full sample"] = presence_counts(rows, cuts, overlap_flags)["All"]
             for label, (n, flagged, without_overlap) in counts.items():
                 label = "Common range" if label == "All" else label
-                records.append(count_record(f"{dataset}_benign", PRIMARY_MODEL, fold, label,
+                records.append(count_record(f"{dataset}_benign{analysis_suffix}", PRIMARY_MODEL, fold, label,
                                             "presence", n, flagged))
-                records.append(count_record(f"{dataset}_benign", PRIMARY_MODEL, fold, label,
+                records.append(count_record(f"{dataset}_benign{analysis_suffix}", PRIMARY_MODEL, fold, label,
                                             "presence_without_overlap", n, without_overlap))
     return records, (lower, upper)
 
@@ -271,7 +240,11 @@ def build_records(data, manifest, archived):
     aul_benign, cuts = select_aul_benign(data.rows)
     masks = load_proxy_masks(proxy_groups[PRIMARY_MODEL, 0])
     comparison, common = comparison_records(aul_benign, proxy_groups, cuts, masks)
-    records = proxy_records(proxy_groups, masks, cuts) + comparison + hcc_records(data.rows, archived)
+    sampled_groups = select_one_image_per_patient(proxy_groups, cases)
+    sampled_comparison, sampled_common = comparison_records(
+        aul_benign, sampled_groups, cuts, masks, analysis_suffix="_one_per_patient")
+    records = (proxy_records(proxy_groups, masks, cuts, cases) + comparison + sampled_comparison
+               + hcc_records(data.rows, archived))
     common_rows = [row for row in proxy_groups[PRIMARY_MODEL, 0]
                    if common[0] <= relative_size(row) <= common[1]]
     common_patients = patients_by_label(common_rows, cuts, cases)
@@ -279,6 +252,7 @@ def build_records(data, manifest, archived):
     summary = {
         "cuts": cuts,
         "common_range": common,
+        "one_per_patient_common_range": sampled_common,
         "proxy_patients": patients_by_label(proxy_groups[PRIMARY_MODEL, 0], cuts, cases),
         "comparison_patients": {**common_patients,
                                 "Full sample": len({cases[row.image_id]["patient"]
@@ -312,12 +286,23 @@ def format_cell(series, analysis, metric, label, scale=100, digits=1):
     return format_values(series.get((analysis, PRIMARY_MODEL, metric, label), []), scale, digits)
 
 
-def format_difference(series, label):
-    smc = series.get(("smc_benign", PRIMARY_MODEL, "presence", label), [])
-    aul_values = series.get(("aul_benign", PRIMARY_MODEL, "presence", label), [])
-    if any(value is None for value in smc + aul_values):
-        return "NA"
-    return format_values([a - b for a, b in zip(smc, aul_values)], digits=2)
+def comparison_table(records, series, analysis_suffix=""):
+    aul_analysis = f"aul_benign{analysis_suffix}"
+    smc_analysis = f"smc_benign{analysis_suffix}"
+    aul_images = first_fold_counts(records, aul_analysis, "presence")
+    smc_images = first_fold_counts(records, smc_analysis, "presence")
+    lines = [
+        "| bin | AUL images | SMC images | AUL presence rate | SMC presence rate | "
+        "AUL presence without overlap rate | SMC presence without overlap rate |",
+        "|---|---:|---:|---|---|---|---|",
+    ]
+    for label in [*QUARTILES, "Common range", "Full sample"]:
+        cells = [format_cell(series, analysis, metric, label, scale=1, digits=3)
+                 for metric in ("presence", "presence_without_overlap")
+                 for analysis in (aul_analysis, smc_analysis)]
+        lines.append(f"| {label} | {aul_images[label]} | {smc_images[label]} | "
+                     + " | ".join(cells) + " |")
+    return lines
 
 
 def largest_family_gap(records):
@@ -342,11 +327,9 @@ def build_report(data, manifest, archived_bytes, records, summary):
     cuts = summary["cuts"]
     lower, upper = summary["common_range"]
     proxy_images = first_fold_counts(records, "proxy_benign", "presence")
-    aul_images = first_fold_counts(records, "aul_benign", "presence")
-    smc_images = first_fold_counts(records, "smc_benign", "presence")
+    proxy_patients = first_fold_counts(records, PATIENT_PROXY_ANALYSIS, "presence")
     hcc_patients = first_fold_counts(records, "hcc_diameter", "patient_weighted_fraction")
     hcc_images = first_fold_counts(records, "hcc_diameter", "image_presence")
-    largest_gap, largest_gap_cell = largest_family_gap(records)
     bin_labels = [*QUARTILES, "All"]
     lines = [
         "# External detection by lesion size",
@@ -356,11 +339,7 @@ def build_report(data, manifest, archived_bytes, records, summary):
         f"`{hashlib.sha256(archived_bytes).hexdigest()}`.",
         "",
         "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, PlainConvUNet, "
-        "folds 0–4. Tables show the data-efficiency family as mean ± sample SD across its five "
-        "fold models on the same images; SD describes model variation, not a confidence interval. "
-        f"The largest cell difference for the other two families is {100 * largest_gap:.1f} points "
-        f"({largest_gap_cell}); all families are in the CSV. All images are mass-positive: "
-        "presence is not clinical cancer detection and specificity is not estimable.",
+        "folds 0–4.",
         "",
         "## Hemangioma by relative lesion size",
         "",
@@ -374,12 +353,10 @@ def build_report(data, manifest, archived_bytes, records, summary):
         "(overlap_iou_05, centroid_deq_025). Image occupancy is not physical lesion size: zoom, "
         "depth, cropping and proxy error are uncontrolled.",
         "",
-        "### SMC localization against proxy circles",
+        "### Triage-level detection rates against SMC proxy circles",
         "",
-        "Overlap uses each retained component's IoU against the proxy (> 0, > 0.2, > 0.5); "
-        "centroid criteria use distance ≤ 0.25, 0.5 or 1.0 proxy equivalent diameters. An image is "
-        "detected when any retained component matches. Presence without overlap is the share of "
-        "images with at least one retained component where no component overlaps the proxy "
+        "An image is detected when any retained component matches. Presence without overlap is the "
+        "share of images with at least one retained component where no component overlaps the proxy "
         "(presence minus overlap_iou_00): an off-target firing, not a clinical false-positive "
         "diagnosis. An image with any overlapping component is not counted, whatever its other "
         "components do.",
@@ -387,41 +364,73 @@ def build_report(data, manifest, archived_bytes, records, summary):
         "| | " + " | ".join(bin_labels) + " |",
         "|---|" + "---|" * len(bin_labels),
         "| images | " + " | ".join(str(proxy_images[label]) for label in bin_labels) + " |",
-        "| patients | " + " | ".join(str(summary["proxy_patients"][label]) for label in bin_labels) + " |",
     ]
-    for metric in BENIGN_METRICS:
-        cells = [format_cell(series, "proxy_benign", metric, label) for label in bin_labels]
-        lines.append(f"| {metric} % | " + " | ".join(cells) + " |")
-    cells = [format_cell(series, "proxy_benign", "presence_without_overlap", label)
+    cells = [format_cell(series, "proxy_benign", "presence", label, scale=1, digits=3)
              for label in bin_labels]
-    lines.append("| presence without overlap % | " + " | ".join(cells) + " |")
+    lines.append("| presence rate | " + " | ".join(cells) + " |")
+    for metric in ("overlap_iou_00", "centroid_deq_100"):
+        cells = [format_cell(series, "proxy_benign", metric, label, scale=1, digits=3)
+                 for label in bin_labels]
+        lines.append(f"| {metric} rate | " + " | ".join(cells) + " |")
+    cells = [format_cell(series, "proxy_benign", "presence_without_overlap", label, scale=1, digits=3)
+             for label in bin_labels]
+    lines.append("| presence without overlap rate | " + " | ".join(cells) + " |")
     lines.extend([
         "",
-        "Patients can contribute images to more than one bin, so patient counts across bins "
-        "must not be added.",
+        "### Patient-level, multiple-pass triage-level detection rates against SMC proxy circles",
         "",
-        "### Presence: AUL versus SMC",
+        f"Patients must have {MIN_PATIENT_PROXY_IMAGES}+ proxy-eligible images overall, before size binning. "
+        "Each quartile uses only that patient's images in that bin, so it may contain fewer than "
+        f"{MIN_PATIENT_PROXY_IMAGES} images per patient. Patients can appear in multiple quartiles; "
+        "All counts each patient once across all their proxy-eligible images. Bin patient counts "
+        "must not be added. Passes here are selected still images, not verified independent acquisitions.",
+        "",
+        "Rates are fractions of patients with any applicable image meeting the criterion. Presence "
+        "without overlap requires at least one presence flag and no overlap on any applicable image; "
+        "an overlap on another image in the same bin excludes that patient from this outcome.",
+        "",
+        "| | " + " | ".join(bin_labels) + " |",
+        "|---|" + "---|" * len(bin_labels),
+        "| patients | " + " | ".join(str(proxy_patients[label]) for label in bin_labels) + " |",
+    ])
+    for metric, label in (("presence", "presence rate"), ("overlap_iou_00", "overlap_iou_00 rate"),
+                          ("centroid_deq_100", "centroid_deq_100 rate"),
+                          ("presence_without_overlap", "presence without overlap rate")):
+        cells = [format_cell(series, PATIENT_PROXY_ANALYSIS, metric, bin_label, scale=1, digits=3)
+                 for bin_label in bin_labels]
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    lines.extend([
+        "",
+        "### Presence-based detection: AUL versus SMC",
         "",
         "Restricted to the observed range common to both datasets "
         f"({100 * lower:.3f}%–{100 * upper:.3f}% of image area, inclusive) so that neither "
         "dataset is compared where the other has no lesions; the full-sample row is unrestricted. "
         "Presence without overlap is the share of all images with a retained prediction but no "
         "overlap with the AUL annotation or SMC proxy circle, respectively. The reference types "
-        "differ; presence itself does not depend on the reference. Differences are SMC − AUL "
-        "presence in percentage points.",
+        "differ; presence itself does not depend on the reference.",
         "",
-        "| bin | AUL images | SMC images | AUL presence % | SMC presence % | difference | "
-        "AUL presence without overlap % | SMC presence without overlap % |",
-        "|---|---:|---:|---|---|---|---|---|",
     ])
-    for label in [*QUARTILES, "Common range", "Full sample"]:
-        lines.append(
-            f"| {label} | {aul_images[label]} | {smc_images[label]} "
-            f"| {format_cell(series, 'aul_benign', 'presence', label, digits=2)} "
-            f"| {format_cell(series, 'smc_benign', 'presence', label, digits=2)} "
-            f"| {format_difference(series, label)} "
-            f"| {format_cell(series, 'aul_benign', 'presence_without_overlap', label, digits=2)} "
-            f"| {format_cell(series, 'smc_benign', 'presence_without_overlap', label, digits=2)} |")
+    lines.extend(comparison_table(records, series))
+    sampled_lower, sampled_upper = summary["one_per_patient_common_range"]
+    lines.extend([
+        "",
+        "### Presence-based detection at one image per patient: AUL versus SMC",
+        "",
+        "One image is sampled uniformly from each SMC patient's proxy-eligible images "
+        f"(seed {IMAGE_SELECTION_SEED}; sorted patient and image IDs), independently of predictions, "
+        "and reused across models and folds. AUL's full sample is unchanged. Sampling precedes size filtering; "
+        "the same AUL quartile cuts apply, with a recomputed common observed range "
+        f"({100 * sampled_lower:.3f}%–{100 * sampled_upper:.3f}% of image area, inclusive). "
+        "The full-sample row includes every sampled image.",
+        "",
+        "This is not the SMC singleton-patient subset. Patients without eligible proxies are excluded. "
+        "AUL's original image-selection procedure is unknown; this matches image counts per patient, "
+        "not acquisition or selection procedures. Results describe one fixed image sample; fold SD "
+        "does not measure image-selection uncertainty.",
+        "",
+    ])
+    lines.extend(comparison_table(records, series, analysis_suffix="_one_per_patient"))
     lines.extend([
         "",
         "AUL benign images are a different diagnostic mix from SMC hemangioma, and the SMC "
@@ -448,6 +457,10 @@ def build_report(data, manifest, archived_bytes, records, summary):
         "| patient-weighted fraction | " + " | ".join(
             format_cell(series, "hcc_diameter", "patient_weighted_fraction", label, digits=4, scale=1)
             for label in DIAMETER_LABELS) + " |",
+        "",
+        "Tables show the data-efficiency family as mean ± sample SD across its five fold models "
+        "on the same images; SD describes model variation, not a confidence interval. All images "
+        "are mass-positive: presence is not clinical cancer detection and specificity is not estimable.",
     ])
     return "\n".join(lines) + "\n"
 

@@ -12,11 +12,12 @@ import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
-from analysis.predictions_dataset.constants import MIN_PRED_AREA_FRACTION, SCHEMA_VERSION
+from analysis.predictions_dataset.constants import SCHEMA_VERSION
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
 
 external = importlib.import_module("analysis.06_external_validation.detection_rates.detection_rates")
 select_groups, MODELS, FOLDS = external.select_groups, external.MODELS, external.FOLDS
+MODELS = {**MODELS, "data_efficiency": "nnU-Net default augmentation"}
 PROJECT_ROOT = external.PROJECT_ROOT
 MANIFEST_PATH = external.MANIFEST_PATH
 ARCHIVED_MANIFEST_PATH = (
@@ -31,7 +32,7 @@ COHORTS = {
     "HCC>=2cm": "HCC ≥2 cm",
     "HCCmissingSize": "HCC missing size",
 }
-VIEW_BINS = [("1", 1, 1), ("2", 2, 2), ("3–5", 3, 5), ("6+", 6, math.inf)]
+VIEW_BINS = [("1", 1, 1), ("2", 2, 2), ("3", 3, 3), ("4", 4, 4), ("5", 5, 5), ("6+", 6, math.inf)]
 
 
 @dataclass
@@ -133,13 +134,9 @@ def build_report(data, manifest, archived_manifest_bytes):
     archived_manifest = json.loads(archived_manifest_bytes)
     groups = patient_groups(data.rows, archived_manifest)
     reference = groups["data_efficiency", 0]
-    results = {}
-    for (model, fold), patients in groups.items():
-        for cohort in COHORTS:
-            results[model, fold, cohort] = summarize(cohort_patients(patients, cohort))
     archive_hash = hashlib.sha256(archived_manifest_bytes).hexdigest()
     lines = [
-        "# External-validation patient detection rates",
+        "# External-validation patient presence-based detection rates",
         "",
         f"SMC-LUD Clean: {len(reference)} patients, {sum(patient.n for patient in reference)} "
         f"images per fold model. Canonical dataset snapshot `{data.snapshot_id}` "
@@ -148,75 +145,55 @@ def build_report(data, manifest, archived_manifest_bytes):
         f"Patient/size input: `{ARCHIVED_MANIFEST_PATH.relative_to(PROJECT_ROOT).as_posix()}` "
         f"(schema {archived_manifest['schema_version']}); SHA-256 `{archive_hash}`.",
         "",
-        "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, PlainConvUNet. "
-        "Every model/fold must match the entire clean manifest, including image pathology, "
-        "dimensions and original-source suffix. Patients come from the exact "
-        "image_id → manifest case join, never from parsing image IDs or joining a patient table. "
-        "Hem_87 remains included despite its missing patient-table row.",
+        "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, for nnUnet default "
+        "augmentation and two augmentation ablations.",
         "",
-        "For each model, fold and patient, n is the number of selected still images and k "
-        "is the number with canonical triage_detection_flag=True (any retained predicted mass "
-        f"component; 8-connectivity, area ≥ int({MIN_PRED_AREA_FRACTION} × image area)). "
-        "The **primary patient-weighted flagged fraction is mean(k/n)**, with equal patient "
-        "weight. It is not the archived runner's strict-majority `patient_weighted_rate`.",
-        "",
-        "Secondary outcomes: image-weighted sum(k)/sum(n), any-image patient rate (k>0), "
-        "and all-image patient rate (k=n).",
-        "",
-        "Each outcome is computed separately in folds 0–4, then summarized as mean ± sample "
-        "SD across the five fold models. Fold outcomes are never pooled. SD describes model "
-        "variability on the same patients, not a confidence interval.",
-        "",
-        "These are selected stills from a mass-positive dataset: flags establish neither "
-        "clinical cancer classification nor confirmed lesion localization. Hemangiomas are "
-        "positive mass cases; there are no normal controls and specificity is not estimable. "
-        "Any-image detection has more opportunities to rise with view count, while all-image "
-        "detection becomes more demanding; view-bin comparisons are descriptive. There are no "
-        "temporal or visit data, so longitudinal monitoring is not established. HCC size is the "
-        "patient-table maximum diameter carried in the manifest, not a measurement of every frame. "
-        "The <2 cm boundary is strict, missing sizes stay separate, and hemangioma size is unavailable.",
+        "Patients are joined by manifest case ID; every model/fold is checked against the full "
+        "Clean cohort. Hem_87 is included.",
+    ]
+    for cohort in ("HCC", "hemangioma"):
+        cohort_groups = {key: cohort_patients(patients, cohort) for key, patients in groups.items()}
+        lines.extend([
+            "", f"## View-count effects: {cohort} cohort", "",
+            "Cells show any-image / all-image rates (three decimals); NA means no patients.", "",
+            "| images per patient | patients | images | " + " | ".join(MODELS.values()) + " |",
+            "|---|---:|---:|---|---|---|",
+        ])
+        for label, lower, upper in reversed(VIEW_BINS):
+            views = [patient.n for patient in cohort_groups["data_efficiency", 0]
+                     if lower <= patient.n <= upper]
+            cells = []
+            for model in MODELS:
+                if not views:
+                    cells.append("NA / NA")
+                    continue
+                summaries = [summarize([patient for patient in cohort_groups[model, fold]
+                                        if lower <= patient.n <= upper]) for fold in FOLDS]
+                cells.append(" / ".join(mean_sd([summary[metric] for summary in summaries], 3)
+                                        for metric in ("any_image_rate", "all_image_rate")))
+            lines.append(f"| {label} | {len(views)} | {sum(views)} | " + " | ".join(cells) + " |")
+    lines.extend([
         "",
         "## Cohort and view counts",
         "",
         "| cohort | patients | images | median views | min | max | singletons |",
         "|---|---:|---:|---:|---:|---:|---:|",
-    ]
-    for cohort, label in COHORTS.items():
+    ])
+    for cohort in ("HCC", "hemangioma"):
+        label = COHORTS[cohort]
         views = [patient.n for patient in cohort_patients(reference, cohort)]
         lines.append(f"| {label} | {len(views)} | {sum(views)} | {statistics.median(views):g} "
                      f"| {min(views)} | {max(views)} | {views.count(1)} |")
     largest = max(patient.n for patient in reference)
     largest_patients = ", ".join(sorted(patient.patient for patient in reference if patient.n == largest))
+    lines.extend(["", f"Largest image contribution: {largest_patients} ({largest} images)."])
     lines.extend([
-        "", f"Largest image contribution: {largest_patients} ({largest} images).", "",
-        "## Model summaries",
         "",
-        "Rates are proportions, mean ± sample SD across five fold models (six decimals).",
-        "",
-        "| cohort | model | primary patient-weighted fraction | image-weighted | any-image | all-image |",
-        "|---|---|---:|---:|---:|---:|",
+        "All cases are mass-positive; flags do not confirm lesion localization or cancer, and "
+        "specificity is not estimable. More views give any-image detection more opportunities "
+        "and make all-image detection harder; comparisons are descriptive, not longitudinal. "
+        "HCC size is the patient-table maximum diameter; missing sizes are separate.",
     ])
-    metrics = ("patient_weighted_fraction", "image_weighted_rate", "any_image_rate", "all_image_rate")
-    for cohort, cohort_label in COHORTS.items():
-        for model, model_label in MODELS.items():
-            cells = [mean_sd([results[model, fold, cohort][metric] for fold in FOLDS])
-                     for metric in metrics]
-            lines.append(f"| {cohort_label} | {model_label} | " + " | ".join(cells) + " |")
-    lines.extend([
-        "", "## View-count effects: combined cohort", "",
-        "Cells show any-image / all-image rates, each mean ± sample SD (three decimals).", "",
-        "| images per patient | patients | images | " + " | ".join(MODELS.values()) + " |",
-        "|---|---:|---:|---|---|---|",
-    ])
-    for label, lower, upper in VIEW_BINS:
-        views = [patient.n for patient in reference if lower <= patient.n <= upper]
-        cells = []
-        for model in MODELS:
-            summaries = [summarize([patient for patient in groups[model, fold]
-                                    if lower <= patient.n <= upper]) for fold in FOLDS]
-            cells.append(" / ".join(mean_sd([summary[metric] for summary in summaries], 3)
-                                    for metric in ("any_image_rate", "all_image_rate")))
-        lines.append(f"| {label} | {len(views)} | {sum(views)} | " + " | ".join(cells) + " |")
     return "\n".join(lines) + "\n"
 
 
