@@ -1,4 +1,4 @@
- import csv
+import csv
 from dataclasses import asdict
 import json
 from pathlib import Path
@@ -30,7 +30,7 @@ class ProxyMassColumnsTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.project_root = Path(temporary.name)
         self.archive = self.project_root / "archives/06_external_validation"
-        self.proxy_directory = self.archive / "proxy_masks"
+        self.proxy_directory = self.archive / "caliper_annotation_tests/proxy_masks"
         for name, value in (("PROJECT_ROOT", self.project_root),
                             ("ARCHIVES_DIR", self.project_root / "archives")):
             patcher = patch.object(builder, name, value)
@@ -56,7 +56,7 @@ class ProxyMassColumnsTests(unittest.TestCase):
         self.proxy_mask[2:4, 3:6] = 2
         self.available = {
             "proxy_mass_available": True,
-            "proxy_mass_reference_path": f"archives/06_external_validation/proxy_masks/{self.benign_id}.png",
+            "proxy_mass_reference_path": f"archives/06_external_validation/caliper_annotation_tests/proxy_masks/{self.benign_id}.png",
             "proxy_mass_method": "twin_diff",
             "proxy_mass_area_px": 6,
         }

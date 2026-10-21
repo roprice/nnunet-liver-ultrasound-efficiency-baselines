@@ -385,7 +385,7 @@ def load_external_cases(experiment_archive):
 
 def load_proxy_mass_references(experiment_archive, cases):
     """Validate extraction outputs and match proxies only to the same clean frame."""
-    proxy_directory = experiment_archive / "proxy_masks"
+    proxy_directory = experiment_archive / "caliper_annotation_tests/proxy_masks"
     if not proxy_directory.exists():
         return {}
     report_path = proxy_directory / "extraction_report.json"

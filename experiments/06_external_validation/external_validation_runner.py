@@ -32,6 +32,9 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
 DEFAULT_PREPARED = REPO / "archives_staging/06_external_validation/smc_lud_prepared"
 DEFAULT_OUTPUT = REPO / "logs/06_external_validation"
 DEFAULT_ARCHIVES = REPO / "archives"

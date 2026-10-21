@@ -9,7 +9,7 @@ Predict with the runner's --experiments data_efficiency: the comparison uses onl
 
 Run after extract_caliper_proxy.py:
     python3 -I experiments/06_external_validation/prepare_twin_test.py \
-        --proxy-masks archives_staging/06_external_validation/proxy_masks
+        --proxy-masks archives/06_external_validation/caliper_annotation_tests/proxy_masks
 """
 
 import argparse
@@ -53,7 +53,7 @@ def main(argv=None):
     parser.add_argument("--proxy-masks", type=Path, required=True,
                         help="Directory holding extraction_report.json from extract_caliper_proxy.py")
     parser.add_argument("--output-dir", type=Path,
-                        default=REPO / "archives_staging/06_external_validation/twin_test_prepared")
+                        default=REPO / "archives/06_external_validation/caliper_annotation_tests/prepared")
     args = parser.parse_args(argv)
 
     reference = prepare_external_data.load_reference(args.reference)

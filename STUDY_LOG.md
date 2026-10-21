@@ -1,18 +1,25 @@
 # Study log
 
 ## 2026-10-20
-_Estimated development effort: 2 through today, 155 total_
+_Estimated development effort: 6 through today, 157 total_
 
 One advantage the external validation set gives us is per patient data where we can see the aggregate detection rate of multiple passes of an ultrasound scan on the same patient.
 
-The numbers show near complete patient-level flagging of mass-positive patients, with nummbers ranging from **99.8% to 99.7% triage-level detection rates** across models (nnU-Net defaults vs augmentation defaults).
+The numbers show near complete patient-level flagging of mass-positive patients, with numbers ranging from **99.8% to 99.7% triage-level detection rates** across models (nnU-Net defaults vs augmentation defaults).
+
+We need to do further analysis to confirm the validity of these numbers, so it would be more correct to say:
+
+"The numbers _may_ show near complete patient-level flagging of mass-positive patients with a given number of multiple image acquisitions." 
+
+And leave it at that for now.
+
 
 -----
 
 Our paper trail budget appears to come to approximately $91. We'll reverify that before reporting. The vast majority of that budget went to model training - 40 models were trained in the main portion of the study.
 
 
-| Experiment | Models trained | final | best | milestone |
+| Experiment | Models trained | final | best | milestone checkpoints |
 |---|---|---|---|---|
 | 01 training efficiency (5 folds × 1,000 epochs) | 5 | 5 | 5 | 40 (8/fold: 25, 50, 75, 100, 150, 300, 500, 750) |
 | 02 data efficiency (4 sizes × 5 folds) | 20 | 20 | 20 | 100 (5/model: 5, 25, 75, 100, 125) |
@@ -20,14 +27,9 @@ Our paper trail budget appears to come to approximately $91. We'll reverify that
 | 04 gaussian noise ablation (1 size × 5 folds) | 5 | 5 | 5 | 0 |
 | **Total** | **40** | **40** | **40** | **140** |
 
-**Total saved checkpoints: 220**
+Total saved checkpoints: 220 (excluding dry run checkpoints)
 
-#### Extras not in the table above
 
-- Two dry-run rehearsals (`00_..._01`, `00_..._02`) each saved 1 final + 1 best + 1 epoch-1 milestone (+2 each category; a third dry-run archive has no checkpoints).
-- Experiment 02's archive contains a failed/restarted size-294 fold-3 run (`recovery_restart_size294_fold3/failed_fold_3/`) that had saved 2 milestones (epoch 5, 25), 1 best, and 1 `checkpoint_latest.pth` before being retrained successfully — so the archive physically holds 21 "best" and 22 milestone files for that experiment.
-
-Including all extras: 42 final, 43 best, 144 milestone.
 
 
 
