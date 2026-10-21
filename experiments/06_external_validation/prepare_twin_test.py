@@ -3,7 +3,8 @@
 
 Builds a caliper-subset inference cohort for external_validation_runner.py --subset caliper:
 the marked twin of every hemangioma Clean frame that has a twin_diff proxy mask, plus the
-HCC caliper frames that have chroma proxy masks (the runner requires both classes).
+HCC caliper frames that have proxy masks (the runner requires both classes): chroma masks from
+--proxy-masks, or transcribed masks from --hcc-proxy-masks (see caliper_transcription_runbook.md).
 Also writes twin_pairs.json, mapping each hemangioma Clean case to its marked twin.
 Predict with the runner's --experiments data_efficiency: the comparison uses only the default models.
 
@@ -52,6 +53,8 @@ def main(argv=None):
     parser.add_argument("--reference", type=Path, default=prepare_external_data.DEFAULT_REFERENCE)
     parser.add_argument("--proxy-masks", type=Path, required=True,
                         help="Directory holding extraction_report.json from extract_caliper_proxy.py")
+    parser.add_argument("--hcc-proxy-masks", type=Path, default=None,
+                        help="Use the HCC cases of this extraction_report.json instead (transcribed masks)")
     parser.add_argument("--output-dir", type=Path,
                         default=REPO / "archives/06_external_validation/caliper_annotation_tests/prepared")
     args = parser.parse_args(argv)
@@ -63,7 +66,9 @@ def main(argv=None):
     proxy_cases = json.loads((args.proxy_masks / "extraction_report.json").read_text())["proxy_cases"]
 
     pairs = select_twin_pairs(args.source, reference, proxy_cases)
-    hcc_cases = {case["case"] for case in proxy_cases if case["class"] == "HCC"}
+    hcc_report = (args.hcc_proxy_masks or args.proxy_masks) / "extraction_report.json"
+    hcc_cases = {case["case"] for case in json.loads(hcc_report.read_text())["proxy_cases"]
+                 if case["class"] == "HCC"}
     hcc_images = [image for image in reference["images"]
                   if image["case"] in hcc_cases and image["subset"] == "caliper"]
     require(len(hcc_images) == len(hcc_cases), "HCC proxy case is not a caliper-subset frame")
