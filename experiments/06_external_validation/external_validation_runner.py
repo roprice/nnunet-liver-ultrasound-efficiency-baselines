@@ -524,6 +524,9 @@ def main(argv=None):
                              "extract_caliper_proxy.py")
     parser.add_argument("--subset", default="clean",
                         choices=("clean", "caliper"))
+    parser.add_argument("--experiments", nargs="+", choices=[e["name"] for e in EXPERIMENTS],
+                        default=[e["name"] for e in EXPERIMENTS],
+                        help="Model families to run (default: all three)")
     parser.add_argument("--checkpoint", default="final",
                         choices=("final", "best"))
     parser.add_argument("--device", default="mps",
@@ -536,6 +539,7 @@ def main(argv=None):
                         help="Verify inputs and exit")
     args = parser.parse_args(argv)
 
+    experiments = [e for e in EXPERIMENTS if e["name"] in args.experiments]
     prepared = args.prepared.resolve()
     archives = args.archives.resolve()
     output = args.output_dir.resolve()
@@ -545,7 +549,7 @@ def main(argv=None):
     try:
         manifest, cases, images_dir = load_manifest(prepared, args.subset)
         checkpoint_records = verify_checkpoints(
-            EXPERIMENTS, archives, args.checkpoint, args.checkpoint)
+            experiments, archives, args.checkpoint, args.checkpoint)
         if proxy_masks_dir is not None:
             require(proxy_masks_dir.is_dir(),
                     f"Proxy masks directory not found: {proxy_masks_dir}")
@@ -564,7 +568,7 @@ def main(argv=None):
         print(f"Verified: {n_cases} cases, {n_patients} patients, "
               f"{len(checkpoint_records)} checkpoints ({args.checkpoint}), "
               f"{n_proxy} proxy masks")
-        for experiment in EXPERIMENTS:
+        for experiment in experiments:
             for fold in FOLDS:
                 config_id = (
                     f"{experiment['name']}_588images_seed42"
@@ -577,12 +581,13 @@ def main(argv=None):
         return
 
     output.mkdir(parents=True, exist_ok=True)
-    merged_results = prepare_merged_results(EXPERIMENTS, archives, output)
+    merged_results = prepare_merged_results(experiments, archives, output)
 
     settings = {
         "experiment": "06_external_validation",
         "subset": args.subset,
         "checkpoint": args.checkpoint,
+        "experiments": [e["name"] for e in experiments],
         "device": args.device,
         "case_count": n_cases,
         "patient_count": n_patients,
@@ -606,7 +611,7 @@ def main(argv=None):
         all_rows = []
         predictions_root = output / "predictions"
 
-        for experiment in EXPERIMENTS:
+        for experiment in experiments:
             for fold in FOLDS:
                 config_id = (
                     f"{experiment['name']}_588images_seed42"
@@ -641,7 +646,7 @@ def main(argv=None):
         csv_path = output / "per_image_results.csv"
         write_per_image_csv(csv_path, all_rows)
 
-        summary = build_summary(all_rows, EXPERIMENTS, {
+        summary = build_summary(all_rows, experiments, {
             "subset": args.subset,
             "checkpoint": args.checkpoint,
             "case_count": n_cases,
