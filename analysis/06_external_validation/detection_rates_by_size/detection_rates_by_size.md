@@ -18,9 +18,11 @@ An image is detected when any retained component matches. Presence without overl
 |---|---|---|---|---|---|
 | images | 6 | 1 | 17 | 36 | 60 |
 | presence rate | 0.533 ± 0.075 | 1.000 ± 0.000 | 0.929 ± 0.064 | 0.950 ± 0.036 | 0.903 ± 0.043 |
-| overlap_iou_00 rate | 0.167 ± 0.000 | 0.600 ± 0.548 | 0.729 ± 0.032 | 0.883 ± 0.036 | 0.763 ± 0.018 |
 | centroid_deq_100 rate | 0.000 ± 0.000 | 0.400 ± 0.548 | 0.753 ± 0.049 | 0.911 ± 0.023 | 0.767 ± 0.026 |
+| overlap_iou_00 rate | 0.167 ± 0.000 | 0.600 ± 0.548 | 0.729 ± 0.032 | 0.883 ± 0.036 | 0.763 ± 0.018 |
 | presence without overlap rate | 0.367 ± 0.075 | 0.400 ± 0.548 | 0.200 ± 0.067 | 0.067 ± 0.015 | 0.140 ± 0.025 |
+
+Presence without overlap is defined relative to overlap_iou_00 (presence rate minus overlap_iou_00 rate), not the centroid criterion.
 
 ### Patient-level, multiple-pass triage-level HCC detection rates against SMC proxy circles
 
@@ -78,9 +80,11 @@ An image is detected when any retained component matches. Presence without overl
 |---|---|---|---|---|---|
 | images | 151 | 91 | 98 | 40 | 380 |
 | presence rate | 0.901 ± 0.008 | 0.949 ± 0.017 | 0.976 ± 0.015 | 0.980 ± 0.021 | 0.940 ± 0.006 |
-| overlap_iou_00 rate | 0.595 ± 0.036 | 0.778 ± 0.027 | 0.906 ± 0.017 | 0.965 ± 0.022 | 0.758 ± 0.017 |
 | centroid_deq_100 rate | 0.420 ± 0.035 | 0.668 ± 0.020 | 0.902 ± 0.037 | 0.970 ± 0.027 | 0.662 ± 0.023 |
+| overlap_iou_00 rate | 0.595 ± 0.036 | 0.778 ± 0.027 | 0.906 ± 0.017 | 0.965 ± 0.022 | 0.758 ± 0.017 |
 | presence without overlap rate | 0.306 ± 0.035 | 0.171 ± 0.018 | 0.069 ± 0.013 | 0.015 ± 0.014 | 0.182 ± 0.015 |
+
+Presence without overlap is defined relative to overlap_iou_00 (presence rate minus overlap_iou_00 rate), not the centroid criterion.
 
 ### Patient-level, multiple-pass triage-level hemangioma detection rates against SMC proxy circles
 

@@ -400,7 +400,7 @@ def relative_size_section(records, summary, cohort="benign"):
     cells = [format_cell(series, proxy_analysis, "presence", label, scale=1, digits=3)
              for label in bin_labels]
     lines.append("| presence rate | " + " | ".join(cells) + " |")
-    for metric in ("overlap_iou_00", "centroid_deq_100"):
+    for metric in ("centroid_deq_100", "overlap_iou_00"):
         cells = [format_cell(series, proxy_analysis, metric, label, scale=1, digits=3)
                  for label in bin_labels]
         lines.append(f"| {metric} rate | " + " | ".join(cells) + " |")
@@ -408,6 +408,9 @@ def relative_size_section(records, summary, cohort="benign"):
              for label in bin_labels]
     lines.append("| presence without overlap rate | " + " | ".join(cells) + " |")
     lines.extend([
+        "",
+        "Presence without overlap is defined relative to overlap_iou_00 (presence rate minus "
+        "overlap_iou_00 rate), not the centroid criterion.",
         "",
         f"### Patient-level, multiple-pass triage-level {name.lower() if cohort == 'benign' else name} detection rates against SMC proxy circles",
         "",

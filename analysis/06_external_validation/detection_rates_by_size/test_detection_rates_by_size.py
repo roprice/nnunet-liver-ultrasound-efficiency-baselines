@@ -475,14 +475,17 @@ class CurrentArtifactTests(unittest.TestCase):
         section = section.split("### Patient-level, multiple-pass triage-level hemangioma detection", 1)[0]
         rows = [line.split("|") for line in section.splitlines() if line.startswith("| ")][1:]
         self.assertEqual([row[1].strip() for row in rows], [
-            "images", "presence rate", "overlap_iou_00 rate", "centroid_deq_100 rate",
+            "images", "presence rate", "centroid_deq_100 rate", "overlap_iou_00 rate",
             "presence without overlap rate",
         ])
         self.assertEqual(rows[1][2].strip(), "0.901 ± 0.008")
         self.assertEqual(rows[1][-2].strip(), "0.940 ± 0.006")
-        self.assertEqual(rows[2][2].strip(), "0.595 ± 0.036")
-        self.assertEqual(rows[3][2].strip(), "0.420 ± 0.035")
+        self.assertEqual(rows[2][2].strip(), "0.420 ± 0.035")
+        self.assertEqual(rows[3][2].strip(), "0.595 ± 0.036")
         self.assertEqual(rows[4][2].strip(), "0.306 ± 0.035")
+        self.assertIn(
+            "\n\nPresence without overlap is defined relative to overlap_iou_00 (presence rate minus "
+            "overlap_iou_00 rate), not the centroid criterion.\n", section)
         self.assertIn(
             "An image is detected when any retained component matches. Presence without overlap "
             "is the share of images with at least one retained component where no component overlaps "

@@ -5,14 +5,50 @@ _Estimated development effort: 6 through today, 157 total_
 
 One advantage the external validation set gives us is per patient data where we can see the aggregate detection rate of multiple passes of an ultrasound scan on the same patient.
 
-The numbers show near complete patient-level flagging of mass-positive patients, with numbers ranging from **99.8% to 99.7% triage-level detection rates** across models (nnU-Net defaults vs augmentation defaults).
+The numbers seems to confirm near complete patient-level flagging of mass-positive patients with a given number of multiple image acquisitions.
 
-We need to do further analysis to confirm the validity of these numbers, so it would be more correct to say:
+Due to the nature of the SCM data set we can probably only report presence-based detection as confirmatory. 
 
-"The numbers _may_ show near complete patient-level flagging of mass-positive patients with a given number of multiple image acquisitions." 
+| Views per patient | Patients | Images | nnU-Net default augmentation |
+|---|---:|---:|---|
+| 1 | 129 | 129 | 0.916 ± 0.014 |
+| 2 | 99 | 198 | 0.988 ± 0.008 |
+| 3 | 67 | 201 | 0.988 ± 0.007 |
+| 4 | 43 | 172 | 1.000 ± 0.000 |
+| 5 | 29 | 145 | 1.000 ± 0.000 |
+| 6 | 10 | 60 | 1.000 ± 0.000 |
+| 7 | 11 | 77 | 1.000 ± 0.000 |
+| 8 | 2 | 16 | 1.000 ± 0.000 |
+| 9 | 6 | 54 | 1.000 ± 0.000 |
+| 10 | 5 | 50 | 1.000 ± 0.000 |
+| 11 | 3 | 33 | 1.000 ± 0.000 |
+| 12 | 4 | 48 | 1.000 ± 0.000 |
+| 13 | 5 | 65 | 1.000 ± 0.000 |
+| 14 | 3 | 42 | 1.000 ± 0.000 |
+| 15 | 1 | 15 | 1.000 ± 0.000 |
+| 16 | 1 | 16 | 1.000 ± 0.000 |
+| 17 | 1 | 17 | 1.000 ± 0.000 |
+| 18 | 0 | 0 | NA |
+| 19 | 0 | 0 | NA |
+| 20 | 0 | 0 | NA |
+| 21 | 0 | 0 | NA |
+| 22 | 0 | 0 | NA |
+| 23 | 1 | 23 | 1.000 ± 0.000 |
+| 24 | 0 | 0 | NA |
+| 25 | 0 | 0 | NA |
+| 26 | 0 | 0 | NA |
+| 27 | 0 | 0 | NA |
+| 28 | 1 | 28 | 1.000 ± 0.000 |
 
-And leave it at that for now.
 
+
+Custom augmentations perform nearly as well, with only Gaussian noise failing to achieve perfect detection at 10 passes (though also perfect from 4-9 and 11-28).
+
+For hemangioma, thanks to the proxy masks we extracted from caliper annotations, we have similar-shaped metrics for other views of detection.
+
+We will  try to derive more proxy masks from the SMC dataset in order to apply the analysis above to other forms of detection besides presence-based. Failing that, or supporting it, we'll also do a beta binomial analysis, to firm up projections. 
+
+We view metrics derived from such proxy masks as exploratory not confirmatory but worth documenting.
 
 -----
 
