@@ -110,7 +110,7 @@ def validate_report_inputs(data, manifest, groups, cohort_manifest=None):
             raise RuntimeError(f"{key}: predictions do not match the full clean cohort manifest")
 
 
-def evaluate_hcc_caliper(root=None):
+def load_hcc_caliper(root=None):
     root = CALIPER_ROOT if root is None else root
     manifest = json.loads((root / "prepared/smc_lud_manifest.json").read_text())
     cases = {case["case"]: case for case in manifest["cases"]}
@@ -141,6 +141,7 @@ def evaluate_hcc_caliper(root=None):
     models = {row["experiment_name"] for row in records}
     if not models or not models <= set(MODELS):
         raise RuntimeError("Unexpected caliper model families")
+    groups = {}
     evaluations = {}
     for model in MODELS:
         if model not in models:
@@ -152,7 +153,8 @@ def evaluate_hcc_caliper(root=None):
             rows = [row for row in model_records if int(row["fold"]) == fold]
             if len(rows) != len(cases) or {row["case"] for row in rows} != set(cases):
                 raise RuntimeError(f"{model}, fold {fold}: mismatched caliper cohort")
-            results = []
+            image_rows = []
+            results = {}
             for row in rows:
                 image_id = row["case"]
                 case = cases[image_id]
@@ -169,15 +171,24 @@ def evaluate_hcc_caliper(root=None):
                 prediction = root / "logs/predictions" / configuration / f"{image_id}.png"
                 facts = SimpleNamespace(
                     image_id=image_id, image_height_px=case["height"], image_width_px=case["width"],
+                    evaluation_split="external_caliper", pathology=case["pathology"],
+                    proxy_mass_area_px=int(masks[image_id].sum()),
                     prediction_path=prediction.relative_to(PROJECT_ROOT).as_posix(),
                     triage_detection_flag=row["triage_detection_flag"] == "True",
                     **{field: int(row[field]) for field in (
                         "predicted_mass_area_raw_px", "predicted_mass_area_retained_px",
                         "retained_component_count")},
                 )
-                results.append(proxy_detection.evaluate_prediction(facts, masks[image_id]))
+                results[image_id] = proxy_detection.evaluate_prediction(facts, masks[image_id])
+                image_rows.append(facts)
+            groups[model, fold] = image_rows
             evaluations[model, fold] = results
-    return evaluations
+    return SimpleNamespace(groups=groups, masks=masks, cases=cases, evaluations=evaluations)
+
+
+def evaluate_hcc_caliper(root=None):
+    cohort = load_hcc_caliper(root)
+    return {key: list(results.values()) for key, results in cohort.evaluations.items()}
 
 
 def proxy_tables(groups):

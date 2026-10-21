@@ -3,6 +3,7 @@ import importlib
 import io
 import json
 import math
+import random
 import tempfile
 import unittest
 from pathlib import Path
@@ -301,10 +302,14 @@ class PatientProxyTests(unittest.TestCase):
                            lookup["All", "presence"]["n"])
 
     def test_no_qualifying_patients_produces_undefined_rates(self):
-        records = analysis.patient_proxy_records(
-            analysis.PRIMARY_MODEL, 0, self.rows[:3], self.evaluations, self.cuts, self.cases)
-        self.assertEqual(len(records), 5 * 8)
-        self.assertTrue(all((r["n"], r["count"], r["rate"]) == (0, 0, None) for r in records))
+        for cohort in ("benign", "hcc"):
+            with self.subTest(cohort=cohort):
+                records = analysis.patient_proxy_records(
+                    analysis.PRIMARY_MODEL, 0, self.rows[:3], self.evaluations, self.cuts, self.cases,
+                    cohort=cohort)
+                self.assertEqual(len(records), 5 * 8)
+                self.assertEqual({r["analysis"] for r in records}, {f"proxy_{cohort}_patient_4plus"})
+                self.assertTrue(all((r["n"], r["count"], r["rate"]) == (0, 0, None) for r in records))
 
     def test_patient_aggregation_reuses_image_evaluations(self):
         groups = {(analysis.PRIMARY_MODEL, 0): self.rows}
@@ -449,7 +454,9 @@ class CurrentArtifactTests(unittest.TestCase):
         cls.data = analysis.load_predictions_dataset()
         cls.manifest = json.loads(analysis.external.MANIFEST_PATH.read_text())
         cls.raw = analysis.by_patient.ARCHIVED_MANIFEST_PATH.read_bytes()
-        cls.records, cls.summary = analysis.build_records(cls.data, cls.manifest, json.loads(cls.raw))
+        cls.hcc = analysis.external.load_hcc_caliper()
+        with patch.object(analysis.external, "load_hcc_caliper", return_value=cls.hcc):
+            cls.records, cls.summary = analysis.build_records(cls.data, cls.manifest, json.loads(cls.raw))
 
     def counts(self, analysis_name, metric, model="data_efficiency"):
         return {(r["fold"], r["bin"]): (r["n"], r["count"]) for r in self.records
@@ -464,8 +471,8 @@ class CurrentArtifactTests(unittest.TestCase):
 
     def test_proxy_table_presentation_and_footer(self):
         report = analysis.build_report(self.data, self.manifest, self.raw, self.records, self.summary)
-        section = report.split("### Triage-level detection rates against SMC proxy circles\n", 1)[1]
-        section = section.split("### Patient-level, multiple-pass triage-level detection", 1)[0]
+        section = report.split("### Triage-level hemangioma detection rates against SMC proxy circles\n", 1)[1]
+        section = section.split("### Patient-level, multiple-pass triage-level hemangioma detection", 1)[0]
         rows = [line.split("|") for line in section.splitlines() if line.startswith("| ")][1:]
         self.assertEqual([row[1].strip() for row in rows], [
             "images", "presence rate", "overlap_iou_00 rate", "centroid_deq_100 rate",
@@ -522,7 +529,7 @@ class CurrentArtifactTests(unittest.TestCase):
                 self.assertEqual(without_overlap[fold, label][1],
                                  presence[fold, label][1] - overlap[fold, label][1])
         report = analysis.build_report(self.data, self.manifest, self.raw, self.records, self.summary)
-        heading = "### Patient-level, multiple-pass triage-level detection rates against SMC proxy circles\n"
+        heading = "### Patient-level, multiple-pass triage-level hemangioma detection rates against SMC proxy circles\n"
         section = report.split(heading, 1)[1].split("### Presence-based detection: AUL versus SMC\n", 1)[0]
         self.assertIn("4+ proxy-eligible images overall, before size binning", section)
         self.assertIn("All counts each patient once", section)
@@ -532,7 +539,7 @@ class CurrentArtifactTests(unittest.TestCase):
             "presence without overlap rate",
         ])
         self.assertTrue(all(len(row) == 8 for row in table_rows))
-        self.assertLess(report.index("### Triage-level detection rates against SMC proxy circles\n"),
+        self.assertLess(report.index("### Triage-level hemangioma detection rates against SMC proxy circles\n"),
                         report.index(heading))
 
     def test_aul_versus_smc_bin_counts(self):
@@ -545,7 +552,8 @@ class CurrentArtifactTests(unittest.TestCase):
 
     def test_comparison_table_uses_rates(self):
         report = analysis.build_report(self.data, self.manifest, self.raw, self.records, self.summary)
-        section = report.split("### Presence-based detection: AUL versus SMC\n", 1)[1]
+        section = report.split("## Hemangioma by relative lesion size\n", 1)[1]
+        section = section.split("### Presence-based detection: AUL versus SMC\n", 1)[1]
         section = section.split("### Presence-based detection at one image per patient:", 1)[0]
         self.assertIn("AUL presence rate | SMC presence rate |", section)
         self.assertIn("AUL presence without overlap rate | SMC presence without overlap rate", section)
@@ -573,7 +581,8 @@ class CurrentArtifactTests(unittest.TestCase):
                 aul_counts = self.counts("aul_benign_one_per_patient", "presence")
                 self.assertEqual(aul_counts[fold, "Full sample"], self.counts("aul_benign", "presence")[fold, "Full sample"])
         report = analysis.build_report(self.data, self.manifest, self.raw, self.records, self.summary)
-        headings = [line for line in report.splitlines() if line.startswith("### Presence-based")]
+        benign_section = report.split("## Hemangioma by relative lesion size\n", 1)[1]
+        headings = [line for line in benign_section.splitlines() if line.startswith("### Presence-based")]
         self.assertEqual(headings, ["### Presence-based detection: AUL versus SMC",
                                    "### Presence-based detection at one image per patient: AUL versus SMC"])
         section = report.split(headings[1] + "\n", 1)[1].split("## HCC by recorded patient diameter\n", 1)[0]
@@ -583,6 +592,137 @@ class CurrentArtifactTests(unittest.TestCase):
         self.assertNotIn("difference", section.lower())
         self.assertIn("not the SMC singleton-patient subset", section)
         self.assertIn("image-selection procedure is unknown", section)
+
+    def test_hcc_sizes_and_groups_use_actual_caliper_masks_and_manifest_patients(self):
+        manifest = json.loads((analysis.external.CALIPER_ROOT / "prepared/smc_lud_manifest.json").read_text())
+        cases = {case["case"]: case for case in manifest["cases"] if case["pathology"] == "malignant"}
+        self.assertEqual(len(cases), 60)
+        self.assertEqual(len({case["patient"] for case in cases.values()}), 42)
+        self.assertEqual(set(self.hcc.groups), {(analysis.PRIMARY_MODEL, fold) for fold in analysis.FOLDS})
+        expected_bins = dict.fromkeys(analysis.QUARTILES, 0)
+        for image_id, case in cases.items():
+            with Image.open(analysis.external.CALIPER_ROOT / "proxy_masks" / f"{image_id}.png") as image:
+                mask = np.asarray(image) == analysis.proxy_detection.builder.MASS_VALUE
+            np.testing.assert_array_equal(self.hcc.masks[image_id], mask)
+            row = next(row for row in self.hcc.groups[analysis.PRIMARY_MODEL, 0] if row.image_id == image_id)
+            self.assertEqual(analysis.relative_size(row), int(mask.sum()) / (case["height"] * case["width"]))
+            expected_bins[analysis.quartile_label(row, self.summary["cuts"])] += 1
+            self.assertEqual(self.hcc.cases[image_id]["patient"], case["patient"])
+        for (model, fold), rows in self.hcc.groups.items():
+            self.assertEqual({row.image_id for row in rows}, set(cases))
+            self.assertEqual(len(rows), 60)
+            for metric in ("presence", "overlap_iou_00", "centroid_deq_100", "presence_without_overlap"):
+                counts = self.counts("proxy_hcc", metric)
+                for label in [*analysis.QUARTILES, "All"]:
+                    selected = [row for row in rows if label == "All"
+                                or analysis.quartile_label(row, self.summary["cuts"]) == label]
+                    results = [self.hcc.evaluations[model, fold][row.image_id] for row in selected]
+                    if metric == "presence":
+                        expected = sum(result.presence for result in results)
+                    elif metric == "presence_without_overlap":
+                        expected = sum(result.presence and not result.detected["overlap_iou_00"] for result in results)
+                    else:
+                        expected = sum(result.detected[metric] for result in results)
+                    self.assertEqual(counts[fold, label], (len(selected), expected))
+            for label in analysis.QUARTILES:
+                self.assertEqual(self.counts("proxy_hcc", "presence")[fold, label][0], expected_bins[label])
+        self.assertEqual(self.summary["hcc"]["proxy_patients"]["All"], 42)
+
+    def test_hcc_comparison_uses_aul_malignant_but_all_aul_quartile_cuts(self):
+        all_aul = [row for row in analysis.aul.select_rows(self.data.rows) if row.checkpoint == "final"]
+        expected_cuts, _ = analysis.aul.assign_quartiles(all_aul, "area_fraction")
+        malignant, cuts = analysis.select_aul_benign(self.data.rows, pathology="malignant")
+        self.assertEqual(cuts, expected_cuts)
+        self.assertEqual(self.summary["hcc"]["cuts"], expected_cuts)
+        for suffix, groups, range_key in (
+                ("", self.hcc.groups, "common_range"),
+                ("_one_per_patient", analysis.select_one_image_per_patient(self.hcc.groups, self.hcc.cases),
+                 "one_per_patient_common_range")):
+            lower, upper = self.summary["hcc"][range_key]
+            self.assertEqual((lower, upper), analysis.common_range(malignant[0], groups[analysis.PRIMARY_MODEL, 0]))
+            for fold in analysis.FOLDS:
+                expected_rows = [row for row in all_aul if row.fold == fold and row.pathology == "malignant"]
+                self.assertEqual(malignant[fold], expected_rows)
+                self.assertGreater(len(expected_rows), 0)
+                for label in [*analysis.QUARTILES, "Common range", "Full sample"]:
+                    selected = [row for row in expected_rows if label == "Full sample"
+                                or (lower <= analysis.relative_size(row) <= upper
+                                    and (label == "Common range" or analysis.quartile_label(row, cuts) == label))]
+                    for metric in ("presence", "presence_without_overlap"):
+                        flagged = sum(row.triage_detection_flag and
+                                      (metric == "presence" or not row.overlap_detection_iou_00_flag)
+                                      for row in selected)
+                        self.assertEqual(self.counts(f"aul_hcc{suffix}", metric)[fold, label], (len(selected), flagged))
+                smc_counts = self.counts(f"smc_hcc{suffix}", "presence")
+                self.assertEqual(smc_counts[fold, "Full sample"][0], 42 if suffix else 60)
+                self.assertEqual(sum(smc_counts[fold, label][0] for label in analysis.QUARTILES),
+                                 smc_counts[fold, "Common range"][0])
+
+    def test_hcc_four_image_patient_rule_and_empty_bins(self):
+        patient_images = {}
+        for row in self.hcc.groups[analysis.PRIMARY_MODEL, 0]:
+            patient = self.hcc.cases[row.image_id]["patient"]
+            patient_images.setdefault(patient, []).append(row.image_id)
+        eligible = {patient: images for patient, images in patient_images.items()
+                    if len(images) >= analysis.MIN_PATIENT_PROXY_IMAGES}
+        self.assertEqual(len(eligible), 2)
+        records = [record for record in self.records if record["analysis"] == "proxy_hcc_patient_4plus"]
+        self.assertEqual(len(records), 5 * 5 * 8)
+        for record in records:
+            if record["bin"] in ("Q1", "Q2", "Q3"):
+                self.assertEqual((record["n"], record["count"], record["rate"]), (0, 0, None))
+                continue
+            self.assertEqual(record["n"], len(eligible))
+            results = self.hcc.evaluations[analysis.PRIMARY_MODEL, record["fold"]]
+            metric = record["metric"]
+            if metric == "presence":
+                expected = sum(any(results[image].presence for image in images) for images in eligible.values())
+            elif metric == "presence_without_overlap":
+                expected = sum(any(results[image].presence for image in images)
+                               and not any(results[image].detected["overlap_iou_00"] for image in images)
+                               for images in eligible.values())
+            else:
+                expected = sum(any(results[image].detected[metric] for image in images) for images in eligible.values())
+            self.assertEqual((record["count"], record["rate"]), (expected, expected / len(eligible)))
+
+    def test_hcc_sample_uses_manifest_identity_sorted_ids_and_seed_42(self):
+        patient_images = {}
+        for row in self.hcc.groups[analysis.PRIMARY_MODEL, 0]:
+            patient_images.setdefault(self.hcc.cases[row.image_id]["patient"], []).append(row.image_id)
+        rng = random.Random(42)
+        expected_ids = {rng.choice(sorted(patient_images[patient])) for patient in sorted(patient_images)}
+        groups = {key: list(reversed(rows)) for key, rows in self.hcc.groups.items()}
+        for (model, fold), rows in analysis.select_one_image_per_patient(groups, self.hcc.cases).items():
+            self.assertEqual({row.image_id for row in rows}, expected_ids)
+            self.assertEqual(len(rows), 42)
+            self.assertEqual(len({self.hcc.cases[row.image_id]["patient"] for row in rows}), 42)
+            self.assertEqual(self.counts("smc_hcc_one_per_patient", "presence")[fold, "Full sample"],
+                             (42, sum(row.triage_detection_flag for row in rows)))
+
+    def test_hcc_section_precedes_hemangioma_and_documents_scope_and_csv_provenance(self):
+        report = analysis.build_report(self.data, self.manifest, self.raw, self.records, self.summary)
+        self.assertLess(report.index("## HCC by relative lesion size"), report.index("## Hemangioma by relative lesion size"))
+        section = report.split("## HCC by relative lesion size\n", 1)[1].split("## Hemangioma by relative lesion size\n", 1)[0]
+        self.assertEqual([line for line in section.splitlines() if line.startswith("### ")], [
+            "### Triage-level HCC detection rates against SMC proxy circles",
+            "### Patient-level, multiple-pass triage-level HCC detection rates against SMC proxy circles",
+            "### Presence-based HCC detection: AUL versus SMC",
+            "### Presence-based HCC detection at one image per patient: AUL versus SMC",
+        ])
+        patient_section = section.split("### Patient-level", 1)[1].split("### Presence-based", 1)[0]
+        self.assertIn("| patients | 0 | 0 | 0 | 2 | 2 |", patient_section)
+        self.assertIn("| presence rate | NA | NA | NA | 1.000 ± 0.000 | 1.000 ± 0.000 |", patient_section)
+        self.assertIn("4+ proxy-eligible images overall, before size binning", patient_section)
+        self.assertIn("AUL malignant images may be a different diagnostic mix from SMC HCC", section)
+        self.assertIn("visible calipers may affect predictions", section)
+        self.assertIn("chroma-derived circular proxy mask", section)
+        self.assertIn("outside the Clean prediction snapshot", section)
+        self.assertIn(self.summary["hcc"]["provenance"], section)
+        buffer = io.StringIO(newline="")
+        analysis.write_csv(buffer, self.records, self.data.snapshot_id)
+        for row in csv.DictReader(io.StringIO(buffer.getvalue())):
+            caliper = row["analysis"].startswith(("proxy_hcc", "smc_hcc"))
+            self.assertEqual(row["snapshot_id"], "NA" if caliper else self.data.snapshot_id)
 
     def test_hcc_bins_partition_the_cohort_and_match_the_detection_report(self):
         fold_zero = {r["bin"]: r["n"] for r in self.records

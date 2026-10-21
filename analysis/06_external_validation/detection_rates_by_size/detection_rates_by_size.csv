@@ -1,4 +1,644 @@
 snapshot_id,analysis,model,fold,bin,metric,n,count,rate
+NA,proxy_hcc,data_efficiency,0,Q1,presence,6,4,0.6666666666666666
+NA,proxy_hcc,data_efficiency,0,Q1,overlap_iou_00,6,1,0.16666666666666666
+NA,proxy_hcc,data_efficiency,0,Q1,overlap_iou_02,6,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q1,overlap_iou_05,6,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q1,centroid_deq_025,6,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q1,centroid_deq_050,6,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q1,centroid_deq_100,6,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q1,presence_without_overlap,6,3,0.5
+NA,proxy_hcc,data_efficiency,0,Q2,presence,1,1,1.0
+NA,proxy_hcc,data_efficiency,0,Q2,overlap_iou_00,1,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q2,overlap_iou_02,1,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q2,overlap_iou_05,1,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q2,centroid_deq_025,1,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q2,centroid_deq_050,1,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q2,centroid_deq_100,1,0,0.0
+NA,proxy_hcc,data_efficiency,0,Q2,presence_without_overlap,1,1,1.0
+NA,proxy_hcc,data_efficiency,0,Q3,presence,17,17,1.0
+NA,proxy_hcc,data_efficiency,0,Q3,overlap_iou_00,17,13,0.7647058823529411
+NA,proxy_hcc,data_efficiency,0,Q3,overlap_iou_02,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,0,Q3,overlap_iou_05,17,7,0.4117647058823529
+NA,proxy_hcc,data_efficiency,0,Q3,centroid_deq_025,17,10,0.5882352941176471
+NA,proxy_hcc,data_efficiency,0,Q3,centroid_deq_050,17,11,0.6470588235294118
+NA,proxy_hcc,data_efficiency,0,Q3,centroid_deq_100,17,14,0.8235294117647058
+NA,proxy_hcc,data_efficiency,0,Q3,presence_without_overlap,17,4,0.23529411764705882
+NA,proxy_hcc,data_efficiency,0,Q4,presence,36,35,0.9722222222222222
+NA,proxy_hcc,data_efficiency,0,Q4,overlap_iou_00,36,33,0.9166666666666666
+NA,proxy_hcc,data_efficiency,0,Q4,overlap_iou_02,36,21,0.5833333333333334
+NA,proxy_hcc,data_efficiency,0,Q4,overlap_iou_05,36,17,0.4722222222222222
+NA,proxy_hcc,data_efficiency,0,Q4,centroid_deq_025,36,20,0.5555555555555556
+NA,proxy_hcc,data_efficiency,0,Q4,centroid_deq_050,36,30,0.8333333333333334
+NA,proxy_hcc,data_efficiency,0,Q4,centroid_deq_100,36,33,0.9166666666666666
+NA,proxy_hcc,data_efficiency,0,Q4,presence_without_overlap,36,2,0.05555555555555555
+NA,proxy_hcc,data_efficiency,0,All,presence,60,57,0.95
+NA,proxy_hcc,data_efficiency,0,All,overlap_iou_00,60,47,0.7833333333333333
+NA,proxy_hcc,data_efficiency,0,All,overlap_iou_02,60,33,0.55
+NA,proxy_hcc,data_efficiency,0,All,overlap_iou_05,60,24,0.4
+NA,proxy_hcc,data_efficiency,0,All,centroid_deq_025,60,30,0.5
+NA,proxy_hcc,data_efficiency,0,All,centroid_deq_050,60,41,0.6833333333333333
+NA,proxy_hcc,data_efficiency,0,All,centroid_deq_100,60,47,0.7833333333333333
+NA,proxy_hcc,data_efficiency,0,All,presence_without_overlap,60,10,0.16666666666666666
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q1,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q2,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q3,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,Q4,presence_without_overlap,2,0,0.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,0,All,presence_without_overlap,2,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q1,presence,6,3,0.5
+NA,proxy_hcc,data_efficiency,1,Q1,overlap_iou_00,6,1,0.16666666666666666
+NA,proxy_hcc,data_efficiency,1,Q1,overlap_iou_02,6,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q1,overlap_iou_05,6,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q1,centroid_deq_025,6,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q1,centroid_deq_050,6,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q1,centroid_deq_100,6,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,proxy_hcc,data_efficiency,1,Q2,presence,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,overlap_iou_00,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,overlap_iou_02,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,overlap_iou_05,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,centroid_deq_025,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,centroid_deq_050,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,centroid_deq_100,1,1,1.0
+NA,proxy_hcc,data_efficiency,1,Q2,presence_without_overlap,1,0,0.0
+NA,proxy_hcc,data_efficiency,1,Q3,presence,17,15,0.8823529411764706
+NA,proxy_hcc,data_efficiency,1,Q3,overlap_iou_00,17,13,0.7647058823529411
+NA,proxy_hcc,data_efficiency,1,Q3,overlap_iou_02,17,10,0.5882352941176471
+NA,proxy_hcc,data_efficiency,1,Q3,overlap_iou_05,17,9,0.5294117647058824
+NA,proxy_hcc,data_efficiency,1,Q3,centroid_deq_025,17,9,0.5294117647058824
+NA,proxy_hcc,data_efficiency,1,Q3,centroid_deq_050,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,1,Q3,centroid_deq_100,17,13,0.7647058823529411
+NA,proxy_hcc,data_efficiency,1,Q3,presence_without_overlap,17,2,0.11764705882352941
+NA,proxy_hcc,data_efficiency,1,Q4,presence,36,33,0.9166666666666666
+NA,proxy_hcc,data_efficiency,1,Q4,overlap_iou_00,36,30,0.8333333333333334
+NA,proxy_hcc,data_efficiency,1,Q4,overlap_iou_02,36,23,0.6388888888888888
+NA,proxy_hcc,data_efficiency,1,Q4,overlap_iou_05,36,16,0.4444444444444444
+NA,proxy_hcc,data_efficiency,1,Q4,centroid_deq_025,36,21,0.5833333333333334
+NA,proxy_hcc,data_efficiency,1,Q4,centroid_deq_050,36,29,0.8055555555555556
+NA,proxy_hcc,data_efficiency,1,Q4,centroid_deq_100,36,32,0.8888888888888888
+NA,proxy_hcc,data_efficiency,1,Q4,presence_without_overlap,36,3,0.08333333333333333
+NA,proxy_hcc,data_efficiency,1,All,presence,60,52,0.8666666666666667
+NA,proxy_hcc,data_efficiency,1,All,overlap_iou_00,60,45,0.75
+NA,proxy_hcc,data_efficiency,1,All,overlap_iou_02,60,34,0.5666666666666667
+NA,proxy_hcc,data_efficiency,1,All,overlap_iou_05,60,26,0.43333333333333335
+NA,proxy_hcc,data_efficiency,1,All,centroid_deq_025,60,31,0.5166666666666667
+NA,proxy_hcc,data_efficiency,1,All,centroid_deq_050,60,42,0.7
+NA,proxy_hcc,data_efficiency,1,All,centroid_deq_100,60,46,0.7666666666666667
+NA,proxy_hcc,data_efficiency,1,All,presence_without_overlap,60,7,0.11666666666666667
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q1,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q2,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q3,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,Q4,presence_without_overlap,2,0,0.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,1,All,presence_without_overlap,2,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q1,presence,6,3,0.5
+NA,proxy_hcc,data_efficiency,2,Q1,overlap_iou_00,6,1,0.16666666666666666
+NA,proxy_hcc,data_efficiency,2,Q1,overlap_iou_02,6,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q1,overlap_iou_05,6,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q1,centroid_deq_025,6,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q1,centroid_deq_050,6,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q1,centroid_deq_100,6,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,proxy_hcc,data_efficiency,2,Q2,presence,1,1,1.0
+NA,proxy_hcc,data_efficiency,2,Q2,overlap_iou_00,1,1,1.0
+NA,proxy_hcc,data_efficiency,2,Q2,overlap_iou_02,1,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q2,overlap_iou_05,1,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q2,centroid_deq_025,1,1,1.0
+NA,proxy_hcc,data_efficiency,2,Q2,centroid_deq_050,1,1,1.0
+NA,proxy_hcc,data_efficiency,2,Q2,centroid_deq_100,1,1,1.0
+NA,proxy_hcc,data_efficiency,2,Q2,presence_without_overlap,1,0,0.0
+NA,proxy_hcc,data_efficiency,2,Q3,presence,17,17,1.0
+NA,proxy_hcc,data_efficiency,2,Q3,overlap_iou_00,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,2,Q3,overlap_iou_02,17,7,0.4117647058823529
+NA,proxy_hcc,data_efficiency,2,Q3,overlap_iou_05,17,5,0.29411764705882354
+NA,proxy_hcc,data_efficiency,2,Q3,centroid_deq_025,17,6,0.35294117647058826
+NA,proxy_hcc,data_efficiency,2,Q3,centroid_deq_050,17,10,0.5882352941176471
+NA,proxy_hcc,data_efficiency,2,Q3,centroid_deq_100,17,13,0.7647058823529411
+NA,proxy_hcc,data_efficiency,2,Q3,presence_without_overlap,17,5,0.29411764705882354
+NA,proxy_hcc,data_efficiency,2,Q4,presence,36,36,1.0
+NA,proxy_hcc,data_efficiency,2,Q4,overlap_iou_00,36,33,0.9166666666666666
+NA,proxy_hcc,data_efficiency,2,Q4,overlap_iou_02,36,22,0.6111111111111112
+NA,proxy_hcc,data_efficiency,2,Q4,overlap_iou_05,36,15,0.4166666666666667
+NA,proxy_hcc,data_efficiency,2,Q4,centroid_deq_025,36,19,0.5277777777777778
+NA,proxy_hcc,data_efficiency,2,Q4,centroid_deq_050,36,30,0.8333333333333334
+NA,proxy_hcc,data_efficiency,2,Q4,centroid_deq_100,36,34,0.9444444444444444
+NA,proxy_hcc,data_efficiency,2,Q4,presence_without_overlap,36,3,0.08333333333333333
+NA,proxy_hcc,data_efficiency,2,All,presence,60,57,0.95
+NA,proxy_hcc,data_efficiency,2,All,overlap_iou_00,60,47,0.7833333333333333
+NA,proxy_hcc,data_efficiency,2,All,overlap_iou_02,60,29,0.48333333333333334
+NA,proxy_hcc,data_efficiency,2,All,overlap_iou_05,60,20,0.3333333333333333
+NA,proxy_hcc,data_efficiency,2,All,centroid_deq_025,60,26,0.43333333333333335
+NA,proxy_hcc,data_efficiency,2,All,centroid_deq_050,60,41,0.6833333333333333
+NA,proxy_hcc,data_efficiency,2,All,centroid_deq_100,60,48,0.8
+NA,proxy_hcc,data_efficiency,2,All,presence_without_overlap,60,10,0.16666666666666666
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q1,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q2,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q3,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,Q4,presence_without_overlap,2,0,0.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,2,All,presence_without_overlap,2,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q1,presence,6,3,0.5
+NA,proxy_hcc,data_efficiency,3,Q1,overlap_iou_00,6,1,0.16666666666666666
+NA,proxy_hcc,data_efficiency,3,Q1,overlap_iou_02,6,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q1,overlap_iou_05,6,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q1,centroid_deq_025,6,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q1,centroid_deq_050,6,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q1,centroid_deq_100,6,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,proxy_hcc,data_efficiency,3,Q2,presence,1,1,1.0
+NA,proxy_hcc,data_efficiency,3,Q2,overlap_iou_00,1,1,1.0
+NA,proxy_hcc,data_efficiency,3,Q2,overlap_iou_02,1,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q2,overlap_iou_05,1,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q2,centroid_deq_025,1,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q2,centroid_deq_050,1,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q2,centroid_deq_100,1,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q2,presence_without_overlap,1,0,0.0
+NA,proxy_hcc,data_efficiency,3,Q3,presence,17,15,0.8823529411764706
+NA,proxy_hcc,data_efficiency,3,Q3,overlap_iou_00,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,3,Q3,overlap_iou_02,17,8,0.47058823529411764
+NA,proxy_hcc,data_efficiency,3,Q3,overlap_iou_05,17,6,0.35294117647058826
+NA,proxy_hcc,data_efficiency,3,Q3,centroid_deq_025,17,8,0.47058823529411764
+NA,proxy_hcc,data_efficiency,3,Q3,centroid_deq_050,17,10,0.5882352941176471
+NA,proxy_hcc,data_efficiency,3,Q3,centroid_deq_100,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,3,Q3,presence_without_overlap,17,3,0.17647058823529413
+NA,proxy_hcc,data_efficiency,3,Q4,presence,36,33,0.9166666666666666
+NA,proxy_hcc,data_efficiency,3,Q4,overlap_iou_00,36,31,0.8611111111111112
+NA,proxy_hcc,data_efficiency,3,Q4,overlap_iou_02,36,24,0.6666666666666666
+NA,proxy_hcc,data_efficiency,3,Q4,overlap_iou_05,36,18,0.5
+NA,proxy_hcc,data_efficiency,3,Q4,centroid_deq_025,36,22,0.6111111111111112
+NA,proxy_hcc,data_efficiency,3,Q4,centroid_deq_050,36,29,0.8055555555555556
+NA,proxy_hcc,data_efficiency,3,Q4,centroid_deq_100,36,33,0.9166666666666666
+NA,proxy_hcc,data_efficiency,3,Q4,presence_without_overlap,36,2,0.05555555555555555
+NA,proxy_hcc,data_efficiency,3,All,presence,60,52,0.8666666666666667
+NA,proxy_hcc,data_efficiency,3,All,overlap_iou_00,60,45,0.75
+NA,proxy_hcc,data_efficiency,3,All,overlap_iou_02,60,32,0.5333333333333333
+NA,proxy_hcc,data_efficiency,3,All,overlap_iou_05,60,24,0.4
+NA,proxy_hcc,data_efficiency,3,All,centroid_deq_025,60,30,0.5
+NA,proxy_hcc,data_efficiency,3,All,centroid_deq_050,60,39,0.65
+NA,proxy_hcc,data_efficiency,3,All,centroid_deq_100,60,45,0.75
+NA,proxy_hcc,data_efficiency,3,All,presence_without_overlap,60,7,0.11666666666666667
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q1,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q2,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q3,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,Q4,presence_without_overlap,2,0,0.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,3,All,presence_without_overlap,2,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q1,presence,6,3,0.5
+NA,proxy_hcc,data_efficiency,4,Q1,overlap_iou_00,6,1,0.16666666666666666
+NA,proxy_hcc,data_efficiency,4,Q1,overlap_iou_02,6,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q1,overlap_iou_05,6,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q1,centroid_deq_025,6,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q1,centroid_deq_050,6,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q1,centroid_deq_100,6,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,proxy_hcc,data_efficiency,4,Q2,presence,1,1,1.0
+NA,proxy_hcc,data_efficiency,4,Q2,overlap_iou_00,1,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q2,overlap_iou_02,1,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q2,overlap_iou_05,1,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q2,centroid_deq_025,1,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q2,centroid_deq_050,1,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q2,centroid_deq_100,1,0,0.0
+NA,proxy_hcc,data_efficiency,4,Q2,presence_without_overlap,1,1,1.0
+NA,proxy_hcc,data_efficiency,4,Q3,presence,17,15,0.8823529411764706
+NA,proxy_hcc,data_efficiency,4,Q3,overlap_iou_00,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,4,Q3,overlap_iou_02,17,10,0.5882352941176471
+NA,proxy_hcc,data_efficiency,4,Q3,overlap_iou_05,17,4,0.23529411764705882
+NA,proxy_hcc,data_efficiency,4,Q3,centroid_deq_025,17,8,0.47058823529411764
+NA,proxy_hcc,data_efficiency,4,Q3,centroid_deq_050,17,9,0.5294117647058824
+NA,proxy_hcc,data_efficiency,4,Q3,centroid_deq_100,17,12,0.7058823529411765
+NA,proxy_hcc,data_efficiency,4,Q3,presence_without_overlap,17,3,0.17647058823529413
+NA,proxy_hcc,data_efficiency,4,Q4,presence,36,34,0.9444444444444444
+NA,proxy_hcc,data_efficiency,4,Q4,overlap_iou_00,36,32,0.8888888888888888
+NA,proxy_hcc,data_efficiency,4,Q4,overlap_iou_02,36,20,0.5555555555555556
+NA,proxy_hcc,data_efficiency,4,Q4,overlap_iou_05,36,15,0.4166666666666667
+NA,proxy_hcc,data_efficiency,4,Q4,centroid_deq_025,36,19,0.5277777777777778
+NA,proxy_hcc,data_efficiency,4,Q4,centroid_deq_050,36,31,0.8611111111111112
+NA,proxy_hcc,data_efficiency,4,Q4,centroid_deq_100,36,32,0.8888888888888888
+NA,proxy_hcc,data_efficiency,4,Q4,presence_without_overlap,36,2,0.05555555555555555
+NA,proxy_hcc,data_efficiency,4,All,presence,60,53,0.8833333333333333
+NA,proxy_hcc,data_efficiency,4,All,overlap_iou_00,60,45,0.75
+NA,proxy_hcc,data_efficiency,4,All,overlap_iou_02,60,30,0.5
+NA,proxy_hcc,data_efficiency,4,All,overlap_iou_05,60,19,0.31666666666666665
+NA,proxy_hcc,data_efficiency,4,All,centroid_deq_025,60,27,0.45
+NA,proxy_hcc,data_efficiency,4,All,centroid_deq_050,60,40,0.6666666666666666
+NA,proxy_hcc,data_efficiency,4,All,centroid_deq_100,60,44,0.7333333333333333
+NA,proxy_hcc,data_efficiency,4,All,presence_without_overlap,60,8,0.13333333333333333
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q1,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q2,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,presence,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,overlap_iou_00,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,overlap_iou_02,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,overlap_iou_05,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,centroid_deq_025,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,centroid_deq_050,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,centroid_deq_100,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q3,presence_without_overlap,0,0,NA
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,Q4,presence_without_overlap,2,0,0.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,presence,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,overlap_iou_00,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,overlap_iou_02,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,overlap_iou_05,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,centroid_deq_025,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,centroid_deq_050,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,centroid_deq_100,2,2,1.0
+NA,proxy_hcc_patient_4plus,data_efficiency,4,All,presence_without_overlap,2,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Q1,presence,12,11,0.9166666666666666
+6d6485d55dae,aul_hcc,data_efficiency,0,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Q2,presence,20,17,0.85
+6d6485d55dae,aul_hcc,data_efficiency,0,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Q3,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Common range,presence,86,82,0.9534883720930233
+6d6485d55dae,aul_hcc,data_efficiency,0,Common range,presence_without_overlap,86,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,0,Full sample,presence,87,83,0.9540229885057471
+6d6485d55dae,aul_hcc,data_efficiency,0,Full sample,presence_without_overlap,87,0,0.0
+NA,smc_hcc,data_efficiency,0,Q1,presence,6,4,0.6666666666666666
+NA,smc_hcc,data_efficiency,0,Q1,presence_without_overlap,6,3,0.5
+NA,smc_hcc,data_efficiency,0,Q2,presence,1,1,1.0
+NA,smc_hcc,data_efficiency,0,Q2,presence_without_overlap,1,1,1.0
+NA,smc_hcc,data_efficiency,0,Q3,presence,17,17,1.0
+NA,smc_hcc,data_efficiency,0,Q3,presence_without_overlap,17,4,0.23529411764705882
+NA,smc_hcc,data_efficiency,0,Q4,presence,27,26,0.9629629629629629
+NA,smc_hcc,data_efficiency,0,Q4,presence_without_overlap,27,2,0.07407407407407407
+NA,smc_hcc,data_efficiency,0,Common range,presence,51,48,0.9411764705882353
+NA,smc_hcc,data_efficiency,0,Common range,presence_without_overlap,51,10,0.19607843137254902
+NA,smc_hcc,data_efficiency,0,Full sample,presence,60,57,0.95
+NA,smc_hcc,data_efficiency,0,Full sample,presence_without_overlap,60,10,0.16666666666666666
+6d6485d55dae,aul_hcc,data_efficiency,1,Q1,presence,12,11,0.9166666666666666
+6d6485d55dae,aul_hcc,data_efficiency,1,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,1,Q2,presence,20,18,0.9
+6d6485d55dae,aul_hcc,data_efficiency,1,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,1,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,1,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc,data_efficiency,1,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,1,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,1,Common range,presence,86,83,0.9651162790697675
+6d6485d55dae,aul_hcc,data_efficiency,1,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc,data_efficiency,1,Full sample,presence,87,84,0.9655172413793104
+6d6485d55dae,aul_hcc,data_efficiency,1,Full sample,presence_without_overlap,87,1,0.011494252873563218
+NA,smc_hcc,data_efficiency,1,Q1,presence,6,3,0.5
+NA,smc_hcc,data_efficiency,1,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,smc_hcc,data_efficiency,1,Q2,presence,1,1,1.0
+NA,smc_hcc,data_efficiency,1,Q2,presence_without_overlap,1,0,0.0
+NA,smc_hcc,data_efficiency,1,Q3,presence,17,15,0.8823529411764706
+NA,smc_hcc,data_efficiency,1,Q3,presence_without_overlap,17,2,0.11764705882352941
+NA,smc_hcc,data_efficiency,1,Q4,presence,27,24,0.8888888888888888
+NA,smc_hcc,data_efficiency,1,Q4,presence_without_overlap,27,3,0.1111111111111111
+NA,smc_hcc,data_efficiency,1,Common range,presence,51,43,0.8431372549019608
+NA,smc_hcc,data_efficiency,1,Common range,presence_without_overlap,51,7,0.13725490196078433
+NA,smc_hcc,data_efficiency,1,Full sample,presence,60,52,0.8666666666666667
+NA,smc_hcc,data_efficiency,1,Full sample,presence_without_overlap,60,7,0.11666666666666667
+6d6485d55dae,aul_hcc,data_efficiency,2,Q1,presence,12,10,0.8333333333333334
+6d6485d55dae,aul_hcc,data_efficiency,2,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,2,Q2,presence,20,17,0.85
+6d6485d55dae,aul_hcc,data_efficiency,2,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,2,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,2,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc,data_efficiency,2,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,2,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,2,Common range,presence,86,81,0.9418604651162791
+6d6485d55dae,aul_hcc,data_efficiency,2,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc,data_efficiency,2,Full sample,presence,87,82,0.9425287356321839
+6d6485d55dae,aul_hcc,data_efficiency,2,Full sample,presence_without_overlap,87,2,0.022988505747126436
+NA,smc_hcc,data_efficiency,2,Q1,presence,6,3,0.5
+NA,smc_hcc,data_efficiency,2,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,smc_hcc,data_efficiency,2,Q2,presence,1,1,1.0
+NA,smc_hcc,data_efficiency,2,Q2,presence_without_overlap,1,0,0.0
+NA,smc_hcc,data_efficiency,2,Q3,presence,17,17,1.0
+NA,smc_hcc,data_efficiency,2,Q3,presence_without_overlap,17,5,0.29411764705882354
+NA,smc_hcc,data_efficiency,2,Q4,presence,27,27,1.0
+NA,smc_hcc,data_efficiency,2,Q4,presence_without_overlap,27,3,0.1111111111111111
+NA,smc_hcc,data_efficiency,2,Common range,presence,51,48,0.9411764705882353
+NA,smc_hcc,data_efficiency,2,Common range,presence_without_overlap,51,10,0.19607843137254902
+NA,smc_hcc,data_efficiency,2,Full sample,presence,60,57,0.95
+NA,smc_hcc,data_efficiency,2,Full sample,presence_without_overlap,60,10,0.16666666666666666
+6d6485d55dae,aul_hcc,data_efficiency,3,Q1,presence,12,10,0.8333333333333334
+6d6485d55dae,aul_hcc,data_efficiency,3,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,3,Q2,presence,20,18,0.9
+6d6485d55dae,aul_hcc,data_efficiency,3,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,3,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,3,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc,data_efficiency,3,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,3,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,3,Common range,presence,86,82,0.9534883720930233
+6d6485d55dae,aul_hcc,data_efficiency,3,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc,data_efficiency,3,Full sample,presence,87,83,0.9540229885057471
+6d6485d55dae,aul_hcc,data_efficiency,3,Full sample,presence_without_overlap,87,2,0.022988505747126436
+NA,smc_hcc,data_efficiency,3,Q1,presence,6,3,0.5
+NA,smc_hcc,data_efficiency,3,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,smc_hcc,data_efficiency,3,Q2,presence,1,1,1.0
+NA,smc_hcc,data_efficiency,3,Q2,presence_without_overlap,1,0,0.0
+NA,smc_hcc,data_efficiency,3,Q3,presence,17,15,0.8823529411764706
+NA,smc_hcc,data_efficiency,3,Q3,presence_without_overlap,17,3,0.17647058823529413
+NA,smc_hcc,data_efficiency,3,Q4,presence,27,24,0.8888888888888888
+NA,smc_hcc,data_efficiency,3,Q4,presence_without_overlap,27,2,0.07407407407407407
+NA,smc_hcc,data_efficiency,3,Common range,presence,51,43,0.8431372549019608
+NA,smc_hcc,data_efficiency,3,Common range,presence_without_overlap,51,7,0.13725490196078433
+NA,smc_hcc,data_efficiency,3,Full sample,presence,60,52,0.8666666666666667
+NA,smc_hcc,data_efficiency,3,Full sample,presence_without_overlap,60,7,0.11666666666666667
+6d6485d55dae,aul_hcc,data_efficiency,4,Q1,presence,12,11,0.9166666666666666
+6d6485d55dae,aul_hcc,data_efficiency,4,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,4,Q2,presence,20,18,0.9
+6d6485d55dae,aul_hcc,data_efficiency,4,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,4,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,4,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc,data_efficiency,4,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc,data_efficiency,4,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc,data_efficiency,4,Common range,presence,86,83,0.9651162790697675
+6d6485d55dae,aul_hcc,data_efficiency,4,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc,data_efficiency,4,Full sample,presence,87,84,0.9655172413793104
+6d6485d55dae,aul_hcc,data_efficiency,4,Full sample,presence_without_overlap,87,2,0.022988505747126436
+NA,smc_hcc,data_efficiency,4,Q1,presence,6,3,0.5
+NA,smc_hcc,data_efficiency,4,Q1,presence_without_overlap,6,2,0.3333333333333333
+NA,smc_hcc,data_efficiency,4,Q2,presence,1,1,1.0
+NA,smc_hcc,data_efficiency,4,Q2,presence_without_overlap,1,1,1.0
+NA,smc_hcc,data_efficiency,4,Q3,presence,17,15,0.8823529411764706
+NA,smc_hcc,data_efficiency,4,Q3,presence_without_overlap,17,3,0.17647058823529413
+NA,smc_hcc,data_efficiency,4,Q4,presence,27,25,0.9259259259259259
+NA,smc_hcc,data_efficiency,4,Q4,presence_without_overlap,27,2,0.07407407407407407
+NA,smc_hcc,data_efficiency,4,Common range,presence,51,44,0.8627450980392157
+NA,smc_hcc,data_efficiency,4,Common range,presence_without_overlap,51,8,0.1568627450980392
+NA,smc_hcc,data_efficiency,4,Full sample,presence,60,53,0.8833333333333333
+NA,smc_hcc,data_efficiency,4,Full sample,presence_without_overlap,60,8,0.13333333333333333
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q1,presence,12,11,0.9166666666666666
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q2,presence,20,17,0.85
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q3,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Common range,presence,86,82,0.9534883720930233
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Common range,presence_without_overlap,86,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Full sample,presence,87,83,0.9540229885057471
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,0,Full sample,presence_without_overlap,87,0,0.0
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q1,presence,5,3,0.6
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q1,presence_without_overlap,5,2,0.4
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q2,presence,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q2,presence_without_overlap,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q3,presence,13,13,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q3,presence_without_overlap,13,3,0.23076923076923078
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q4,presence,17,17,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,0,Q4,presence_without_overlap,17,2,0.11764705882352941
+NA,smc_hcc_one_per_patient,data_efficiency,0,Common range,presence,36,34,0.9444444444444444
+NA,smc_hcc_one_per_patient,data_efficiency,0,Common range,presence_without_overlap,36,8,0.2222222222222222
+NA,smc_hcc_one_per_patient,data_efficiency,0,Full sample,presence,42,40,0.9523809523809523
+NA,smc_hcc_one_per_patient,data_efficiency,0,Full sample,presence_without_overlap,42,8,0.19047619047619047
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q1,presence,12,11,0.9166666666666666
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q2,presence,20,18,0.9
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Common range,presence,86,83,0.9651162790697675
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Full sample,presence,87,84,0.9655172413793104
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,1,Full sample,presence_without_overlap,87,1,0.011494252873563218
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q1,presence,5,3,0.6
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q1,presence_without_overlap,5,2,0.4
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q2,presence,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q2,presence_without_overlap,1,0,0.0
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q3,presence,13,11,0.8461538461538461
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q3,presence_without_overlap,13,1,0.07692307692307693
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q4,presence,17,16,0.9411764705882353
+NA,smc_hcc_one_per_patient,data_efficiency,1,Q4,presence_without_overlap,17,3,0.17647058823529413
+NA,smc_hcc_one_per_patient,data_efficiency,1,Common range,presence,36,31,0.8611111111111112
+NA,smc_hcc_one_per_patient,data_efficiency,1,Common range,presence_without_overlap,36,6,0.16666666666666666
+NA,smc_hcc_one_per_patient,data_efficiency,1,Full sample,presence,42,37,0.8809523809523809
+NA,smc_hcc_one_per_patient,data_efficiency,1,Full sample,presence_without_overlap,42,6,0.14285714285714285
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q1,presence,12,10,0.8333333333333334
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q2,presence,20,17,0.85
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Common range,presence,86,81,0.9418604651162791
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Full sample,presence,87,82,0.9425287356321839
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,2,Full sample,presence_without_overlap,87,2,0.022988505747126436
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q1,presence,5,3,0.6
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q1,presence_without_overlap,5,2,0.4
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q2,presence,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q2,presence_without_overlap,1,0,0.0
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q3,presence,13,13,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q3,presence_without_overlap,13,4,0.3076923076923077
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q4,presence,17,17,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,2,Q4,presence_without_overlap,17,3,0.17647058823529413
+NA,smc_hcc_one_per_patient,data_efficiency,2,Common range,presence,36,34,0.9444444444444444
+NA,smc_hcc_one_per_patient,data_efficiency,2,Common range,presence_without_overlap,36,9,0.25
+NA,smc_hcc_one_per_patient,data_efficiency,2,Full sample,presence,42,40,0.9523809523809523
+NA,smc_hcc_one_per_patient,data_efficiency,2,Full sample,presence_without_overlap,42,9,0.21428571428571427
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q1,presence,12,10,0.8333333333333334
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q2,presence,20,18,0.9
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Common range,presence,86,82,0.9534883720930233
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Full sample,presence,87,83,0.9540229885057471
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,3,Full sample,presence_without_overlap,87,2,0.022988505747126436
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q1,presence,5,3,0.6
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q1,presence_without_overlap,5,2,0.4
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q2,presence,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q2,presence_without_overlap,1,0,0.0
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q3,presence,13,11,0.8461538461538461
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q3,presence_without_overlap,13,2,0.15384615384615385
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q4,presence,17,15,0.8823529411764706
+NA,smc_hcc_one_per_patient,data_efficiency,3,Q4,presence_without_overlap,17,2,0.11764705882352941
+NA,smc_hcc_one_per_patient,data_efficiency,3,Common range,presence,36,30,0.8333333333333334
+NA,smc_hcc_one_per_patient,data_efficiency,3,Common range,presence_without_overlap,36,6,0.16666666666666666
+NA,smc_hcc_one_per_patient,data_efficiency,3,Full sample,presence,42,36,0.8571428571428571
+NA,smc_hcc_one_per_patient,data_efficiency,3,Full sample,presence_without_overlap,42,6,0.14285714285714285
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q1,presence,12,11,0.9166666666666666
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q1,presence_without_overlap,12,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q2,presence,20,18,0.9
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q2,presence_without_overlap,20,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q3,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q3,presence_without_overlap,27,1,0.037037037037037035
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q4,presence,27,27,1.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Q4,presence_without_overlap,27,0,0.0
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Common range,presence,86,83,0.9651162790697675
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Common range,presence_without_overlap,86,1,0.011627906976744186
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Full sample,presence,87,84,0.9655172413793104
+6d6485d55dae,aul_hcc_one_per_patient,data_efficiency,4,Full sample,presence_without_overlap,87,2,0.022988505747126436
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q1,presence,5,3,0.6
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q1,presence_without_overlap,5,2,0.4
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q2,presence,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q2,presence_without_overlap,1,1,1.0
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q3,presence,13,11,0.8461538461538461
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q3,presence_without_overlap,13,3,0.23076923076923078
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q4,presence,17,15,0.8823529411764706
+NA,smc_hcc_one_per_patient,data_efficiency,4,Q4,presence_without_overlap,17,2,0.11764705882352941
+NA,smc_hcc_one_per_patient,data_efficiency,4,Common range,presence,36,30,0.8333333333333334
+NA,smc_hcc_one_per_patient,data_efficiency,4,Common range,presence_without_overlap,36,8,0.2222222222222222
+NA,smc_hcc_one_per_patient,data_efficiency,4,Full sample,presence,42,36,0.8571428571428571
+NA,smc_hcc_one_per_patient,data_efficiency,4,Full sample,presence_without_overlap,42,8,0.19047619047619047
 6d6485d55dae,proxy_benign,data_efficiency,0,Q1,presence,151,135,0.8940397350993378
 6d6485d55dae,proxy_benign,data_efficiency,0,Q1,overlap_iou_00,151,93,0.6158940397350994
 6d6485d55dae,proxy_benign,data_efficiency,0,Q1,overlap_iou_02,151,53,0.3509933774834437
