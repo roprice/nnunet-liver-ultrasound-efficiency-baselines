@@ -11,6 +11,9 @@ import json
 import statistics
 from collections import Counter
 from pathlib import Path
+from types import SimpleNamespace
+
+import numpy as np
 
 from analysis.predictions_dataset.constants import MIN_PRED_AREA_FRACTION, SCHEMA_VERSION
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
@@ -23,6 +26,7 @@ OUTPUT_PATH = SCRIPT_DIR / "detection_rates.md"
 CSV_PATH = SCRIPT_DIR / "detection_rates.csv"
 MANIFEST_PATH = SCRIPT_DIR.parent.parent / "predictions_dataset/predictions_dataset_manifest.json"
 COHORT_MANIFEST_PATH = PROJECT_ROOT / "archives/06_external_validation/smc_lud_prepared/smc_lud_manifest.json"
+CALIPER_ROOT = PROJECT_ROOT / "archives/06_external_validation/caliper_annotation_tests"
 MODELS = {
     "data_efficiency": "nnU-Net default augmentation",
     "augmentation_ablation": "Brightness augmentation",
@@ -106,6 +110,76 @@ def validate_report_inputs(data, manifest, groups, cohort_manifest=None):
             raise RuntimeError(f"{key}: predictions do not match the full clean cohort manifest")
 
 
+def evaluate_hcc_caliper(root=None):
+    root = CALIPER_ROOT if root is None else root
+    manifest = json.loads((root / "prepared/smc_lud_manifest.json").read_text())
+    cases = {case["case"]: case for case in manifest["cases"]}
+    if (len(cases) != manifest["case_count"] or len(cases) != len(manifest["cases"])
+            or any(case["subset"] != "caliper" for case in cases.values())):
+        raise RuntimeError("Invalid caliper cohort manifest")
+    report = json.loads((root / "proxy_masks/extraction_report.json").read_text())
+    references = [case for case in report["proxy_cases"] if case["class"] == "HCC"]
+    reference_ids = {case["case"] for case in references}
+    hcc_ids = {name for name, case in cases.items() if case["pathology"] == "malignant"}
+    if not references or len(reference_ids) != len(references) or reference_ids != hcc_ids:
+        raise RuntimeError("HCC caliper references do not match the prepared HCC cohort")
+    masks = {}
+    for reference in references:
+        image_id = reference["case"]
+        case = cases[image_id]
+        if reference["method"] != "chroma" or case["class"] != "HCC":
+            raise RuntimeError(f"{image_id}: invalid HCC caliper reference metadata")
+        path = (root / "proxy_masks" / f"{image_id}.png").relative_to(PROJECT_ROOT)
+        mask = proxy_detection.builder.read_mask(proxy_detection.case_mask_path(str(path), image_id))
+        if (mask.shape != (case["height"], case["width"])
+                or not set(np.unique(mask)) <= {0, proxy_detection.builder.MASS_VALUE}
+                or not (mask == proxy_detection.builder.MASS_VALUE).any()):
+            raise RuntimeError(f"{image_id}: invalid HCC caliper proxy mask")
+        masks[image_id] = mask == proxy_detection.builder.MASS_VALUE
+    with (root / "logs/per_image_results.csv").open(newline="") as file:
+        records = list(csv.DictReader(file))
+    models = {row["experiment_name"] for row in records}
+    if not models or not models <= set(MODELS):
+        raise RuntimeError("Unexpected caliper model families")
+    evaluations = {}
+    for model in MODELS:
+        if model not in models:
+            continue
+        model_records = [row for row in records if row["experiment_name"] == model]
+        if {int(row["fold"]) for row in model_records} != set(FOLDS):
+            raise RuntimeError(f"{model}: expected caliper folds 0-4")
+        for fold in FOLDS:
+            rows = [row for row in model_records if int(row["fold"]) == fold]
+            if len(rows) != len(cases) or {row["case"] for row in rows} != set(cases):
+                raise RuntimeError(f"{model}, fold {fold}: mismatched caliper cohort")
+            results = []
+            for row in rows:
+                image_id = row["case"]
+                case = cases[image_id]
+                configuration = f"{model}_588images_seed42_fold{fold}_final"
+                if (row["configuration_id"] != configuration or row["checkpoint"] != "final"
+                        or row["pathology"] != case["pathology"]
+                        or (int(row["image_height_px"]), int(row["image_width_px"]))
+                        != (case["height"], case["width"])):
+                    raise RuntimeError(f"{image_id}: invalid caliper prediction metadata")
+                if image_id not in masks:
+                    continue
+                if row["triage_detection_flag"] not in {"True", "False"}:
+                    raise RuntimeError(f"{image_id}: invalid caliper presence flag")
+                prediction = root / "logs/predictions" / configuration / f"{image_id}.png"
+                facts = SimpleNamespace(
+                    image_id=image_id, image_height_px=case["height"], image_width_px=case["width"],
+                    prediction_path=prediction.relative_to(PROJECT_ROOT).as_posix(),
+                    triage_detection_flag=row["triage_detection_flag"] == "True",
+                    **{field: int(row[field]) for field in (
+                        "predicted_mass_area_raw_px", "predicted_mass_area_retained_px",
+                        "retained_component_count")},
+                )
+                results.append(proxy_detection.evaluate_prediction(facts, masks[image_id]))
+            evaluations[model, fold] = results
+    return evaluations
+
+
 def proxy_tables(groups):
     proxy_groups = proxy_detection.select_proxy_groups(groups)
     masks = proxy_detection.load_proxy_masks(proxy_groups["data_efficiency", 0])
@@ -113,13 +187,19 @@ def proxy_tables(groups):
         key: [proxy_detection.evaluate_prediction(row, masks[row.image_id]) for row in rows]
         for key, rows in proxy_groups.items()
     }
+    hcc_evaluations = evaluate_hcc_caliper()
     lines = [
         "",
-        "Spatial detection uses twin-derived circular proxy masks, available only on a selected "
-        "subset of benign Clean images with usable caliper twins. Proxies are heuristic circles, "
+        "Spatial detection uses twin-derived circular proxy masks on a selected subset of benign Clean images "
+        "with usable caliper twins, and chroma-derived circular proxies on HCC caliper-marked images. "
+        "The HCC caliper subset is separate from the Clean presence cohort; visible calipers may affect "
+        "predictions. HCC inputs are the prepared manifest, proxy_masks/extraction_report.json and "
+        "logs/per_image_results.csv plus prediction masks under "
+        "archives/06_external_validation/caliper_annotation_tests, outside the Clean dataset snapshot. "
+        "NA means no caliper predictions for that model family, not zero. Proxies are heuristic circles, "
         "not manual annotations; circles fitted to elongated lesions overstate their area. "
-        "Zoom, depth, cropping and proxy error are uncontrolled. Malignant results are unavailable "
-        "(NA), not zero. These rates describe agreement with proxies, not verified localization.",
+        "Zoom, depth, cropping and proxy error are uncontrolled. "
+        "These rates describe agreement with proxies, not verified localization.",
     ]
     criteria = [
         ("overlap_iou_00", "Overlap-based detection at IoU > 0",
@@ -133,8 +213,18 @@ def proxy_tables(groups):
             "", f"## {title}", "", explanation, "",
             "| cohort | images per fold model | " + " | ".join(MODELS.values()) + " |",
             "|---|---|---|---|---|",
-            "| Malignant (HCC) | NA | NA | NA | NA |",
         ])
+        hcc_cells = []
+        for model in MODELS:
+            if (model, 0) not in hcc_evaluations:
+                hcc_cells.append("NA")
+                continue
+            rates = [sum(result.detected[metric] for result in hcc_evaluations[model, fold])
+                     / len(hcc_evaluations[model, fold]) for fold in FOLDS]
+            hcc_cells.append(f"{statistics.mean(rates):.3f} ± {statistics.stdev(rates):.3f}")
+        hcc_count = len(next(iter(hcc_evaluations.values())))
+        lines.append(f"| Malignant (HCC), caliper proxy subset | {hcc_count} | "
+                     + " | ".join(hcc_cells) + " |")
         cells = []
         for model in MODELS:
             rates = [sum(result.detected[metric] for result in evaluations[model, fold])

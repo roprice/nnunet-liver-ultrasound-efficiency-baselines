@@ -2,6 +2,8 @@ import csv
 import importlib
 import io
 import json
+from pathlib import Path
+import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -53,7 +55,11 @@ class DetectionRatesTests(unittest.TestCase):
                                              "centroid_deq_100": centroid})
 
         with patch.object(analysis.proxy_detection, "load_proxy_masks", return_value={"2": None}), \
-                patch.object(analysis.proxy_detection, "evaluate_prediction", side_effect=evaluate):
+                patch.object(analysis.proxy_detection, "evaluate_prediction", side_effect=evaluate), \
+                patch.object(analysis, "evaluate_hcc_caliper", return_value={
+                    ("data_efficiency", fold): [SimpleNamespace(detected={
+                        "overlap_iou_00": fold < 2, "centroid_deq_100": fold < 3})]
+                    for fold in analysis.FOLDS}):
             return analysis.build_report(self.data, self.manifest, self.cohort_manifest)
 
     def test_image_weighted_rates_and_fold_sample_sd(self):
@@ -77,8 +83,9 @@ class DetectionRatesTests(unittest.TestCase):
                       "1.000 ± 0.000 | 0.000 ± 0.000 |", overlap)
         self.assertIn("| Benign (hemangioma), proxy subset | 1 | 0.400 ± 0.548 | "
                       "1.000 ± 0.000 | 0.000 ± 0.000 |", centroid)
-        for table in (overlap, centroid):
-            self.assertIn("| Malignant (HCC) | NA | NA | NA | NA |", table)
+        self.assertIn("| Malignant (HCC), caliper proxy subset | 1 | 0.400 ± 0.548 | NA | NA |", overlap)
+        self.assertIn("| Malignant (HCC), caliper proxy subset | 1 | 0.600 ± 0.548 | NA | NA |", centroid)
+        self.assertIn("separate from the Clean presence cohort", text)
         self.assertIn("selected subset of benign Clean images", text)
         self.assertIn("not manual annotations", text)
         self.assertIn("≤ 1.0 proxy equivalent diameter", text)
@@ -188,6 +195,7 @@ class DetectionRatesTests(unittest.TestCase):
         text = analysis.build_report(data, manifest)
         self.assertEqual(analysis.OUTPUT_PATH.read_text(), text)
         self.assertEqual(text.count("| Benign (hemangioma), proxy subset | 380 |"), 2)
+        self.assertEqual(text.count("| Malignant (HCC), caliper proxy subset | 60 |"), 2)
         self.assertIn("| Benign (hemangioma), proxy subset | 380 | 0.758 ± 0.017 |", text)
         self.assertIn("| Benign (hemangioma), proxy subset | 380 | 0.662 ± 0.023 |", text)
         self.assertEqual(analysis.CSV_PATH.read_text(), analysis.build_csv(data, manifest))
@@ -207,6 +215,42 @@ class DetectionRatesTests(unittest.TestCase):
                 self.assertEqual(len(cohort), expected_count)
                 self.assertEqual((sum(row.triage_detection_flag for row in cohort), len(cohort)),
                                  archived_counts[model, fold, pathology])
+
+    def test_caliper_rejects_wrong_cohort_missing_fold_and_stale_predictions(self):
+        root = analysis.CALIPER_ROOT
+        with (root / "logs/per_image_results.csv").open(newline="") as file:
+            records = list(csv.DictReader(file))
+        manifest = json.loads((root / "prepared/smc_lud_manifest.json").read_text())
+        references = json.loads((root / "proxy_masks/extraction_report.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            for name in ("prepared", "proxy_masks", "logs"):
+                (temporary / name).mkdir()
+            (temporary / "proxy_masks/extraction_report.json").write_text(json.dumps(references))
+            for scenario, message in (("cohort", "references do not match"),
+                                      ("fold", "expected caliper folds"),
+                                      ("stale", "canonical retained facts")):
+                with self.subTest(scenario=scenario):
+                    changed_manifest = json.loads(json.dumps(manifest))
+                    changed_records = [dict(row) for row in records]
+                    if scenario == "cohort":
+                        hcc = next(case for case in changed_manifest["cases"]
+                                   if case["pathology"] == "malignant")
+                        hcc["case"] = "other_hcc"
+                    elif scenario == "fold":
+                        changed_records = [row for row in changed_records if row["fold"] != "4"]
+                    else:
+                        changed_records[0]["predicted_mass_area_raw_px"] = "0"
+                    (temporary / "prepared/smc_lud_manifest.json").write_text(json.dumps(changed_manifest))
+                    with (temporary / "logs/per_image_results.csv").open("w", newline="") as file:
+                        writer = csv.DictWriter(file, fieldnames=records[0].keys())
+                        writer.writeheader()
+                        writer.writerows(changed_records)
+                    # Keep mask reads on the actual archive while varying only its metadata.
+                    with patch.object(analysis, "PROJECT_ROOT", temporary), \
+                            patch.object(analysis.proxy_detection, "PROJECT_ROOT", root), \
+                            self.assertRaisesRegex(RuntimeError, message):
+                        analysis.evaluate_hcc_caliper(temporary)
 
 
 if __name__ == "__main__":
