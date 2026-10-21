@@ -130,10 +130,15 @@ def transcribe(args):
     session = Session(queue, transcriptions, lambda t: save_transcriptions(args.transcriptions, t))
     plt.rcParams["keymap.quit"] = []
     figure, axes = plt.subplots(figsize=(9, 9))
+    notice = figure.text(0.5, 0.02, "", ha="center", color="red", fontsize=11)
+    shown = {"case": None}
 
-    def draw():
-        axes.clear()
+    def draw(message=""):
+        notice.set_text(message)
         image = session.current
+        same_frame = image is not None and image["case"] == shown["case"]
+        limits = (axes.get_xlim(), axes.get_ylim()) if same_frame else None
+        axes.clear()
         if image is None:
             plt.close(figure)
             return
@@ -147,17 +152,29 @@ def transcribe(args):
         axes.set_title(f"{position}/{len(frames)}  {image['patient']}  {image['case']}\n{INSTRUCTIONS}",
                        fontsize=9)
         axes.set_axis_off()
+        if limits is not None:
+            axes.set_xlim(limits[0])
+            axes.set_ylim(limits[1])
+        elif figure.canvas.toolbar is not None:
+            figure.canvas.toolbar.update()
+        shown["case"] = image["case"]
         figure.canvas.draw_idle()
 
     def on_click(event):
+        if event.inaxes is not axes or event.button != 1:
+            return
         toolbar = figure.canvas.toolbar
-        if event.inaxes is axes and event.button == 1 and not (toolbar is not None and toolbar.mode):
-            session.click(event.ydata, event.xdata)
-            draw()
+        if toolbar is not None and toolbar.mode:
+            draw("Zoom or pan is on, so clicks are ignored: click the highlighted toolbar button to turn it off.")
+            return
+        session.click(event.ydata, event.xdata)
+        draw()
 
     def on_key(event):
         if event.key == "enter":
-            session.accept()
+            if not session.accept():
+                draw(f"Not saved: {len(session.points)} of 2 marks clicked (or the two clicks are too close).")
+                return
         elif event.key == "x":
             session.exclude()
         elif event.key == "u":
