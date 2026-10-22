@@ -9,19 +9,18 @@ __pycache__/
 *.zip
 *.tar
 
-# data and archives of training and predictions
-archives/
-archives_staging/
-/logs/
-
 # python environmnet
 .venv
 
-# private
-private/
-
+# data and archives of training and predictions
+archives/
+archives_staging/
 archives_amendments/
+/logs/
 
 #SMC database
 SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)
 SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma).zip
+
+# private
+private/
