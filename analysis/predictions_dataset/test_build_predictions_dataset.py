@@ -533,9 +533,9 @@ class ExternalValidationTests(ArchiveFixtureTests):
     def setUp(self):
         super().setUp()
         self.archive = self.project_root / "archives/06_external_validation"
-        self.predictions_root = self.archive / "logs/predictions"
+        self.predictions_root = self.archive / "clean/logs/predictions"
         self.predictions_root.mkdir(parents=True)
-        self.manifest_path = self.archive / "smc_lud_prepared/smc_lud_manifest.json"
+        self.manifest_path = self.archive / "clean/prepared/smc_lud_manifest.json"
         self.entries = [
             {"case": "smc_0002", "subset": "clean", "pathology": "malignant",
              "height": 80, "width": 120, "source_relative_path": "original_data/HCC/Clean/2.png"},

@@ -195,7 +195,7 @@ class DetectionRatesTests(unittest.TestCase):
         text = analysis.build_report(data, manifest)
         self.assertEqual(analysis.OUTPUT_PATH.read_text(), text)
         self.assertEqual(text.count("| Benign (hemangioma), proxy subset | 380 |"), 2)
-        self.assertEqual(text.count("| Malignant (HCC), caliper proxy subset | 60 |"), 2)
+        self.assertEqual(text.count("| Malignant (HCC), caliper proxy subset | 306 |"), 2)
         self.assertIn("| Benign (hemangioma), proxy subset | 380 | 0.758 ± 0.017 |", text)
         self.assertIn("| Benign (hemangioma), proxy subset | 380 | 0.662 ± 0.023 |", text)
         self.assertEqual(analysis.CSV_PATH.read_text(), analysis.build_csv(data, manifest))
@@ -203,7 +203,7 @@ class DetectionRatesTests(unittest.TestCase):
         self.assertEqual(len(groups), 15)
         self.assertEqual({len(rows) for rows in groups.values()}, {2656})
         archived_counts = {}
-        path = analysis.PROJECT_ROOT / "archives/06_external_validation/logs/per_image_results.csv"
+        path = analysis.ARCHIVE_ROOT / "clean/logs/per_image_results.csv"
         with path.open(newline="") as file:
             for row in csv.DictReader(file):
                 key = (row["experiment_name"], int(row["fold"]), row["pathology"])
@@ -221,12 +221,13 @@ class DetectionRatesTests(unittest.TestCase):
         with (root / "logs/per_image_results.csv").open(newline="") as file:
             records = list(csv.DictReader(file))
         manifest = json.loads((root / "prepared/smc_lud_manifest.json").read_text())
-        references = json.loads((root / "proxy_masks/extraction_report.json").read_text())
         with tempfile.TemporaryDirectory() as directory:
             temporary = Path(directory)
-            for name in ("prepared", "proxy_masks", "logs"):
+            for name in ("prepared", "logs"):
                 (temporary / name).mkdir()
-            (temporary / "proxy_masks/extraction_report.json").write_text(json.dumps(references))
+            # Masks and predictions stay the archived ones; only manifest and run metadata vary.
+            (temporary / "proxy").symlink_to(analysis.HCC_PROXY_ROOT, target_is_directory=True)
+            (temporary / "logs/predictions").symlink_to(root / "logs/predictions", target_is_directory=True)
             for scenario, message in (("cohort", "references do not match"),
                                       ("fold", "expected caliper folds"),
                                       ("stale", "canonical retained facts")):
@@ -246,11 +247,10 @@ class DetectionRatesTests(unittest.TestCase):
                         writer = csv.DictWriter(file, fieldnames=records[0].keys())
                         writer.writeheader()
                         writer.writerows(changed_records)
-                    # Keep mask reads on the actual archive while varying only its metadata.
                     with patch.object(analysis, "PROJECT_ROOT", temporary), \
-                            patch.object(analysis.proxy_detection, "PROJECT_ROOT", root), \
+                            patch.object(analysis.proxy_detection, "PROJECT_ROOT", temporary), \
                             self.assertRaisesRegex(RuntimeError, message):
-                        analysis.evaluate_hcc_caliper(temporary)
+                        analysis.evaluate_hcc_caliper(temporary, temporary / "proxy")
 
 
 if __name__ == "__main__":

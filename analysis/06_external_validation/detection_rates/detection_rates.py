@@ -25,8 +25,10 @@ PROJECT_ROOT = SCRIPT_DIR.parent.parent.parent
 OUTPUT_PATH = SCRIPT_DIR / "detection_rates.md"
 CSV_PATH = SCRIPT_DIR / "detection_rates.csv"
 MANIFEST_PATH = SCRIPT_DIR.parent.parent / "predictions_dataset/predictions_dataset_manifest.json"
-COHORT_MANIFEST_PATH = PROJECT_ROOT / "archives/06_external_validation/smc_lud_prepared/smc_lud_manifest.json"
-CALIPER_ROOT = PROJECT_ROOT / "archives/06_external_validation/caliper_annotation_tests"
+ARCHIVE_ROOT = PROJECT_ROOT / "archives/06_external_validation"
+COHORT_MANIFEST_PATH = ARCHIVE_ROOT / "clean/prepared/smc_lud_manifest.json"
+CALIPER_ROOT = ARCHIVE_ROOT / "caliper"
+HCC_PROXY_ROOT = ARCHIVE_ROOT / "proxy_masks/hcc_transcribed"
 MODELS = {
     "data_efficiency": "nnU-Net default augmentation",
     "augmentation_ablation": "Brightness augmentation",
@@ -110,14 +112,15 @@ def validate_report_inputs(data, manifest, groups, cohort_manifest=None):
             raise RuntimeError(f"{key}: predictions do not match the full clean cohort manifest")
 
 
-def load_hcc_caliper(root=None):
+def load_hcc_caliper(root=None, proxy_root=None):
     root = CALIPER_ROOT if root is None else root
+    proxy_root = HCC_PROXY_ROOT if proxy_root is None else proxy_root
     manifest = json.loads((root / "prepared/smc_lud_manifest.json").read_text())
     cases = {case["case"]: case for case in manifest["cases"]}
     if (len(cases) != manifest["case_count"] or len(cases) != len(manifest["cases"])
             or any(case["subset"] != "caliper" for case in cases.values())):
         raise RuntimeError("Invalid caliper cohort manifest")
-    report = json.loads((root / "proxy_masks/extraction_report.json").read_text())
+    report = json.loads((proxy_root / "extraction_report.json").read_text())
     references = [case for case in report["proxy_cases"] if case["class"] == "HCC"]
     reference_ids = {case["case"] for case in references}
     hcc_ids = {name for name, case in cases.items() if case["pathology"] == "malignant"}
@@ -127,9 +130,9 @@ def load_hcc_caliper(root=None):
     for reference in references:
         image_id = reference["case"]
         case = cases[image_id]
-        if reference["method"] != "chroma" or case["class"] != "HCC":
+        if reference["method"] != "transcribed" or case["class"] != "HCC":
             raise RuntimeError(f"{image_id}: invalid HCC caliper reference metadata")
-        path = (root / "proxy_masks" / f"{image_id}.png").relative_to(PROJECT_ROOT)
+        path = (proxy_root / f"{image_id}.png").relative_to(PROJECT_ROOT)
         mask = proxy_detection.builder.read_mask(proxy_detection.case_mask_path(str(path), image_id))
         if (mask.shape != (case["height"], case["width"])
                 or not set(np.unique(mask)) <= {0, proxy_detection.builder.MASS_VALUE}
@@ -186,8 +189,8 @@ def load_hcc_caliper(root=None):
     return SimpleNamespace(groups=groups, masks=masks, cases=cases, evaluations=evaluations)
 
 
-def evaluate_hcc_caliper(root=None):
-    cohort = load_hcc_caliper(root)
+def evaluate_hcc_caliper(root=None, proxy_root=None):
+    cohort = load_hcc_caliper(root, proxy_root)
     return {key: list(results.values()) for key, results in cohort.evaluations.items()}
 
 
@@ -202,11 +205,11 @@ def proxy_tables(groups):
     lines = [
         "",
         "Spatial detection uses twin-derived circular proxy masks on a selected subset of benign Clean images "
-        "with usable caliper twins, and chroma-derived circular proxies on HCC caliper-marked images. "
-        "The HCC caliper subset is separate from the Clean presence cohort; visible calipers may affect "
-        "predictions. HCC inputs are the prepared manifest, proxy_masks/extraction_report.json and "
-        "logs/per_image_results.csv plus prediction masks under "
-        "archives/06_external_validation/caliper_annotation_tests, outside the Clean dataset snapshot. "
+        "with usable caliper twins, and circular proxies from hand-transcribed caliper endpoints on HCC "
+        "caliper-marked images. The HCC caliper subset is separate from the Clean presence cohort; "
+        "visible calipers may affect predictions. HCC inputs are the caliper run under "
+        "archives/06_external_validation/caliper and the transcribed proxy masks under "
+        "archives/06_external_validation/proxy_masks/hcc_transcribed, outside the Clean dataset snapshot. "
         "NA means no caliper predictions for that model family, not zero. Proxies are heuristic circles, "
         "not manual annotations; circles fitted to elongated lesions overstate their area. "
         "Zoom, depth, cropping and proxy error are uncontrolled. "

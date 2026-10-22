@@ -6,8 +6,7 @@ parameters are the mean per-image rate mu = a / (a + b) and the within-patient c
 rho = 1 / (a + b + 1). Fitted per fold, nnU-Net default-augmentation models only.
 
 Run from the repository root:
-    python -m analysis.06_external_validation.multi_pass_projection.multi_pass_projection \
-        [--hcc-caliper-results path/to/per_image_results.csv]
+    python -m analysis.06_external_validation.multi_pass_projection.multi_pass_projection
 """
 
 import argparse
@@ -269,8 +268,9 @@ def build_report(data, results, transferred):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--hcc-caliper-results", type=Path, default=None,
-                        help="Runner per_image_results.csv from a caliper-subset run with HCC proxies")
+    parser.add_argument("--hcc-caliper-results", type=Path,
+                        default=external.CALIPER_ROOT / "logs/per_image_results.csv",
+                        help="Runner per_image_results.csv from the caliper-subset run")
     args = parser.parse_args(argv)
     data = load_predictions_dataset()
     manifest = json.loads(external.MANIFEST_PATH.read_text())
@@ -278,8 +278,7 @@ def main(argv=None):
     external.validate_report_inputs(data, manifest, external.select_groups(data.rows), archived)
     counts = presence_counts(data.rows, archived)
     counts["hemangioma_overlap"] = hemangioma_overlap_counts(data.rows, archived)
-    if args.hcc_caliper_results is not None:
-        counts["hcc_overlap"] = hcc_caliper_overlap_counts(args.hcc_caliper_results)
+    counts["hcc_overlap"] = hcc_caliper_overlap_counts(args.hcc_caliper_results)
     results = {key: analyze(outcome_counts) for key, outcome_counts in counts.items()}
     transferred = transferred_projection(results) if "hcc_overlap" in results else None
     OUTPUT_PATH.write_text(build_report(data, results, transferred))

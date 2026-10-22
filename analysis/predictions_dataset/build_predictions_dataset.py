@@ -353,7 +353,7 @@ def load_test_cases(experiment_archive):
 
 def load_external_cases(experiment_archive):
     """Load the classification-only SMC-LUD Clean cohort without inventing masks."""
-    manifest_path = experiment_archive / "smc_lud_prepared/smc_lud_manifest.json"
+    manifest_path = experiment_archive / "clean/prepared/smc_lud_manifest.json"
     with open(manifest_path) as file:
         manifest = json.load(file)
     entries = manifest["cases"]
@@ -385,7 +385,7 @@ def load_external_cases(experiment_archive):
 
 def load_proxy_mass_references(experiment_archive, cases):
     """Validate extraction outputs and match proxies only to the same clean frame."""
-    proxy_directory = experiment_archive / "caliper_annotation_tests/proxy_masks"
+    proxy_directory = experiment_archive / "proxy_masks/automatic"
     if not proxy_directory.exists():
         return {}
     report_path = proxy_directory / "extraction_report.json"
@@ -869,7 +869,7 @@ def discover_external_validation_configurations(experiment_archive):
         "gaussian_noise_ablation": ("04_gaussian_noise_ablation", "nnUNetTrainer_gaussianNoiseAugmentation"),
     }
     configurations = []
-    for directory in sorted((experiment_archive / "logs/predictions").iterdir()):
+    for directory in sorted((experiment_archive / "clean/logs/predictions").iterdir()):
         if not directory.is_dir():
             continue
         match = PREDICTION_DIR_PATTERN.fullmatch(f"predictions_{directory.name}")

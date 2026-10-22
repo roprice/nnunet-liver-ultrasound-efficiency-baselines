@@ -253,6 +253,7 @@ def build_records(data, manifest, archived):
             record["snapshot_id"] = "NA"
     summary["hcc"] = hcc_summary
     summary["hcc"]["provenance"] = external.CALIPER_ROOT.relative_to(PROJECT_ROOT).as_posix()
+    summary["hcc"]["proxy_provenance"] = external.HCC_PROXY_ROOT.relative_to(PROJECT_ROOT).as_posix()
     return hcc_proxy_records + records + hcc_records(data.rows, archived), summary
 
 
@@ -355,7 +356,8 @@ def relative_size_section(records, summary, cohort="benign"):
     bin_labels = [*QUARTILES, "All"]
     reference_description = (
         "Size is reference mass area divided by whole-image area. For SMC the reference is the "
-        "chroma-derived circular proxy mask on the selected HCC caliper-marked images; for AUL "
+        "circular proxy mask from hand-transcribed caliper endpoints on the selected HCC "
+        "caliper-marked images; for AUL "
         "it is the annotated mass on malignant images. Bins are the AUL test-set "
         if cohort == "hcc" else
         "Size is reference mass area divided by whole-image area. For SMC the reference is the "
@@ -367,12 +369,11 @@ def relative_size_section(records, summary, cohort="benign"):
         lines.extend([
             f"The HCC caliper cohort contains {proxy_images['All']} images from "
             f"{summary['proxy_patients']['All']} patients, separate from the Clean cohort below. "
-            "Inputs are `prepared/smc_lud_manifest.json`, `proxy_masks/extraction_report.json` "
-            "and proxy PNGs, and `logs/per_image_results.csv` plus prediction masks under "
-            f"`{summary['provenance']}`, outside the Clean prediction snapshot. "
+            f"Inputs are the caliper run under `{summary['provenance']}` and the transcribed proxy "
+            f"masks under `{summary['proxy_provenance']}`, outside the Clean prediction snapshot. "
             "CSV HCC proxy/SMC rows therefore have snapshot_id=NA; AUL rows retain their snapshot ID. "
             "Only the default augmentation family has caliper predictions. Unlike the twin-derived "
-            "benign Clean proxies, these proxies come from caliper chroma on the evaluated images; "
+            "benign Clean proxies, these proxies come from caliper marks on the evaluated images; "
             "visible calipers may affect predictions.",
             "",
         ])

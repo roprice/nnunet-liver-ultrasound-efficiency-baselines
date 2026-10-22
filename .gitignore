@@ -12,6 +12,7 @@ __pycache__/
 # data and archives of training and predictions
 archives/
 archives_staging/
+/logs/
 
 # python environmnet
 .venv

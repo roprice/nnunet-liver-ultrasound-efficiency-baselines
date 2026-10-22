@@ -18,7 +18,7 @@ Usage:
     python3 -I experiments/06_external_validation/extract_caliper_proxy.py \
         --source "path/to/SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)" \
         --reference experiments/06_external_validation/reference/smc_lud_reference.json \
-        --output-dir archives/06_external_validation/caliper_annotation_tests/proxy_masks
+        --output-dir archives/06_external_validation/proxy_masks/automatic
 """
 
 import argparse
@@ -340,7 +340,9 @@ def main(argv=None):
                  / "reference" / "smc_lud_reference.json"),
         help="Committed reference manifest")
     parser.add_argument(
-        "--output-dir", type=Path, required=True,
+        "--output-dir", type=Path,
+        default=(Path(__file__).resolve().parents[2]
+                 / "archives/06_external_validation/proxy_masks/automatic"),
         help="Directory for proxy mask PNGs and extraction report")
     parser.add_argument(
         "--skip-hcc", action="store_true",

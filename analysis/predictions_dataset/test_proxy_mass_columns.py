@@ -30,7 +30,7 @@ class ProxyMassColumnsTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.project_root = Path(temporary.name)
         self.archive = self.project_root / "archives/06_external_validation"
-        self.proxy_directory = self.archive / "caliper_annotation_tests/proxy_masks"
+        self.proxy_directory = self.archive / "proxy_masks/automatic"
         for name, value in (("PROJECT_ROOT", self.project_root),
                             ("ARCHIVES_DIR", self.project_root / "archives")):
             patcher = patch.object(builder, name, value)
@@ -47,7 +47,7 @@ class ProxyMassColumnsTests(unittest.TestCase):
                 "class": class_name, "subset": "clean", "height": 20, "width": 30,
                 "source_relative_path": f"original_data/{class_name}/Clean/{patient}/{case_id}.png",
             })
-        self.write_json(self.archive / "smc_lud_prepared/smc_lud_manifest.json", {
+        self.write_json(self.archive / "clean/prepared/smc_lud_manifest.json", {
             "case_count": len(entries), "cases": entries,
         })
         self.cases = builder.load_external_cases(self.archive)
@@ -56,7 +56,7 @@ class ProxyMassColumnsTests(unittest.TestCase):
         self.proxy_mask[2:4, 3:6] = 2
         self.available = {
             "proxy_mass_available": True,
-            "proxy_mass_reference_path": f"archives/06_external_validation/caliper_annotation_tests/proxy_masks/{self.benign_id}.png",
+            "proxy_mass_reference_path": f"archives/06_external_validation/proxy_masks/automatic/{self.benign_id}.png",
             "proxy_mass_method": "twin_diff",
             "proxy_mass_area_px": 6,
         }
@@ -83,7 +83,7 @@ class ProxyMassColumnsTests(unittest.TestCase):
 
     def make_row(self, case=None, evaluation_split="external_clean", configuration_id="model_final"):
         case = self.benign_case if case is None else case
-        directory = self.archive / "logs/predictions" / configuration_id
+        directory = self.archive / "clean/logs/predictions" / configuration_id
         directory.mkdir(parents=True, exist_ok=True)
         prediction = np.zeros(case["reference_shape"], dtype=np.uint8)
         prediction[4:7, 5:9] = 2

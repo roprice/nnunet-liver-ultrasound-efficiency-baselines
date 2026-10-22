@@ -23,8 +23,8 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 DEFAULT_SOURCE = HERE / "SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)"
 DEFAULT_REFERENCE = HERE / "reference" / "smc_lud_reference.json"
-DEFAULT_TRANSCRIPTIONS = REPO / "archives_staging/06_external_validation/caliper_transcriptions.json"
-DEFAULT_MASKS = REPO / "archives_staging/06_external_validation/proxy_masks_transcribed"
+DEFAULT_MASKS = REPO / "archives/06_external_validation/proxy_masks/hcc_transcribed"
+DEFAULT_TRANSCRIPTIONS = DEFAULT_MASKS / "caliper_transcriptions.json"
 MIN_FRAMES_PER_PATIENT = 4
 MIN_ENDPOINT_DISTANCE_PX = 3
 INSTRUCTIONS = ("click both caliper centers, Enter = save | x = exclude | u = undo click | q = quit\n"

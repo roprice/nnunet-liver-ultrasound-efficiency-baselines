@@ -44,7 +44,7 @@ If CUDA is unavailable, install a CUDA-enabled build of the same PyTorch version
 
 Required inputs:
 
-- `archives_staging/06_external_validation/smc_lud_prepared/{smc_lud_manifest.json,conversion_report.json,images/}`.
+- `archives/06_external_validation/clean/prepared/{smc_lud_manifest.json,conversion_report.json,images/}`.
 - Each experiment's `archives/<experiment>/nnUNet_results/Dataset001_AUL/<trainer>__nnUNetPlans__2d/{plans.json,dataset.json,fold_<0-4>/checkpoint_final.pth,fold_<0-4>/checkpoint_metadata.json}`.
 
 On the **local computer**, prepare the cohort if needed:
@@ -56,7 +56,7 @@ On the **local computer**, prepare the cohort if needed:
 While that process runs, on the **local computer**, from the repository root, replace `<gpu_ip>` before pasting:
 
 ```sh
-rsync -avR archives_staging/06_external_validation/smc_lud_prepared/ \
+rsync -avR archives/06_external_validation/clean/prepared/ \
   "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/"
 
 rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
@@ -85,7 +85,7 @@ Once the upload is complete, on the **GPU host**, from the repository root:
 ```sh
 . "$HOME/.venv/bin/activate"
 export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
-mkdir -p logs/06_external_validation
+mkdir -p archives/06_external_validation/clean/logs
 python - <<'PY'
 from importlib.metadata import version
 import torch
@@ -97,10 +97,10 @@ assert torch.cuda.is_available()
 print('GPU:', torch.cuda.get_device_name(0))
 print('CUDA:', torch.version.cuda, 'cuDNN:', torch.backends.cudnn.version())
 PY
-python -m pip freeze > logs/06_external_validation/environment_packages.txt
-nvidia-smi > logs/06_external_validation/nvidia_smi.txt
-git rev-parse HEAD > logs/06_external_validation/source_revision.txt
-git status --short >> logs/06_external_validation/source_revision.txt
+python -m pip freeze > archives/06_external_validation/clean/logs/environment_packages.txt
+nvidia-smi > archives/06_external_validation/clean/logs/nvidia_smi.txt
+git rev-parse HEAD > archives/06_external_validation/clean/logs/source_revision.txt
+git status --short >> archives/06_external_validation/clean/logs/source_revision.txt
 python -B experiments/06_external_validation/external_validation_runner.py \
   --device cuda --check-only
 ```
@@ -123,7 +123,7 @@ Inside tmux, from the repository root:
 export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
 set -o pipefail
 python -u -B experiments/06_external_validation/external_validation_runner.py \
-  --device cuda 2>&1 | tee -a logs/06_external_validation/runner.log
+  --device cuda 2>&1 | tee -a archives/06_external_validation/clean/logs/runner.log
 ```
 
 Detach with `Ctrl+b`, then `d`; reattach with `tmux attach -t external_validation`.
@@ -134,7 +134,7 @@ Resume by rerunning the same command: existing masks are skipped and all cases r
 
 ## Outputs and retrieval
 
-`logs/06_external_validation/` contains:
+`archives/06_external_validation/clean/logs/` contains:
 
 - `run_settings.json`: device, cohort, checkpoint, Git revision, UTC boundaries and status.
 - `per_image_results.csv` and `summary.json`: detection rates, patient-weighted rates, bootstrap intervals and fold-matched differences against experiment 02.
@@ -147,7 +147,7 @@ After the command exits successfully, verify completion on the **GPU host**:
 python - <<'PY'
 import json
 from pathlib import Path
-output = Path('logs/06_external_validation')
+output = Path('archives/06_external_validation/clean/logs')
 assert json.loads((output / 'run_settings.json').read_text())['status'] == 'completed'
 assert (output / 'per_image_results.csv').is_file()
 assert (output / 'summary.json').is_file()
@@ -158,13 +158,13 @@ PY
 On the **local computer**, from the repository root, replace `<gpu_ip>` before pasting:
 
 ```sh
-mkdir -p logs/06_external_validation_cuda
+mkdir -p archives/06_external_validation/clean/logs
 rsync -av --exclude='merged_nnUNet_results/' \
-  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
-  logs/06_external_validation_cuda/
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/archives/06_external_validation/clean/logs/" \
+  archives/06_external_validation/clean/logs/
 rsync -avnc --exclude='merged_nnUNet_results/' \
-  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/logs/06_external_validation/" \
-  logs/06_external_validation_cuda/
+  "root@<gpu_ip>:/root/nnunet-liver-ultrasound-efficiency-baselines/archives/06_external_validation/clean/logs/" \
+  archives/06_external_validation/clean/logs/
 ```
 
 The checksum dry run should list no file changes. Retry the same transfer after interruption.

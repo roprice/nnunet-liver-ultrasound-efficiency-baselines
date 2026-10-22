@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 DEFAULT_SOURCE = HERE / "SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)"
 DEFAULT_REFERENCE = HERE / "reference" / "smc_lud_reference.json"
-DEFAULT_OUTPUT = REPO / "archives_staging/06_external_validation/smc_lud_prepared"
+DEFAULT_OUTPUT = REPO / "archives/06_external_validation/clean/prepared"
 LUMA_NOTE = ("RGB inputs converted to 8-bit grayscale with PIL Image.convert('L') "
              "(ITU-R 601-2 luma), then saved as PNG. No resizing or intensity rescaling.")
 MANIFEST_FIELDS = ("case", "patient", "class", "pathology", "subset", "split",

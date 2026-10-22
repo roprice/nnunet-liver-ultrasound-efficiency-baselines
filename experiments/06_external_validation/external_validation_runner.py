@@ -35,8 +35,10 @@ REPO = HERE.parents[1]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-DEFAULT_PREPARED = REPO / "archives_staging/06_external_validation/smc_lud_prepared"
-DEFAULT_OUTPUT = REPO / "logs/06_external_validation"
+ARCHIVE = REPO / "archives/06_external_validation"
+DEFAULT_PREPARED = {"clean": ARCHIVE / "clean/prepared", "caliper": ARCHIVE / "caliper/prepared"}
+DEFAULT_OUTPUT = {"clean": ARCHIVE / "clean/logs", "caliper": ARCHIVE / "caliper/logs"}
+DEFAULT_PROXY_MASKS = {"clean": None, "caliper": ARCHIVE / "proxy_masks/hcc_transcribed"}
 DEFAULT_ARCHIVES = REPO / "archives"
 EXPERIMENTS = (
     {"name": "data_efficiency", "trainer": "nnUNetTrainer_dataSubsets_Seed42",
@@ -78,7 +80,8 @@ def model_folder(archive, trainer):
 
 def load_manifest(prepared, subset):
     manifest_path = prepared / "smc_lud_manifest.json"
-    require(manifest_path.is_file(), f"Missing prepared manifest: {manifest_path}; run prepare_external_data.py")
+    require(manifest_path.is_file(), f"Missing prepared manifest: {manifest_path}; run prepare_external_data.py (clean) "
+            "or prepare_caliper_cohort.py (caliper)")
     manifest = json.loads(manifest_path.read_text())
     require(manifest.get("schema_version") == 1, "Unsupported manifest schema")
     cases = sorted((case for case in manifest["cases"] if case["subset"] == subset),
@@ -519,12 +522,13 @@ def main(argv=None):
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--prepared", type=Path, default=DEFAULT_PREPARED)
+    parser.add_argument("--prepared", type=Path, default=None,
+                        help="Default: clean/prepared or caliper/prepared under " + str(ARCHIVE))
     parser.add_argument("--archives", type=Path, default=DEFAULT_ARCHIVES)
-    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--output-dir", type=Path, default=None,
+                        help="Default: clean/logs or caliper/logs under " + str(ARCHIVE))
     parser.add_argument("--proxy-masks", type=Path, default=None,
-                        help="Proxy reference masks from "
-                             "extract_caliper_proxy.py")
+                        help="Default: none for clean, proxy_masks/hcc_transcribed for caliper")
     parser.add_argument("--subset", default="clean",
                         choices=("clean", "caliper"))
     parser.add_argument("--experiments", nargs="+", choices=[e["name"] for e in EXPERIMENTS],
@@ -543,11 +547,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     experiments = [e for e in EXPERIMENTS if e["name"] in args.experiments]
-    prepared = args.prepared.resolve()
+    prepared = (args.prepared or DEFAULT_PREPARED[args.subset]).resolve()
     archives = args.archives.resolve()
-    output = args.output_dir.resolve()
-    proxy_masks_dir = (args.proxy_masks.resolve()
-                       if args.proxy_masks else None)
+    output = (args.output_dir or DEFAULT_OUTPUT[args.subset]).resolve()
+    proxy_masks = args.proxy_masks or DEFAULT_PROXY_MASKS[args.subset]
+    proxy_masks_dir = proxy_masks.resolve() if proxy_masks else None
 
     try:
         manifest, cases, images_dir = load_manifest(prepared, args.subset)

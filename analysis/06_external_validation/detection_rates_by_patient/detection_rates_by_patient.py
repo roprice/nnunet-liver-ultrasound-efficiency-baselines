@@ -21,7 +21,7 @@ MODELS = {**MODELS, "data_efficiency": "nnU-Net default augmentation"}
 PROJECT_ROOT = external.PROJECT_ROOT
 MANIFEST_PATH = external.MANIFEST_PATH
 ARCHIVED_MANIFEST_PATH = (
-    PROJECT_ROOT / "archives/06_external_validation/smc_lud_prepared/smc_lud_manifest.json"
+    PROJECT_ROOT / "archives/06_external_validation/clean/prepared/smc_lud_manifest.json"
 )
 OUTPUT_PATH = Path(__file__).with_suffix(".md")
 COHORTS = {

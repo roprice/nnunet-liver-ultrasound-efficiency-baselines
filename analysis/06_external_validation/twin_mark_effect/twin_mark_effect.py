@@ -2,7 +2,7 @@
 
 The twin frames are identical to the Clean frames except for the caliper marks, so any
 difference between the two predictions is caused by the marks. Prepare and predict the twins with
-experiments/06_external_validation/prepare_twin_test.py and the runner's --subset caliper
+experiments/06_external_validation/prepare_caliper_cohort.py and the runner's --subset caliper
 --experiments data_efficiency, then run from the repository root:
     python -m analysis.06_external_validation.twin_mark_effect.twin_mark_effect
 """
@@ -23,8 +23,8 @@ PROJECT_ROOT = external.PROJECT_ROOT
 FOLDS = external.FOLDS
 PRIMARY_MODEL = "data_efficiency"
 OUTPUT_PATH = Path(__file__).with_suffix(".md")
-DEFAULT_PAIRS = PROJECT_ROOT / "archives_staging/06_external_validation/twin_test_prepared/twin_pairs.json"
-DEFAULT_PREDICTIONS = PROJECT_ROOT / "logs/06_external_validation_twin_test/predictions"
+DEFAULT_PAIRS = PROJECT_ROOT / "archives/06_external_validation/caliper/prepared/twin_pairs.json"
+DEFAULT_PREDICTIONS = PROJECT_ROOT / "archives/06_external_validation/caliper/logs/predictions"
 RATE_METRICS = ("presence", "overlap_iou_00", "centroid_deq_100")
 
 
