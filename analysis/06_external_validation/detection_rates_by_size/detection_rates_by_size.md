@@ -1,14 +1,14 @@
 # External detection by lesion size
 
-SMC-LUD Clean; prediction snapshot `6d6485d55dae` (schema 4); SMC patient manifest SHA-256 `379d7a561b0d0840526bf6cacfe8b43c3c8e280c1086dac95612c8c9f185a7f3`.
+SMC-LUD Clean; prediction snapshot `195716b4a6ec` (schema 4); SMC patient manifest SHA-256 `379d7a561b0d0840526bf6cacfe8b43c3c8e280c1086dac95612c8c9f185a7f3`.
 
 Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, PlainConvUNet, folds 0–4.
 
 ## HCC by relative lesion size
 
-The HCC caliper cohort contains 60 images from 42 patients, separate from the Clean cohort below. Inputs are `prepared/smc_lud_manifest.json`, `proxy_masks/extraction_report.json` and proxy PNGs, and `logs/per_image_results.csv` plus prediction masks under `archives/06_external_validation/caliper_annotation_tests`, outside the Clean prediction snapshot. CSV HCC proxy/SMC rows therefore have snapshot_id=NA; AUL rows retain their snapshot ID. Only the default augmentation family has caliper predictions. Unlike the twin-derived benign Clean proxies, these proxies come from caliper chroma on the evaluated images; visible calipers may affect predictions.
+The HCC caliper cohort contains 306 images from 78 patients, separate from the Clean cohort below. Inputs are the caliper run under `archives/06_external_validation/caliper` and the transcribed proxy masks under `archives/06_external_validation/proxy_masks/hcc_transcribed`, outside the Clean prediction snapshot. CSV HCC proxy/SMC rows therefore have snapshot_id=NA; AUL rows retain their snapshot ID. Only the default augmentation family has caliper predictions. Unlike the twin-derived benign Clean proxies, these proxies come from caliper marks on the evaluated images; visible calipers may affect predictions.
 
-Size is reference mass area divided by whole-image area. For SMC the reference is the chroma-derived circular proxy mask on the selected HCC caliper-marked images; for AUL it is the annotated mass on malignant images. Bins are the AUL test-set quartile cuts of that fraction, applied unchanged to both datasets (0.735%, 1.639%, 5.125%); values equal to a cut fall in the lower bin. Proxies are heuristic circles, not manual annotations, and a circle fitted to an elongated lesion overstates its area, which caps the strict criteria (overlap_iou_05, centroid_deq_025). Image occupancy is not physical lesion size: zoom, depth, cropping and proxy error are uncontrolled.
+Size is reference mass area divided by whole-image area. For SMC the reference is the circular proxy mask from hand-transcribed caliper endpoints on the selected HCC caliper-marked images; for AUL it is the annotated mass on malignant images. Bins are the AUL test-set quartile cuts of that fraction, applied unchanged to both datasets (0.735%, 1.639%, 5.125%); values equal to a cut fall in the lower bin. Proxies are heuristic circles, not manual annotations, and a circle fitted to an elongated lesion overstates its area, which caps the strict criteria (overlap_iou_05, centroid_deq_025). Image occupancy is not physical lesion size: zoom, depth, cropping and proxy error are uncontrolled.
 
 ### Triage-level HCC detection rates against SMC proxy circles
 
@@ -16,11 +16,11 @@ An image is detected when any retained component matches. Presence without overl
 
 | | Q1 | Q2 | Q3 | Q4 | All |
 |---|---|---|---|---|---|
-| images | 6 | 1 | 17 | 36 | 60 |
-| presence rate | 0.533 ± 0.075 | 1.000 ± 0.000 | 0.929 ± 0.064 | 0.950 ± 0.036 | 0.903 ± 0.043 |
-| centroid_deq_100 rate | 0.000 ± 0.000 | 0.400 ± 0.548 | 0.753 ± 0.049 | 0.911 ± 0.023 | 0.767 ± 0.026 |
-| overlap_iou_00 rate | 0.167 ± 0.000 | 0.600 ± 0.548 | 0.729 ± 0.032 | 0.883 ± 0.036 | 0.763 ± 0.018 |
-| presence without overlap rate | 0.367 ± 0.075 | 0.400 ± 0.548 | 0.200 ± 0.067 | 0.067 ± 0.015 | 0.140 ± 0.025 |
+| images | 23 | 47 | 111 | 125 | 306 |
+| presence rate | 0.583 ± 0.079 | 0.736 ± 0.099 | 0.861 ± 0.028 | 0.938 ± 0.023 | 0.852 ± 0.028 |
+| centroid_deq_100 rate | 0.096 ± 0.084 | 0.447 ± 0.103 | 0.739 ± 0.041 | 0.880 ± 0.018 | 0.703 ± 0.035 |
+| overlap_iou_00 rate | 0.287 ± 0.105 | 0.511 ± 0.099 | 0.762 ± 0.033 | 0.867 ± 0.017 | 0.731 ± 0.033 |
+| presence without overlap rate | 0.296 ± 0.036 | 0.226 ± 0.032 | 0.099 ± 0.017 | 0.070 ± 0.014 | 0.122 ± 0.014 |
 
 Presence without overlap is defined relative to overlap_iou_00 (presence rate minus overlap_iou_00 rate), not the centroid criterion.
 
@@ -32,39 +32,39 @@ Rates are fractions of patients with any applicable image meeting the criterion.
 
 | | Q1 | Q2 | Q3 | Q4 | All |
 |---|---|---|---|---|---|
-| patients | 0 | 0 | 0 | 2 | 2 |
-| presence rate | NA | NA | NA | 1.000 ± 0.000 | 1.000 ± 0.000 |
-| overlap_iou_00 rate | NA | NA | NA | 1.000 ± 0.000 | 1.000 ± 0.000 |
-| centroid_deq_100 rate | NA | NA | NA | 1.000 ± 0.000 | 1.000 ± 0.000 |
-| presence without overlap rate | NA | NA | NA | 0.000 ± 0.000 | 0.000 ± 0.000 |
+| patients | 10 | 22 | 30 | 34 | 48 |
+| presence rate | 0.760 ± 0.089 | 0.891 ± 0.052 | 0.980 ± 0.018 | 0.941 ± 0.042 | 0.983 ± 0.017 |
+| overlap_iou_00 rate | 0.340 ± 0.114 | 0.682 ± 0.072 | 0.927 ± 0.028 | 0.876 ± 0.038 | 0.954 ± 0.009 |
+| centroid_deq_100 rate | 0.180 ± 0.130 | 0.555 ± 0.067 | 0.833 ± 0.053 | 0.876 ± 0.038 | 0.933 ± 0.017 |
+| presence without overlap rate | 0.420 ± 0.084 | 0.209 ± 0.041 | 0.053 ± 0.018 | 0.065 ± 0.048 | 0.029 ± 0.024 |
 
 ### Presence-based HCC detection: AUL versus SMC
 
-Restricted to the observed range common to both datasets (0.056%–23.442% of image area, inclusive) so that neither dataset is compared where the other has no lesions; the full-sample row is unrestricted. Presence without overlap is the share of all images with a retained prediction but no overlap with the AUL annotation or SMC proxy circle, respectively. The reference types differ; presence itself does not depend on the reference.
+Restricted to the observed range common to both datasets (0.079%–23.442% of image area, inclusive) so that neither dataset is compared where the other has no lesions; the full-sample row is unrestricted. Presence without overlap is the share of all images with a retained prediction but no overlap with the AUL annotation or SMC proxy circle, respectively. The reference types differ; presence itself does not depend on the reference.
 
 | bin | AUL images | SMC images | AUL presence rate | SMC presence rate | AUL presence without overlap rate | SMC presence without overlap rate |
 |---|---:|---:|---|---|---|---|
-| Q1 | 12 | 6 | 0.883 ± 0.046 | 0.533 ± 0.075 | 0.000 ± 0.000 | 0.367 ± 0.075 |
-| Q2 | 20 | 1 | 0.880 ± 0.027 | 1.000 ± 0.000 | 0.000 ± 0.000 | 0.400 ± 0.548 |
-| Q3 | 27 | 17 | 1.000 ± 0.000 | 0.929 ± 0.064 | 0.030 ± 0.017 | 0.200 ± 0.067 |
-| Q4 | 27 | 27 | 1.000 ± 0.000 | 0.933 ± 0.048 | 0.000 ± 0.000 | 0.089 ± 0.020 |
-| Common range | 86 | 51 | 0.956 ± 0.010 | 0.886 ± 0.051 | 0.009 ± 0.005 | 0.165 ± 0.030 |
-| Full sample | 87 | 60 | 0.956 ± 0.010 | 0.903 ± 0.043 | 0.016 ± 0.010 | 0.140 ± 0.025 |
+| Q1 | 12 | 23 | 0.883 ± 0.046 | 0.583 ± 0.079 | 0.000 ± 0.000 | 0.296 ± 0.036 |
+| Q2 | 20 | 47 | 0.880 ± 0.027 | 0.736 ± 0.099 | 0.000 ± 0.000 | 0.226 ± 0.032 |
+| Q3 | 27 | 111 | 1.000 ± 0.000 | 0.861 ± 0.028 | 0.030 ± 0.017 | 0.099 ± 0.017 |
+| Q4 | 27 | 107 | 1.000 ± 0.000 | 0.933 ± 0.021 | 0.000 ± 0.000 | 0.082 ± 0.017 |
+| Common range | 86 | 288 | 0.956 ± 0.010 | 0.845 ± 0.031 | 0.009 ± 0.005 | 0.129 ± 0.015 |
+| Full sample | 87 | 306 | 0.956 ± 0.010 | 0.852 ± 0.028 | 0.016 ± 0.010 | 0.122 ± 0.014 |
 
 ### Presence-based HCC detection at one image per patient: AUL versus SMC
 
-One image is sampled uniformly from each SMC patient's proxy-eligible images (seed 42; sorted patient and image IDs), independently of predictions, and reused across models and folds. AUL's full sample is unchanged. Sampling precedes size filtering; the same AUL quartile cuts apply, with a recomputed common observed range (0.056%–23.442% of image area, inclusive). The full-sample row includes every sampled image.
+One image is sampled uniformly from each SMC patient's proxy-eligible images (seed 42; sorted patient and image IDs), independently of predictions, and reused across models and folds. AUL's full sample is unchanged. Sampling precedes size filtering; the same AUL quartile cuts apply, with a recomputed common observed range (0.235%–23.442% of image area, inclusive). The full-sample row includes every sampled image.
 
 This is not the SMC singleton-patient subset. Patients without eligible proxies are excluded. AUL's original image-selection procedure is unknown; this matches image counts per patient, not acquisition or selection procedures. Results describe one fixed image sample; fold SD does not measure image-selection uncertainty.
 
 | bin | AUL images | SMC images | AUL presence rate | SMC presence rate | AUL presence without overlap rate | SMC presence without overlap rate |
 |---|---:|---:|---|---|---|---|
-| Q1 | 12 | 5 | 0.883 ± 0.046 | 0.600 ± 0.000 | 0.000 ± 0.000 | 0.400 ± 0.000 |
-| Q2 | 20 | 1 | 0.880 ± 0.027 | 1.000 ± 0.000 | 0.000 ± 0.000 | 0.400 ± 0.548 |
-| Q3 | 27 | 13 | 1.000 ± 0.000 | 0.908 ± 0.084 | 0.030 ± 0.017 | 0.200 ± 0.088 |
-| Q4 | 27 | 17 | 1.000 ± 0.000 | 0.941 ± 0.059 | 0.000 ± 0.000 | 0.141 ± 0.032 |
-| Common range | 86 | 36 | 0.956 ± 0.010 | 0.883 ± 0.057 | 0.009 ± 0.005 | 0.206 ± 0.037 |
-| Full sample | 87 | 42 | 0.956 ± 0.010 | 0.900 ± 0.049 | 0.016 ± 0.010 | 0.176 ± 0.032 |
+| Q1 | 11 | 4 | 0.873 ± 0.050 | 0.800 ± 0.112 | 0.000 ± 0.000 | 0.200 ± 0.209 |
+| Q2 | 20 | 11 | 0.880 ± 0.027 | 0.818 ± 0.144 | 0.000 ± 0.000 | 0.200 ± 0.076 |
+| Q3 | 27 | 29 | 1.000 ± 0.000 | 0.772 ± 0.052 | 0.030 ± 0.017 | 0.090 ± 0.031 |
+| Q4 | 27 | 27 | 1.000 ± 0.000 | 0.904 ± 0.042 | 0.000 ± 0.000 | 0.111 ± 0.045 |
+| Common range | 85 | 71 | 0.955 ± 0.010 | 0.831 ± 0.045 | 0.009 ± 0.005 | 0.121 ± 0.027 |
+| Full sample | 87 | 78 | 0.956 ± 0.010 | 0.846 ± 0.041 | 0.016 ± 0.010 | 0.110 ± 0.025 |
 
 AUL malignant images may be a different diagnostic mix from SMC HCC, and the SMC caliper subset is selected. Rates are image-weighted with no patient-clustered intervals or hypothesis tests.
 
