@@ -39,7 +39,16 @@ Rule: **save only when the frame has exactly one pair of caliper marks, on one l
 - a mark whose center you cannot locate;
 - any doubt.
 
-To zoom, use the toolbar magnifier, then click it again to switch it off before clicking marks. Clicks are ignored while zoom or pan is active.
+How to zoom:
+
+- Click the magnifier button in the toolbar.
+- On the image, press and drag a box around the mark, then release.
+- Click the magnifier again to turn it off. Your clicks won’t register until you do, and a red message reminds you.
+- Click the mark centers. You can zoom in on one mark, click it, press the home button (house icon) for the full view, then zoom in on the second mark. Your first click is kept.
+
+Note that when you advance to the next frame, via Enter to save or x to exclude, the next frame opens at full view.
+
+
 
 Expect about 5 seconds per frame, roughly 40 minutes in total.
 
