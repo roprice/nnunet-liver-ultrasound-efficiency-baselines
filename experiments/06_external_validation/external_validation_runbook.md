@@ -1,6 +1,6 @@
 # Experiment 06: external validation
 
-Fixed models: experiments 02, 03 and 04, 588-image training pool, seed 42, folds 0–4, `checkpoint_final.pth` (150 epochs). Run 15 separate models on SMC-LUD Clean. No training is performed.
+Fixed models: experiments 02, 03 and 04, 588-image training pool, seed 42, folds 0–4, `checkpoint_final.pth` (150 epochs). Run 15 separate models on SMC-LUD Clean. No training is performed. CUDA required.
 
 ## Environment and inputs
 
@@ -39,8 +39,6 @@ python -m pip install --upgrade pip
 python -m pip install 'nnunetv2==2.8.1' 'torch==2.14.1'
 python -c 'import torch, numpy, PIL; assert torch.cuda.is_available(); print(torch.cuda.get_device_name(0))'
 ```
-
-If CUDA is unavailable, install a CUDA-enabled build of the same PyTorch version before proceeding.
 
 Required inputs:
 
