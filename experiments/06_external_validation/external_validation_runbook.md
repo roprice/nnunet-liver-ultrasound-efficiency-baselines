@@ -1,12 +1,12 @@
 # Experiment 06: external validation
 
-Fixed models: experiments 02, 03 and 04, **588-image training pool, seed 42, folds 0–4, `checkpoint_final.pth` (150 epochs)**. Run 15 separate models on SMC-LUD Clean. No training is performed.
+Fixed models: experiments 02, 03 and 04, 588-image training pool, seed 42, folds 0–4, `checkpoint_final.pth` (150 epochs). Run 15 separate models on SMC-LUD Clean. No training is performed.
 
 ## Environment and inputs
 
 Run commands from the repository root unless stated otherwise.
 
-On the **GPU host** (Ubuntu, RTX A6000):
+On the GPU host:
 
 ```sh
 # install python lest not be installed already
@@ -47,13 +47,13 @@ Required inputs:
 - `archives/06_external_validation/clean/prepared/{smc_lud_manifest.json,conversion_report.json,images/}`.
 - Each experiment's `archives/<experiment>/nnUNet_results/Dataset001_AUL/<trainer>__nnUNetPlans__2d/{plans.json,dataset.json,fold_<0-4>/checkpoint_final.pth,fold_<0-4>/checkpoint_metadata.json}`.
 
-On the **local computer**, prepare the cohort if needed:
+On the local computer, prepare the cohort if needed:
 
 ```sh
 .venv/bin/python -B experiments/06_external_validation/prepare_external_data.py
 ```
 
-While that process runs, on the **local computer**, from the repository root, replace `<gpu_ip>` before pasting:
+While that process runs, on the local computer, from the repository root, replace `<gpu_ip>` before pasting:
 
 ```sh
 rsync -avR archives/06_external_validation/clean/prepared/ \
@@ -80,7 +80,7 @@ rsync -avR --include='*/' --include='plans.json' --include='dataset.json' \
 
 ## Check and run
 
-Once the upload is complete, on the **GPU host**, from the repository root:
+Once the upload is complete, on the GPU host, from the repository root:
 
 ```sh
 . "$HOME/.venv/bin/activate"
@@ -109,7 +109,7 @@ python -B experiments/06_external_validation/external_validation_runner.py \
 
 ## Full validation
 
-On the **GPU host**:
+On the GPU host:
 
 ```sh
 tmux new -s external_validation
@@ -141,7 +141,7 @@ Resume by rerunning the same command: existing masks are skipped and all cases r
 - `predictions/<experiment>_588images_seed42_fold<0-4>_final/`: masks and nnU-Net sidecars.
 - `runner.log`, `environment_packages.txt`, `nvidia_smi.txt` and `source_revision.txt`.
 
-After the command exits successfully, verify completion on the **GPU host**:
+After the command exits successfully, verify completion on the GPU host:
 
 ```sh
 python - <<'PY'
@@ -155,7 +155,7 @@ print('Completed')
 PY
 ```
 
-On the **local computer**, from the repository root, replace `<gpu_ip>` before pasting:
+On the local computer, from the repository root, replace `<gpu_ip>` before pasting:
 
 ```sh
 mkdir -p archives/06_external_validation/clean/logs

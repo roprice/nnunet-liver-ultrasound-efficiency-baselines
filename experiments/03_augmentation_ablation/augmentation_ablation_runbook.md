@@ -126,8 +126,8 @@ def brightness_wrapper(pipeline):
     assert len(wrappers) == 1
     return wrappers[0]
 
-default = brightness_wrapper(nnUNetTrainer.get_training_transforms(**arguments))
-wrapper = brightness_wrapper(nnUNetTrainer_brightnessAugmentation.get_training_transforms(**arguments))
+default = brightness_wrapper(nnUNetTrainer.get_training_transforms(arguments))
+wrapper = brightness_wrapper(nnUNetTrainer_brightnessAugmentation.get_training_transforms(arguments))
 assert wrapper.apply_probability == 0.5
 assert default.apply_probability == 0.15
 transform = wrapper.transform
@@ -286,7 +286,7 @@ sh logs/03_augmentation_ablation/record_event.sh setup_complete
   
   #### Download everything
   
-  On your **local computer**, from the repository root (replace `<gpu-ip>`):
+  On your local computer, from the repository root (replace `<gpu-ip>`):
   
   ```sh
   #
@@ -310,7 +310,7 @@ sh logs/03_augmentation_ablation/record_event.sh setup_complete
 
  On a CPU, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. 
   
-  After training starts, launch this once from the repository root **on the CPU**. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
+  After training starts, launch this once from the repository root on the CPU. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
 
 ```bash
 #

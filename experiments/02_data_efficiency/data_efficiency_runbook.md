@@ -237,7 +237,7 @@
   
   #### Download everything
   
-  On your **local computer**, from the repository root (replace `<gpu-ip>`):
+  On your local computer, from the repository root (replace `<gpu-ip>`):
   
   ```sh
   bash experiments/download_archive.sh 02_data_efficiency root@<gpu-ip>
@@ -254,7 +254,7 @@
   
   On a CPU, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. 
   
-  After training starts, launch this once from the repository root **on the CPU**. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
+  After training starts, launch this once from the repository root on the CPU. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
   
   ```sh
   python3 -B experiments/02_data_efficiency/data_efficiency_runner_remote_control.py finish \

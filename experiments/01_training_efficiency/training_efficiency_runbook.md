@@ -204,7 +204,7 @@ Option A takes you through manually completion (verifying, finishing, downloadin
 
 #### Verify completion
 
-On the **GPU**, from the repository root, require exit status `0` and successful separate verification:
+On the GPU, from the repository root, require exit status `0` and successful separate verification:
 
 ```sh
 cat runner_exit_status.txt  # must be 0
@@ -212,7 +212,7 @@ cat runner_exit_status.txt  # must be 0
 
 #### Finish the GPU usage record
 
-On the **GPU**, from the repository root:
+On the GPU, from the repository root:
 
 ```sh
 python3 experiments/01_training_efficiency/finish_recording.py
@@ -222,7 +222,7 @@ Records missing completion events, stops the sampler, and writes the cost summar
 
 #### Download everything
 
-On your **local computer**, from the repository root (replace `<gpu-ip>`):
+On your local computer, from the repository root (replace `<gpu-ip>`):
 
 ```sh
 bash experiments/download_archive.sh 01_training_efficiency root@<gpu-ip>
@@ -237,9 +237,9 @@ After `Archive verified`, delete the instance in Verda. You can delete the block
 
 ### Option B: Automated completion
 
-On the **CPU**, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. Choose the GPU instance ID and an archive destination with sufficient space that does not yet exist.
+On the CPU, prepare this checkout, Python 3.10+, `rsync`, non-interactive SSH with a trusted GPU host key, and the configured [Verda CLI](https://docs.verda.com/cli/getting-started/). Keep the SSH private key and Cloud API credentials on the CPU. Choose the GPU instance ID and an archive destination with sufficient space that does not yet exist.
 
-After training starts, launch this once from the repository root **on the CPU**. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
+After training starts, launch this once from the repository root on the CPU. Use the GPU's actual SSH address, instance ID, and absolute paths; no need to wait for training to finish:
 
 ```sh
 python3 experiments/01_training_efficiency/training_efficiency_runner_remote_control.py finish \

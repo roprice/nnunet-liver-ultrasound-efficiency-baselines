@@ -1,6 +1,6 @@
 # Experiment 05: local prediction efficiency
 
-Fixed model: experiment 02, **588-image training pool, seed 42, fold 4, `checkpoint_final.pth` (150 epochs)**. This is one fold model, not a five-fold ensemble. Use the same 147 held-out images (87 malignant, 40 benign, 20 normal). No training is performed. The old experiment-04 prediction runner is replaced by this experiment.
+Fixed model: experiment 02, 588-image training pool, seed 42, fold 4, `checkpoint_final.pth` (150 epochs). This is one fold model, not a five-fold ensemble. Use the same 147 held-out images (87 malignant, 40 benign, 20 normal). No training is performed. The old experiment-04 prediction runner is replaced by this experiment.
 
 ## Environment and inputs
 
@@ -48,7 +48,7 @@ Every run also times the first sorted image in an independent, process-cold CLI 
 
 Prediction masks and nnU-Net sidecars are stored under `archives/05_prediction_efficiency/nnUNet_results/Dataset001_AUL/<run-name>/`, which is Git-ignored. `<run-name>` is the report output directory's final component: `cpu` or `mps` by default, or `smoke_cpu` for the documented smoke test. Each run contains `single_case_<device>/` and `predictions_<device>_seed42_fold4_repeatN/`. Reports, settings, CSVs and logs remain under `logs/` for Git tracking.
 
-Pixel-identical masks are not required, but any per-image decision/count discrepancy makes the runner fail **after writing the agreement reports**. Inspect those differences rather than silently accepting a new model/device result. Output-name, mask-format, dimension and label checks also fail on mismatch. Other failures preserve logs/settings; reruns require new empty report and prediction directories.
+Pixel-identical masks are not required, but any per-image decision/count discrepancy makes the runner fail after writing the agreement reports. Inspect those differences rather than silently accepting a new model/device result. Output-name, mask-format, dimension and label checks also fail on mismatch. Other failures preserve logs/settings; reruns require new empty report and prediction directories.
 
 Parent lifetime RSS includes all preloaded images and is labelled separately. Optional child-tree summed RSS excludes the benchmark parent, can count shared pages repeatedly and can miss short peaks; it is not MPS peak allocated memory. No Mac energy sensor is sampled: local energy is null, not zero or a TDP estimate. Training GPU energy and invoice attribution are handled by the [compute-cost tooling](../../analysis/compute_efficiency/compute_cost/compute_cost_runbook.md); weights-only FP16 export is handled by the [footprint tooling](../../analysis/compute_efficiency/model_footprint/model_footprint_runbook.md).
 

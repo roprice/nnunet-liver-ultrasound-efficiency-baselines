@@ -36,7 +36,7 @@ Image-size associations are descriptive, not causal; shape/sliding-window tiling
 
 ## Prediction agreement
 
-The baseline is the **saved CUDA benchmark masks**. Experiment 02's ordinary masks (`cuda_evaluation`) are separate: execution paths can slightly change the same model's masks. Canonical-dataset facts are verified against archived local masks; CUDA benchmark metrics use the same shared functions and experiment-02 references.
+The baseline is the saved CUDA benchmark masks. Experiment 02's ordinary masks (`cuda_evaluation`) are separate: execution paths can slightly change the same model's masks. Canonical-dataset facts are verified against archived local masks; CUDA benchmark metrics use the same shared functions and experiment-02 references.
 
 Repeat 1 is shown; within-backend repeatability is reported below.
 

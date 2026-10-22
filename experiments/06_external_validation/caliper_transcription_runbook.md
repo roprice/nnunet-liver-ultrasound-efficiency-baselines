@@ -32,7 +32,7 @@ The tool shows one frame at a time and saves after every decision to `archives/0
 | `x` | exclude the frame |
 | `q` | quit |
 
-Rule: **save only when the frame has exactly one pair of caliper marks, on one lesion.** Click the center of each of the two marks. Press `x` for everything else:
+Rule: save only when the frame has exactly one pair of caliper marks, on one lesion. Click the center of each of the two marks. Press `x` for everything else:
 
 - no caliper marks;
 - more than one pair of marks, including two measurements of the same lesion or marks on separate lesions;

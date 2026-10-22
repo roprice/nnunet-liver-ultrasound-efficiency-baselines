@@ -173,7 +173,7 @@ Detach with `Ctrl+b` then `d`; reattach with `tmux attach -t training_dryrun`. C
 
 #### Verify completion
 
-On the **GPU**, from the repository root with the venv active, require exit status `0` and successful verification:
+On the GPU, from the repository root with the venv active, require exit status `0` and successful verification:
 
 ```sh
 cat dryrun_exit_status.txt  # must be 0
@@ -210,7 +210,7 @@ Epoch-1 and best masks come from `nnUNet_results/dry_run`; final masks come from
 
 #### Finish the GPU usage record
 
-On the **GPU**, from the repository root:
+On the GPU, from the repository root:
 
 ```sh
 sh logs/01_training_efficiency_dryrun/record_event.sh recording_ended
@@ -234,7 +234,7 @@ PY
 
 #### Download everything
 
-On your **local computer**, from the repository root (replace `<gpu-ip>`):
+On your local computer, from the repository root (replace `<gpu-ip>`):
 
 ```sh
 bash experiments/download_archive.sh 01_training_efficiency_dry_run_01 root@<gpu-ip>
@@ -250,7 +250,7 @@ After `Staging copy verified`, delete the instance in Verda or continue to step 
 
 For a fresh instance, start the [full runbook](../01_training_efficiency/training_efficiency_runbook.md) at step 1.
 
-To reuse this instance, remove the dry-run outputs from the repository root on the **GPU**, only after `Staging copy verified`:
+To reuse this instance, remove the dry-run outputs from the repository root on the GPU, only after `Staging copy verified`:
 
 ```sh
 rm -rf ~/nnUNet_preprocessed/dry_run ~/nnUNet_results/dry_run \
