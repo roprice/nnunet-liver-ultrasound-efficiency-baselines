@@ -13,6 +13,23 @@ analysis = importlib.import_module(
 
 
 class FormulaTests(unittest.TestCase):
+    def test_rounded_target_returns_first_pass_and_handles_search_limit(self):
+        per_fold = [{"parameters": (1.0, 0.123)} for _ in analysis.FOLDS]
+        self.assertEqual(analysis.passes_to_rounded_target(per_fold), "246 passes")
+        self.assertEqual(analysis.passes_to_rounded_target(per_fold, max_passes=10),
+                         "more than 10 passes")
+        self.assertEqual(analysis.passes_to_rounded_target([{}]), "not fitted")
+
+    def test_rounded_target_requires_sd_to_round_to_zero(self):
+        per_fold = [{"parameters": (1.0, b)} for b in (0.1, 0.1, 0.1, 0.1, 2.0)]
+        expected = next(n for n in range(1, 5000)
+                        if analysis.mean_sd([analysis.detection_probability(1.0, b, n)
+                                             for b in (0.1, 0.1, 0.1, 0.1, 2.0)]) == "1.000 ± 0.000")
+        self.assertEqual(analysis.passes_to_rounded_target(per_fold), f"{expected:,} passes")
+        previous = [analysis.detection_probability(*r["parameters"], expected - 1) for r in per_fold]
+        self.assertTrue(analysis.mean_sd(previous).startswith("1.000 ±"))
+        self.assertNotEqual(analysis.mean_sd(previous), "1.000 ± 0.000")
+
     def test_detection_probability_matches_monte_carlo(self):
         a, b = 2.0, 0.5
         rng = np.random.default_rng(0)
@@ -104,6 +121,10 @@ class HccCaliperCsvTests(unittest.TestCase):
             path.write_text(header + "\n".join(lines) + "\n")
             counts = analysis.hcc_caliper_overlap_counts(path)
             self.assertEqual(sorted(counts[0]), [(1, 0), (2, 1)])
+            path.write_text((header + "\n".join(lines) + "\n").replace(
+                "overlap_detection_iou_00_flag", "centroid_detection_deq_100_flag"))
+            centroid = analysis.hcc_caliper_overlap_counts(path, "centroid_detection_deq_100_flag")
+            self.assertEqual(centroid, counts)
             path.write_text(header)
             with self.assertRaisesRegex(RuntimeError, "No default-model HCC proxy rows"):
                 analysis.hcc_caliper_overlap_counts(path)
@@ -124,6 +145,16 @@ class ReportTests(unittest.TestCase):
             self.assertIn(heading, text)
         self.assertIn("| HCC overlap, transferred ρ |", text)
         self.assertIn("| HCC presence, Clean cohort | 300 |", text)
+        self.assertNotIn("The fitted HCC projections first round", text)
+        projection = text.split("## Projected detection by number of passes\n", 1)[1]
+        table = [line for line in projection.splitlines() if line.startswith("|")]
+        self.assertTrue(table[0].startswith("| passes | HCC presence, Clean cohort |"))
+        self.assertEqual(len(table), 13)
+        for passes, row in enumerate(table[2:], start=1):
+            expected = analysis.mean_sd([r["projection"][passes - 1] for r in results["hcc_presence"]])
+            self.assertTrue(row.startswith(f"| {passes} | {expected} |"))
+            self.assertEqual(len(row.split("|")), len(table[0].split("|")))
+        self.assertNotIn("**", text)
 
 
 if __name__ == "__main__":

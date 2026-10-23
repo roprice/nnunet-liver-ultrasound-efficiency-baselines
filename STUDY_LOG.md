@@ -1,5 +1,56 @@
 # Study log
 
+
+
+## 2026-10-22
+_Estimated development effort: 1 through today, 169 total_
+
+
+
+
+## 2026-10-22
+_Estimated development effort: 11 through today, 168 total_
+
+This is a longer entry than most, so we'll summarize it as follows:
+
+### AUL-trained models generalize to external dataset but don't meet our pre-registered 0.03 threshold, failing it for malignant detection and greatly surpassing it for benign, which may result from mass-size discrepancies by pathology. Multiple passes per patient improve the effectiveness of the model for a nominal cost.
+
+Picking up on the last point, we can project that AUL-trained models predict 100% of malignant masses in the SMC dataset after 11 passes.
+
+Given recorded inference speeds of less than 1 prediction per second on a consumer laptop, we consider this one of the studies most important findings of the study. 
+
+It could mean that one of our low-cost models, for a nominal cost in clinical time and energy, could surpass whatever gains might be derived from other methods, such as adding more data, more compute, more complex training pipelines, or novel network architectures. 
+
+At that same 11-pass threshold, exploratory, proxy-mask based prediction rates for overlap IoU>0.0 and Centroid DEQ 1.0 are 99% and 98% respectively.
+
+The caveat there is the size analysis, where HCC detection rates are abysmal at less than 2cm and very good above 8cm. Keeping in mind that sizes analyses themselves are exploratory, given that they are based in the same calipers-derived, perfect-circle, proxy masks.
+
+It's hard to compare these SMC numbers to AUL because, among other discrepancies, the latter doesnt have physical measurements.
+
+---
+
+As for multiple-passes for single patients, we did extract more proxy masks for HCC images from the SMC dataset using calipers and run analysis. The analysis shows more noise than for hemangioma proxy masks, due to (a) the lack of "clean twins" and (b) the heterogenous nature of the acquisition devices and data preparation methods, such as the resizing of all images to a 512x512 standard.
+
+The HCC proxy mask extraction is also problematic in that necessitated both manually standardizing caliper marks, and also creating faux clean twins. The manually created caliper marks, where applied to a subset of images where patients had exactly 4 or more scans. And relatively large subset thereof was discarded accorded to the following rule: only black and white images with exactly two caliper marks were used; the rest (0 marks, 1 mark, 3 marks, 4 marks, doppler etc) were excluded. The maually added marks were used  to create proxy masks for the resulting subset.
+
+Because of the flimsiness of the approach, we continue to regard all analysis derived from proxy masks as exploratory; it is amply reported in the repository, however, and like the presence-based detection rates (which do no need proxy masks), the results partially validate the the AUL-trained models.
+
+With that said, the findings are interesting for exploratory purposes, showing that for multiple passes other triage-level detections views besides presence based improve monotically.
+
+---
+
+Despite the high presence-based detection rates at multiple passes per patient, the external validation experiment against the SMC dataset only partially validates the AUL models, did not fall within our registered 0.03 detection rate range. This metric was consistent with 0.03 detection-rate threshholds registered in advance of other experiments in our study. In retrospect, perhaps it was a mistake to register an AUL-comparitive value as a basis for considering the experiment "validating". We should have defined validating better, since post-hoc, it seems the external validation experiment was valuable in multiple ways. We should have researched the question better and found a more meaningful metric or set of metrics.
+
+Presence-based detection rates were 0.894 for malignant-mass images and 0.924 for benign-mass ones. That's as compared to 0.956 in for malignant in AUL and 0.725 for benign. 
+
+A one-off analysis whereby we purged SMC of color images, made no substantial difference.
+
+It's problematic to compare one dataset's results to another however, without considering size, which as we have seen from regression testing is a significant confound for the performance of the models on the AUL dataset.
+
+In short: it's possible there were proportionally more small malignant masses in SMC than in AUL and more large benign masses in SMC. Caliper-derived proxy masks support this explanation. However, this remains speculative since mass sizes (and locations) were not recorded by segmenation-annotation.
+
+
+
 ## 2026-10-20
 _Estimated development effort: 6 through today, 157 total_
 
@@ -40,8 +91,6 @@ Due to the nature of the SCM data set we can probably only report presence-based
 | 27 | 0 | 0 | NA |
 | 28 | 1 | 28 | 1.000 ± 0.000 |
 
-
-
 Custom augmentations perform nearly as well, with only Gaussian noise failing to achieve perfect detection at 10 passes (though also perfect from 4-9 and 11-28).
 
 For hemangioma, thanks to the proxy masks we extracted from caliper annotations, we have similar-shaped metrics for other views of detection.
@@ -64,10 +113,6 @@ Our paper trail budget appears to come to approximately $91. We'll reverify that
 | **Total** | **40** | **40** | **40** | **140** |
 
 Total saved checkpoints: 220 (excluding dry run checkpoints)
-
-
-
-
 
 
 

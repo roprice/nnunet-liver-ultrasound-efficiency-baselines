@@ -14,6 +14,7 @@ Outcomes are fitted only with at least 20 patients with two or more images.
 | Hemangioma presence, Clean cohort | 323 | 212 | 1267 | 0.924 ± 0.004 | 0.926 ± 0.002 | 0.063 ± 0.013 |
 | Hemangioma overlap (IoU > 0), proxy subset | 190 | 75 | 380 | 0.758 ± 0.017 | 0.754 ± 0.020 | 0.122 ± 0.049 |
 | HCC overlap (IoU > 0), caliper subset | 78 | 68 | 306 | 0.731 ± 0.033 | 0.730 ± 0.034 | 0.300 ± 0.053 |
+| HCC centroid (d_eq ≤ 1.0), caliper subset | 78 | 68 | 306 | 0.703 ± 0.035 | 0.702 ± 0.036 | 0.310 ± 0.065 |
 
 ## Out-of-sample check
 
@@ -29,6 +30,8 @@ Fitted only on patients with ≤3 images, then used to predict detection for pat
 | Hemangioma overlap (IoU > 0), proxy subset | 5 | 10 | 1.000 ± 0.000 | 0.979 ± 0.014 |
 | HCC overlap (IoU > 0), caliper subset | 4 | 26 | 0.985 ± 0.021 | 0.947 ± 0.054 |
 | HCC overlap (IoU > 0), caliper subset | 5 | 12 | 0.850 ± 0.037 | 0.960 ± 0.046 |
+| HCC centroid (d_eq ≤ 1.0), caliper subset | 4 | 26 | 0.985 ± 0.021 | 0.960 ± 0.044 |
+| HCC centroid (d_eq ≤ 1.0), caliper subset | 5 | 12 | 0.800 ± 0.075 | 0.972 ± 0.036 |
 
 ## Within-patient subsampling
 
@@ -44,15 +47,23 @@ Patients with ≥5 images. For each, the exact share of all n-image subsets of t
 | Hemangioma overlap (IoU > 0), proxy subset | all | model | 0.754 ± 0.020 | 0.916 ± 0.020 | 0.965 ± 0.015 | 0.983 ± 0.011 | 0.991 ± 0.007 |
 | HCC overlap (IoU > 0), caliper subset | 22 | subsampled | 0.711 ± 0.034 | 0.837 ± 0.043 | 0.882 ± 0.039 | 0.903 ± 0.031 | 0.913 ± 0.024 |
 | HCC overlap (IoU > 0), caliper subset | all | model | 0.730 ± 0.034 | 0.867 ± 0.033 | 0.918 ± 0.028 | 0.943 ± 0.024 | 0.958 ± 0.021 |
+| HCC centroid (d_eq ≤ 1.0), caliper subset | 22 | subsampled | 0.668 ± 0.031 | 0.794 ± 0.051 | 0.838 ± 0.055 | 0.857 ± 0.055 | 0.868 ± 0.052 |
+| HCC centroid (d_eq ≤ 1.0), caliper subset | all | model | 0.702 ± 0.036 | 0.845 ± 0.039 | 0.901 ± 0.035 | 0.929 ± 0.031 | 0.946 ± 0.028 |
 
 ## Projected detection by number of passes
 
-| outcome | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-|---|---|---|---|---|---|---|---|---|---|---|
-| HCC presence, Clean cohort | 0.918 ± 0.012 | 0.976 ± 0.005 | 0.990 ± 0.003 | 0.995 ± 0.002 | 0.997 ± 0.001 | 0.998 ± 0.001 | 0.999 ± 0.001 | 0.999 ± 0.001 | 0.999 ± 0.000 | 0.999 ± 0.000 |
-| Hemangioma presence, Clean cohort | 0.926 ± 0.002 | 0.990 ± 0.001 | 0.998 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 | 1.000 ± 0.000 |
-| Hemangioma overlap (IoU > 0), proxy subset | 0.754 ± 0.020 | 0.916 ± 0.020 | 0.965 ± 0.015 | 0.983 ± 0.011 | 0.991 ± 0.007 | 0.994 ± 0.005 | 0.996 ± 0.004 | 0.998 ± 0.003 | 0.998 ± 0.002 | 0.999 ± 0.002 |
-| HCC overlap (IoU > 0), caliper subset | 0.730 ± 0.034 | 0.867 ± 0.033 | 0.918 ± 0.028 | 0.943 ± 0.024 | 0.958 ± 0.021 | 0.967 ± 0.018 | 0.973 ± 0.016 | 0.978 ± 0.014 | 0.981 ± 0.013 | 0.984 ± 0.012 |
-| HCC overlap, transferred ρ | 0.731 ± 0.033 | 0.835 ± 0.059 | 0.875 ± 0.076 | 0.897 ± 0.084 | 0.909 ± 0.089 | 0.918 ± 0.091 | 0.924 ± 0.093 | 0.928 ± 0.094 | 0.932 ± 0.095 | 0.935 ± 0.095 |
+| passes | HCC presence, Clean cohort | Hemangioma presence, Clean cohort | Hemangioma overlap (IoU > 0), proxy subset | HCC overlap (IoU > 0), caliper subset | HCC centroid (d_eq ≤ 1.0), caliper subset | HCC overlap, transferred ρ |
+|---:|---|---|---|---|---|---|
+| 1 | 0.918 ± 0.012 | 0.926 ± 0.002 | 0.754 ± 0.020 | 0.730 ± 0.034 | 0.702 ± 0.036 | 0.731 ± 0.033 |
+| 2 | 0.976 ± 0.005 | 0.990 ± 0.001 | 0.916 ± 0.020 | 0.867 ± 0.033 | 0.845 ± 0.039 | 0.835 ± 0.059 |
+| 3 | 0.990 ± 0.003 | 0.998 ± 0.000 | 0.965 ± 0.015 | 0.918 ± 0.028 | 0.901 ± 0.035 | 0.875 ± 0.076 |
+| 4 | 0.995 ± 0.002 | 1.000 ± 0.000 | 0.983 ± 0.011 | 0.943 ± 0.024 | 0.929 ± 0.031 | 0.897 ± 0.084 |
+| 5 | 0.997 ± 0.001 | 1.000 ± 0.000 | 0.991 ± 0.007 | 0.958 ± 0.021 | 0.946 ± 0.028 | 0.909 ± 0.089 |
+| 6 | 0.998 ± 0.001 | 1.000 ± 0.000 | 0.994 ± 0.005 | 0.967 ± 0.018 | 0.956 ± 0.025 | 0.918 ± 0.091 |
+| 7 | 0.999 ± 0.001 | 1.000 ± 0.000 | 0.996 ± 0.004 | 0.973 ± 0.016 | 0.964 ± 0.022 | 0.924 ± 0.093 |
+| 8 | 0.999 ± 0.001 | 1.000 ± 0.000 | 0.998 ± 0.003 | 0.978 ± 0.014 | 0.969 ± 0.020 | 0.928 ± 0.094 |
+| 9 | 0.999 ± 0.000 | 1.000 ± 0.000 | 0.998 ± 0.002 | 0.981 ± 0.013 | 0.974 ± 0.018 | 0.932 ± 0.095 |
+| 10 | 0.999 ± 0.000 | 1.000 ± 0.000 | 0.999 ± 0.002 | 0.984 ± 0.012 | 0.977 ± 0.017 | 0.935 ± 0.095 |
+| 11 | 1.000 ± 0.000 | 1.000 ± 0.000 | 0.999 ± 0.001 | 0.986 ± 0.011 | 0.979 ± 0.016 | 0.937 ± 0.095 |
 
-The transferred row uses the HCC caliper subset's per-image overlap rate and a borrowed ρ: HCC presence ρ scaled by hemangioma's ratio of overlap ρ to presence ρ (transferred ρ = 0.469 ± 0.255). It assumes that ratio carries over between pathologies.
+The transferred column uses the HCC caliper subset's per-image overlap rate and a borrowed ρ: HCC presence ρ scaled by hemangioma's ratio of overlap ρ to presence ρ (transferred ρ = 0.469 ± 0.255). It assumes that ratio carries over between pathologies.

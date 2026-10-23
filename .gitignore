@@ -12,11 +12,11 @@ __pycache__/
 # python environmnet
 .venv
 
-# data and archives of training and predictions
+# data and archives of training and predictions - checkpoints archived on HF
 archives/
 archives_staging/
 archives_amendments/
-/logs/
+logs/
 
 #SMC database
 SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)
@@ -24,3 +24,4 @@ SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma).zip
 
 # private
 private/
+paper/

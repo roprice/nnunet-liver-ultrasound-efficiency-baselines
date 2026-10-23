@@ -34,7 +34,8 @@ PROJECT_ROOT = external.PROJECT_ROOT
 FOLDS = external.FOLDS
 MODEL = "data_efficiency"
 OUTPUT_PATH = Path(__file__).with_suffix(".md")
-MAX_PROJECTED_PASSES = 10
+MAX_PROJECTED_PASSES = 11
+TARGET_SEARCH_MAX_PASSES = 1_000_000
 VALIDATION_FIT_MAX_VIEWS = 3
 VALIDATION_VIEWS = (4, 5)
 SUBSAMPLE_MIN_VIEWS = 5
@@ -44,6 +45,7 @@ OUTCOMES = {
     "hemangioma_presence": "Hemangioma presence, Clean cohort",
     "hemangioma_overlap": "Hemangioma overlap (IoU > 0), proxy subset",
     "hcc_overlap": "HCC overlap (IoU > 0), caliper subset",
+    "hcc_centroid": "HCC centroid (d_eq ≤ 1.0), caliper subset",
 }
 
 
@@ -108,7 +110,7 @@ def hemangioma_overlap_counts(rows, archived):
     return counts
 
 
-def hcc_caliper_overlap_counts(path):
+def hcc_caliper_overlap_counts(path, detection_flag="overlap_detection_iou_00_flag"):
     counts = {fold: {} for fold in FOLDS}
     with path.open(newline="") as file:
         for row in csv.DictReader(file):
@@ -117,7 +119,7 @@ def hcc_caliper_overlap_counts(path):
                 continue
             fold_counts = counts[int(row["fold"])]
             n, k = fold_counts.get(row["patient"], (0, 0))
-            fold_counts[row["patient"]] = (n + 1, k + (row["overlap_detection_iou_00_flag"] == "True"))
+            fold_counts[row["patient"]] = (n + 1, k + (row[detection_flag] == "True"))
     if not all(counts.values()):
         raise RuntimeError(f"No default-model HCC proxy rows for every fold in {path}")
     return {fold: list(per_patient.values()) for fold, per_patient in counts.items()}
@@ -134,6 +136,7 @@ def analyze(counts):
                   "image_rate": sum(k for _, k in patients) / sum(n for n, _ in patients)}
         if multi >= MIN_MULTI_IMAGE_PATIENTS:
             a, b = fit_beta_binomial(patients)
+            result["parameters"] = (a, b)
             result["mean"], result["correlation"] = mean_and_correlation(a, b)
             result["projection"] = [detection_probability(a, b, passes)
                                     for passes in range(1, MAX_PROJECTED_PASSES + 1)]
@@ -171,6 +174,17 @@ def mean_sd(values, digits=3):
     if any(value is None for value in values):
         return "NA"
     return f"{statistics.mean(values):.{digits}f} ± {statistics.stdev(values):.{digits}f}"
+
+
+def passes_to_rounded_target(per_fold, max_passes=TARGET_SEARCH_MAX_PASSES):
+    """First integer pass count whose fold mean and sample SD round to the target."""
+    if not all("parameters" in result for result in per_fold):
+        return "not fitted"
+    for passes in range(1, max_passes + 1):
+        values = [detection_probability(*result["parameters"], passes) for result in per_fold]
+        if mean_sd(values) == "1.000 ± 0.000":
+            return f"{passes:,} passes"
+    return f"more than {max_passes:,} passes"
 
 
 def build_report(data, results, transferred):
@@ -242,22 +256,24 @@ def build_report(data, results, transferred):
         model = [mean_sd([r["projection"][i] for r in results[key]]) for i in range(SUBSAMPLE_MIN_VIEWS)]
         lines.append(f"| {OUTCOMES[key]} | {first['subsampled_patients']} | subsampled | " + " | ".join(observed) + " |")
         lines.append(f"| {OUTCOMES[key]} | all | model | " + " | ".join(model) + " |")
+    projection_columns = [(OUTCOMES[key], results[key]) for key in fitted]
+    if transferred is not None:
+        projection_columns.append(("HCC overlap, transferred ρ", transferred))
     lines.extend([
         "",
         "## Projected detection by number of passes",
         "",
-        "| outcome | " + " | ".join(str(n) for n in range(1, MAX_PROJECTED_PASSES + 1)) + " |",
-        "|---|" + "---|" * MAX_PROJECTED_PASSES,
+        "| passes | " + " | ".join(label for label, _ in projection_columns) + " |",
+        "|---:|" + "---|" * len(projection_columns),
     ])
-    for key in fitted:
-        cells = [mean_sd([r["projection"][i] for r in results[key]]) for i in range(MAX_PROJECTED_PASSES)]
-        lines.append(f"| {OUTCOMES[key]} | " + " | ".join(cells) + " |")
+    for i in range(MAX_PROJECTED_PASSES):
+        cells = [mean_sd([r["projection"][i] for r in per_fold])
+                 for _, per_fold in projection_columns]
+        lines.append(f"| {i + 1} | " + " | ".join(cells) + " |")
     if transferred is not None:
-        cells = [mean_sd([t["projection"][i] for t in transferred]) for i in range(MAX_PROJECTED_PASSES)]
-        lines.append(f"| HCC overlap, transferred ρ | " + " | ".join(cells) + " |")
         lines.extend([
             "",
-            "The transferred row uses the HCC caliper subset's per-image overlap rate and a borrowed ρ: HCC "
+            "The transferred column uses the HCC caliper subset's per-image overlap rate and a borrowed ρ: HCC "
             "presence ρ scaled by hemangioma's ratio of overlap ρ to presence ρ "
             f"(transferred ρ = {mean_sd([t['correlation'] for t in transferred])}). It assumes that ratio "
             "carries over between pathologies.",
@@ -279,6 +295,8 @@ def main(argv=None):
     counts = presence_counts(data.rows, archived)
     counts["hemangioma_overlap"] = hemangioma_overlap_counts(data.rows, archived)
     counts["hcc_overlap"] = hcc_caliper_overlap_counts(args.hcc_caliper_results)
+    counts["hcc_centroid"] = hcc_caliper_overlap_counts(
+        args.hcc_caliper_results, "centroid_detection_deq_100_flag")
     results = {key: analyze(outcome_counts) for key, outcome_counts in counts.items()}
     transferred = transferred_projection(results) if "hcc_overlap" in results else None
     OUTPUT_PATH.write_text(build_report(data, results, transferred))
