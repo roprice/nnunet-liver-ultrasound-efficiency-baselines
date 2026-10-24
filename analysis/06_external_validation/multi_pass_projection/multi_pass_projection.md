@@ -4,6 +4,17 @@ Prediction snapshot `195716b4a6ec`. nnU-Net default-augmentation final models (5
 
 Each patient has a latent per-image detection probability, Beta-distributed across patients. Detection in n passes is the probability that at least one of n images is detected: 1 − B(a, b + n) / B(a, b). The model has two parameters: the mean per-image rate and the within-patient correlation ρ. ρ = 0 means a patient's images behave independently; larger ρ means misses concentrate in particular patients, so extra passes help less. A patient's images are treated as interchangeable draws. Presence uses every Clean image; overlap uses the caliper-derived circular proxies.
 
+## HCC strictly <2.5 cm: target projections
+
+Caliper-marked, proxy-eligible images only: 30 patients, 124 images, 25 patients with 2+ images. Presence and overlap use the same images. Circular caliper proxies are approximate lesion references.
+
+The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. Values are mean ± sample SD across five separately fitted fold models, not confidence intervals. Pass counts beyond the observed maximum of 11 images per patient are extrapolations.
+
+| outcome | first passes to 99% mean | projected detection (mean ± sample SD) |
+|---|---:|---|
+| HCC presence | 7 | 0.991560 ± 0.006011 |
+| HCC overlap (IoU > 0) | 15 | 0.990787 ± 0.007096 |
+
 ## Fitted parameters
 
 Outcomes are fitted only with at least 20 patients with two or more images.

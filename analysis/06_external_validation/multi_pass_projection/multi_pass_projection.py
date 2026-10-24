@@ -49,7 +49,7 @@ OUTCOMES = {
 }
 
 
-def fit_beta_binomial(counts):
+def fit_beta_binomial(counts, check_convergence=False):
     """Maximum-likelihood (a, b) for a list of (n, k) patient counts."""
     n = np.array([count[0] for count in counts])
     k = np.array([count[1] for count in counts])
@@ -62,6 +62,8 @@ def fit_beta_binomial(counts):
 
     # Bounds keep the fit finite when (almost) every image of every patient is detected.
     result = minimize(negative_log_likelihood, start, method="L-BFGS-B", bounds=[(-8, 8), (-8, 8)])
+    if check_convergence and (not result.success or not np.isfinite(result.fun)):
+        raise RuntimeError(f"Beta-binomial fit did not converge: {result.message}")
     a, b = np.exp(result.x)
     return float(a), float(b)
 
@@ -176,18 +178,61 @@ def mean_sd(values, digits=3):
     return f"{statistics.mean(values):.{digits}f} ± {statistics.stdev(values):.{digits}f}"
 
 
-def passes_to_rounded_target(per_fold, max_passes=TARGET_SEARCH_MAX_PASSES):
-    """First integer pass count whose fold mean and sample SD round to the target."""
-    if not all("parameters" in result for result in per_fold):
-        return "not fitted"
+def small_hcc_counts(cohort):
+    counts = {outcome: {} for outcome in ("presence", "overlap_iou_00")}
+    for fold in FOLDS:
+        per_patient = {outcome: {} for outcome in counts}
+        for row in cohort.groups[MODEL, fold]:
+            case = cohort.cases[row.image_id]
+            diameter = case["tumor_max_diameter_cm"]
+            if diameter is None or diameter >= 2.5:
+                continue
+            detected = cohort.evaluations[MODEL, fold][row.image_id].detected
+            for outcome in counts:
+                n, k = per_patient[outcome].get(case["patient"], (0, 0))
+                hit = row.triage_detection_flag if outcome == "presence" else detected[outcome]
+                per_patient[outcome][case["patient"]] = (n + 1, k + hit)
+        for outcome in counts:
+            counts[outcome][fold] = list(per_patient[outcome].values())
+    return counts
+
+
+def passes_to_mean_target(parameters, target=0.99, max_passes=TARGET_SEARCH_MAX_PASSES):
     for passes in range(1, max_passes + 1):
-        values = [detection_probability(*result["parameters"], passes) for result in per_fold]
-        if mean_sd(values) == "1.000 ± 0.000":
-            return f"{passes:,} passes"
-    return f"more than {max_passes:,} passes"
+        values = [detection_probability(a, b, passes) for a, b in parameters]
+        if statistics.mean(values) >= target:
+            return passes, values
+    raise RuntimeError(f"Mean target not reached within {max_passes} passes")
 
 
-def build_report(data, results, transferred):
+def small_hcc_section(counts):
+    first = counts["presence"][FOLDS[0]]
+    multi = sum(n >= 2 for n, _ in first)
+    maximum = max(n for n, _ in first)
+    lines = [
+        "## HCC strictly <2.5 cm: target projections", "",
+        f"Caliper-marked, proxy-eligible images only: {len(first)} patients, "
+        f"{sum(n for n, _ in first)} images, {multi} patients with 2+ images. "
+        "Presence and overlap use the same images. Circular caliper proxies are approximate lesion references.", "",
+        "The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. "
+        "Values are mean ± sample SD across five separately fitted fold models, not confidence intervals. "
+        f"Pass counts beyond the observed maximum of {maximum} images per patient are extrapolations.", "",
+        "| outcome | first passes to 99% mean | projected detection (mean ± sample SD) |",
+        "|---|---:|---|",
+    ]
+    for outcome, label in (("presence", "HCC presence"), ("overlap_iou_00", "HCC overlap (IoU > 0)")):
+        parameters = []
+        for fold in FOLDS:
+            patients = counts[outcome][fold]
+            if sum(n >= 2 for n, _ in patients) < MIN_MULTI_IMAGE_PATIENTS:
+                raise RuntimeError("Too few multi-image patients for small-HCC fit")
+            parameters.append(fit_beta_binomial(patients, check_convergence=True))
+        passes, values = passes_to_mean_target(parameters)
+        lines.append(f"| {label} | {passes} | {mean_sd(values, digits=6)} |")
+    return "\n".join(lines) + "\n\n"
+
+
+def build_report(data, results, transferred, small_hcc=None):
     fitted = [key for key in OUTCOMES if key in results and "projection" in results[key][0]]
     lines = [
         "# Multi-pass detection projected with a beta-binomial model",
@@ -278,7 +323,10 @@ def build_report(data, results, transferred):
             f"(transferred ρ = {mean_sd([t['correlation'] for t in transferred])}). It assumes that ratio "
             "carries over between pathologies.",
         ])
-    return "\n".join(lines) + "\n"
+    text = "\n".join(lines) + "\n"
+    if small_hcc is not None:
+        text = text.replace("## Fitted parameters", small_hcc_section(small_hcc) + "## Fitted parameters", 1)
+    return text
 
 
 def main(argv=None):
@@ -299,7 +347,8 @@ def main(argv=None):
         args.hcc_caliper_results, "centroid_detection_deq_100_flag")
     results = {key: analyze(outcome_counts) for key, outcome_counts in counts.items()}
     transferred = transferred_projection(results) if "hcc_overlap" in results else None
-    OUTPUT_PATH.write_text(build_report(data, results, transferred))
+    small_hcc = small_hcc_counts(external.load_hcc_caliper(root=args.hcc_caliper_results.parent.parent))
+    OUTPUT_PATH.write_text(build_report(data, results, transferred, small_hcc))
     print(f"Wrote {OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
 
 

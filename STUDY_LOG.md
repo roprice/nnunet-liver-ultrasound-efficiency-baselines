@@ -3,9 +3,16 @@
 
 
 ## 2026-10-22
-_Estimated development effort: 1 through today, 169 total_
+_Estimated development effort: 2 through today, 167 total_
 
+We made some minor refinements to projections analysis. For the most part the projections were made obselete by the custom caliper work done to generate HCC proxy masks. But that work left one area unexplored: multiple-pass detection rates on small HCC masses (smaller than 2.5cm). Our projections showed 99% accuracy for presence-based detection at 7 passes and 99% accuracy for overlap based detection, IoU>0. We didn't have the data to run the projections to 100%, but that finding is interesting and, while exploraty, we will consider mentioning it in the discussion section of the paper.
 
+Today we set a rough outline for the paper and tentatively setteld on the paper's two primary ideas:
+
+1. Using nnUnet and B-mode ultrasound, it's very cheap to train models to perform triage detection of liver masses.
+2. Simply by running multiple passes, such models can get to 100% detection for almost no extra cost.
+
+We'll refine these ideas and work through supporting materials as we arrange the paper; we expect more analysis as we write the paper and will note that here. 
 
 
 ## 2026-10-22

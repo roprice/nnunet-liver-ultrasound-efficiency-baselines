@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -13,23 +14,6 @@ analysis = importlib.import_module(
 
 
 class FormulaTests(unittest.TestCase):
-    def test_rounded_target_returns_first_pass_and_handles_search_limit(self):
-        per_fold = [{"parameters": (1.0, 0.123)} for _ in analysis.FOLDS]
-        self.assertEqual(analysis.passes_to_rounded_target(per_fold), "246 passes")
-        self.assertEqual(analysis.passes_to_rounded_target(per_fold, max_passes=10),
-                         "more than 10 passes")
-        self.assertEqual(analysis.passes_to_rounded_target([{}]), "not fitted")
-
-    def test_rounded_target_requires_sd_to_round_to_zero(self):
-        per_fold = [{"parameters": (1.0, b)} for b in (0.1, 0.1, 0.1, 0.1, 2.0)]
-        expected = next(n for n in range(1, 5000)
-                        if analysis.mean_sd([analysis.detection_probability(1.0, b, n)
-                                             for b in (0.1, 0.1, 0.1, 0.1, 2.0)]) == "1.000 ± 0.000")
-        self.assertEqual(analysis.passes_to_rounded_target(per_fold), f"{expected:,} passes")
-        previous = [analysis.detection_probability(*r["parameters"], expected - 1) for r in per_fold]
-        self.assertTrue(analysis.mean_sd(previous).startswith("1.000 ±"))
-        self.assertNotEqual(analysis.mean_sd(previous), "1.000 ± 0.000")
-
     def test_detection_probability_matches_monte_carlo(self):
         a, b = 2.0, 0.5
         rng = np.random.default_rng(0)
@@ -128,6 +112,42 @@ class HccCaliperCsvTests(unittest.TestCase):
             path.write_text(header)
             with self.assertRaisesRegex(RuntimeError, "No default-model HCC proxy rows"):
                 analysis.hcc_caliper_overlap_counts(path)
+
+
+class SmallHccTests(unittest.TestCase):
+    def test_strict_size_filter_and_shared_images(self):
+        sizes = (2.49, 2.5, None, 1.0)
+        cases = {str(i): {"patient": "patient", "tumor_max_diameter_cm": size}
+                 for i, size in enumerate(sizes)}
+        rows = [SimpleNamespace(image_id=str(i), triage_detection_flag=True) for i in range(4)]
+        cohort = SimpleNamespace(
+            cases=cases, groups={(analysis.MODEL, f): rows for f in analysis.FOLDS},
+            evaluations={(analysis.MODEL, f): {str(i): SimpleNamespace(
+                detected={"overlap_iou_00": i == 0}) for i in range(4)} for f in analysis.FOLDS})
+        counts = analysis.small_hcc_counts(cohort)
+        for fold in analysis.FOLDS:
+            self.assertEqual(counts["presence"][fold], [(2, 2)])
+            self.assertEqual(counts["overlap_iou_00"][fold], [(2, 1)])
+
+    def test_target_is_first_integer_using_mean_not_every_fold(self):
+        parameters = [(1.0, b) for b in (0.01, 0.01, 0.01, 0.01, 0.2)]
+        passes, values = analysis.passes_to_mean_target(parameters)
+        self.assertGreaterEqual(sum(values) / len(values), 0.99)
+        self.assertLess(min(values), 0.99)
+        previous = [analysis.detection_probability(*p, passes - 1) for p in parameters]
+        self.assertLess(sum(previous) / len(previous), 0.99)
+
+    def test_new_fits_reject_optimizer_failure(self):
+        with patch.object(analysis, "minimize", return_value=SimpleNamespace(
+                success=False, fun=1.0, message="failed")):
+            with self.assertRaisesRegex(RuntimeError, "did not converge"):
+                analysis.fit_beta_binomial([(2, 1)] * 20, check_convergence=True)
+
+    def test_section_enforces_minimum_multi_image_patients(self):
+        counts = {key: {fold: [(2, 1)] * 19 for fold in analysis.FOLDS}
+                  for key in ("presence", "overlap_iou_00")}
+        with self.assertRaisesRegex(RuntimeError, "Too few"):
+            analysis.small_hcc_section(counts)
 
 
 class ReportTests(unittest.TestCase):
