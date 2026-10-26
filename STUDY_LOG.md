@@ -8,7 +8,7 @@ In drafting our paper, we saw fit to do extended analysis on detection rates, pa
 
 We also finalized and concretized the project budget at $92.99, reported as $93 throughout the study.
 
-
+We also did some analysis of the SMC-LUD meta data to use in the paper for context.
 
 ## 2026-10-23
 _Estimated development effort: 2 through today, 167 total_
