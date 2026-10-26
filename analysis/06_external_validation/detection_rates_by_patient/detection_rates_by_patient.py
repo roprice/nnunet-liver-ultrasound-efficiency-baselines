@@ -24,6 +24,8 @@ ARCHIVED_MANIFEST_PATH = (
     PROJECT_ROOT / "archives/06_external_validation/clean/prepared/smc_lud_manifest.json"
 )
 OUTPUT_PATH = Path(__file__).with_suffix(".md")
+EXAMPLE_OUTPUT_PATH = Path(__file__).with_name("detection_rates_by_patient_example.md")
+DATASET_ROOT = Path("experiments/06_external_validation/SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)")
 COHORTS = {
     "all": "Combined",
     "HCC": "HCC",
@@ -197,12 +199,97 @@ def build_report(data, manifest, archived_manifest_bytes):
     return "\n".join(lines) + "\n"
 
 
+def build_example_report(data, manifest, archived_manifest_bytes):
+    if manifest.get("snapshot_id") != data.snapshot_id:
+        raise RuntimeError("predictions_dataset.csv does not match its build manifest")
+    if manifest.get("schema_version") != SCHEMA_VERSION:
+        raise RuntimeError("Prediction manifest schema does not match the canonical loader schema")
+    archived = json.loads(archived_manifest_bytes)
+    patient_groups(data.rows, archived)
+    entries = sorted((entry for entry in archived["cases"] if entry["patient"] == "HCC_1146"),
+                     key=lambda entry: entry["source_relative_path"])
+    if not entries:
+        raise RuntimeError("Example patient HCC_1146 is missing from the archived manifest")
+    groups = select_groups(data.rows)
+    flags = {fold: {row.image_id: row.triage_detection_flag
+                    for row in groups["data_efficiency", fold]} for fold in FOLDS}
+    lines = [
+        "# Patient presence example: HCC_1146", "",
+        f"SMC-LUD Clean: {len(entries)} images; nnU-Net default augmentation, folds 0–4. "
+        "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs.", "",
+        f"Dataset root (repository-relative): `{DATASET_ROOT.as_posix()}`. "
+        "Source paths below are relative to this root; filenames are preserved.", "",
+        f"Canonical dataset snapshot `{data.snapshot_id}` (schema {manifest['schema_version']}; "
+        f"checked against `{MANIFEST_PATH.relative_to(PROJECT_ROOT).as_posix()}`).", "",
+        f"Patient/source manifest: `{ARCHIVED_MANIFEST_PATH.relative_to(PROJECT_ROOT).as_posix()}` "
+        f"(schema {archived['schema_version']}); SHA-256 "
+        f"`{hashlib.sha256(archived_manifest_bytes).hexdigest()}`.", "",
+        "Presence flags are canonical `triage_detection_flag` values: 1 = flagged "
+        "(a predicted mass component remains after filtering), 0 = unflagged. "
+        "These are presence predictions, not verified lesion localization or cancer diagnosis. "
+        "Rows are sorted by source path, not acquisition time; the pattern is nonchronological "
+        "and does not describe disease progression. Folds are models evaluated on the same images.", "",
+        "## Verified source metadata", "",
+        "Static local audit (25 October 2026), not clinical fields loaded from the canonical "
+        "prediction dataset: `original_data/HCC/HCC_patient_table.csv`, row `No=292`, "
+        "`Subject_id=1146`: age `80` (decade-valued, not exact age), Height `165`, Weight `59`, "
+        "Sex `1`, modified UICC 2000 `pT2`, AJCC 2010 `pT1`, Tumor size `1.2x0.8x0.7 cm`, "
+        "Max_Diameter `1.2` cm, matching the manifest (HCC <2 cm). Height/weight units are not "
+        "independently documented in the CSV.", "",
+        "The source reference `experiments/06_external_validation/reference/smc_lud_reference.json` "
+        "lists 7 unique images (3 clean, 4 caliper), all 512 × 512; only clean images are evaluated "
+        "here. Supplied overall splits are 5 train / 0 validation / 2 test; the separate clean "
+        "splits are 1 train / 2 validation. These splits are not patient-disjoint and are separate "
+        "from the model folds below.", "",
+        "## Processing-time evidence", "",
+        "Static local audit (25 October 2026): individual image processing timestamps and "
+        "durations were not recorded in the canonical schema or archived per-image results. "
+        "`archives/06_external_validation/clean/logs/runner.log` identifies all three case IDs "
+        "within each `data_efficiency_588images_seed42_fold{0–4}_final` prediction batch, "
+        "but its per-case Predicting/done messages have no timestamps.", "",
+        "The same log records full 2,656-image prediction subprocess durations: fold 0 "
+        "281.9 s (line 13303), fold 1 281.5 s (26607), fold 2 279.1 s (39911), fold 3 "
+        "280.6 s (53215), fold 4 278.4 s (66519). "
+        "`experiments/06_external_validation/external_validation_runner.py:641–648` measures "
+        "`time.monotonic()` around the blocking `nnUNetv2_predict` subprocess: this includes "
+        "startup, image loading/preprocessing, inference and export, and excludes subsequent "
+        "evaluation. Each batch processed all 2,656 cases (no previously predicted cases skipped). "
+        "These are batch wall durations, not HCC_1146 or individual-image durations; dividing "
+        "by image count would not measure this patient's processing time.", "",
+        "`archives/06_external_validation/clean/logs/run_settings.json` records CUDA execution "
+        "from 2026-10-16 21:30:13 to 22:44:16 UTC for the complete 15-model/fold run, "
+        "including evaluation, not per-fold or per-image start/end times. The canonical "
+        "prediction paths link this patient's flags to the corresponding archived fold outputs; "
+        "`archives/06_external_validation/clean/logs/per_image_results.csv` agrees with these flags. "
+        "CSV build times, training times, image/ZIP timestamps and file modification times are "
+        "not inference timestamps and are not used to infer durations.", "",
+        "## Per-image presence flags", "",
+        "| case ID | original filename | source path | "
+        + " | ".join(f"fold {fold}" for fold in FOLDS) + " |",
+        "|---|---|---|" + "---:|" * len(FOLDS),
+    ]
+    for entry in entries:
+        source = entry["source_relative_path"]
+        cells = " | ".join(str(int(flags[fold][entry["case"]])) for fold in FOLDS)
+        lines.append(f"| `{entry['case']}` | `{Path(source).name}` | `{source}` | {cells} |")
+    lines.extend(["", "## Per-fold totals", "", "| fold | flagged | unflagged | total |",
+                  "|---:|---:|---:|---:|"])
+    for fold in FOLDS:
+        flagged = sum(flags[fold][entry["case"]] for entry in entries)
+        lines.append(f"| {fold} | {flagged} | {len(entries) - flagged} | {len(entries)} |")
+    return "\n".join(lines) + "\n"
+
+
 def main():
     data = load_predictions_dataset()
     manifest = json.loads(MANIFEST_PATH.read_text())
-    report = build_report(data, manifest, ARCHIVED_MANIFEST_PATH.read_bytes())
+    archived_manifest_bytes = ARCHIVED_MANIFEST_PATH.read_bytes()
+    report = build_report(data, manifest, archived_manifest_bytes)
+    example = build_example_report(data, manifest, archived_manifest_bytes)
     OUTPUT_PATH.write_text(report)
     print(f"Wrote {OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
+    EXAMPLE_OUTPUT_PATH.write_text(example)
+    print(f"Wrote {EXAMPLE_OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
 
 
 if __name__ == "__main__":

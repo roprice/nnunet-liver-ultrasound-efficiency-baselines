@@ -136,6 +136,53 @@ class DetectionRatesByPatientTests(unittest.TestCase):
             "and make all-image detection harder; comparisons are descriptive, not longitudinal. "
             "HCC size is the patient-table maximum diameter; missing sizes are separate.\n"))
 
+    def test_example_uses_manifest_names_and_fold_specific_flags(self):
+        for entry in self.entries[1:3]:
+            entry["patient"] = "HCC_1146"
+        raw = json.dumps(self.archived).encode()
+        report = analysis.build_example_report(self.data, self.manifest, raw)
+        for entry in self.entries[1:3]:
+            self.assertIn(f"| `{entry['case']}` | `{entry['case']}.jpg` | "
+                          f"`{entry['source_relative_path']}` |", report)
+        self.assertIn("| 1 | 0 | 1 | 0 | 1 |", report)
+        self.assertIn("| 0 | 1 | 0 | 1 | 0 |", report)
+        for fold in analysis.FOLDS:
+            self.assertIn(f"| {fold} | 1 | 1 | 2 |", report)
+        self.assertIn(hashlib.sha256(raw).hexdigest(), report)
+        self.assertIn(analysis.DATASET_ROOT.as_posix(), report)
+        self.assertIn("snapshot `test`", report)
+        self.assertIn("nonchronological", report)
+        self.assertIn("not verified lesion localization", report)
+        for field, value in (("snapshot_id", "stale"), ("schema_version", -1)):
+            with self.subTest(field=field), self.assertRaises(RuntimeError):
+                analysis.build_example_report(self.data, {**self.manifest, field: value}, raw)
+
+    def test_example_rejects_missing_patient(self):
+        with self.assertRaisesRegex(RuntimeError, "HCC_1146 is missing"):
+            analysis.build_example_report(self.data, self.manifest, json.dumps(self.archived).encode())
+
+    def test_example_keeps_static_audit_separate_from_dynamic_clean_cohort(self):
+        for entry in self.entries[1:3]:
+            entry["patient"] = "HCC_1146"
+        report = analysis.build_example_report(
+            self.data, self.manifest, json.dumps(self.archived).encode())
+        self.assertIn("SMC-LUD Clean: 2 images", report)
+        metadata = report.split("## Verified source metadata\n", 1)[1].split(
+            "## Per-image presence flags", 1)[0]
+        for text in ("Static local audit (25 October 2026)",
+                     "not clinical fields loaded from the canonical prediction dataset",
+                      "original_data/HCC/HCC_patient_table.csv", "`No=292`", "`Subject_id=1146`",
+                      "decade-valued, not exact age", "Height `165`, Weight `59`",
+                      "units are not independently documented", "`pT2`", "`pT1`",
+                      "`1.2x0.8x0.7 cm`", "7 unique images (3 clean, 4 caliper)",
+                      "1 train / 2 validation", "from the model folds"):
+            with self.subTest(text=text):
+                self.assertIn(text, metadata)
+        self.assertNotIn("HCC_423", report)
+        self.assertIn("durations were not recorded", report)
+        self.assertIn("batch wall durations, not HCC_1146 or individual-image durations", report)
+        self.assertIn("not inference timestamps", report)
+
     def test_manifest_integrity_is_validated(self):
         for field, value in (("schema_version", 2), ("subsets", ["clean", "caliper"]),
                              ("case_count", 11), ("patient_count", 3)):
@@ -196,6 +243,86 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
     def test_current_report_matches_inputs(self):
         self.assertEqual(analysis.OUTPUT_PATH.read_text(),
                          analysis.build_report(self.data, self.manifest, self.raw))
+
+    def test_current_example_matches_all_patient_images_and_totals(self):
+        report = analysis.build_example_report(self.data, self.manifest, self.raw)
+        self.assertEqual(analysis.EXAMPLE_OUTPUT_PATH.read_text(), report)
+        entries = [entry for entry in json.loads(self.raw)["cases"]
+                   if entry["patient"] == "HCC_1146"]
+        self.assertEqual(len(entries), 3)
+        groups = analysis.select_groups(self.data.rows)
+        for entry in entries:
+            flags = [next(row.triage_detection_flag for row in groups["data_efficiency", fold]
+                          if row.image_id == entry["case"]) for fold in analysis.FOLDS]
+            self.assertIn(f"| `{entry['case']}` | `{entry['source_relative_path'].split('/')[-1]}` | "
+                          f"`{entry['source_relative_path']}` | "
+                          + " | ".join(str(int(flag)) for flag in flags) + " |", report)
+        for fold in analysis.FOLDS:
+            patient = next(patient for patient in self.groups["data_efficiency", fold]
+                           if patient.patient == "HCC_1146")
+            self.assertIn(f"| {fold} | {patient.k} | {patient.n - patient.k} | {patient.n} |", report)
+
+    def test_example_flags_match_original_results_and_prediction_paths(self):
+        import csv
+
+        original_path = analysis.PROJECT_ROOT / "archives/06_external_validation/clean/logs/per_image_results.csv"
+        with original_path.open() as stream:
+            original = {(int(row["fold"]), row["case"]): row["triage_detection_flag"] == "True"
+                        for row in csv.DictReader(stream)
+                        if row["patient"] == "HCC_1146" and row["experiment_name"] == "data_efficiency"}
+        expected = {"0e8bba85": [1, 1, 1, 1, 1], "10b944a1": [0, 0, 0, 0, 0],
+                    "a0d5a81f": [0, 0, 1, 1, 0]}
+        groups = analysis.select_groups(self.data.rows)
+        self.assertEqual(len(original), 15)
+        for fold in analysis.FOLDS:
+            for row in groups["data_efficiency", fold]:
+                if (fold, row.image_id) not in original:
+                    continue
+                self.assertEqual(row.triage_detection_flag, original[fold, row.image_id])
+                self.assertEqual(row.triage_detection_flag, bool(expected[row.image_id.rsplit("_", 1)[1]][fold]))
+                self.assertIn(f"data_efficiency_588images_seed42_fold{fold}_final/", row.prediction_path)
+                self.assertTrue((analysis.PROJECT_ROOT / row.prediction_path).is_file())
+
+    def test_example_clinical_audit_matches_source_csv_and_reference(self):
+        import csv
+
+        path = analysis.PROJECT_ROOT / analysis.DATASET_ROOT / "original_data/HCC/HCC_patient_table.csv"
+        with path.open() as stream:
+            patient = next(row for row in csv.DictReader(stream) if row["Subject_id"] == "1146")
+        self.assertEqual([patient[field] for field in
+                          ("No", "age", "Height", "Weight", "Sex", "Tumor size", "Max_Diameter")],
+                         ["292", "80", "165", "59", "1", "1.2x0.8x0.7 cm", "1.2"])
+        self.assertEqual(patient["Pathologic T stage (modified UICC, 2000)"], "pT2")
+        self.assertEqual(patient["Pathologic T stage (AJCC, 2010)"], "pT1")
+        reference_path = analysis.PROJECT_ROOT / "experiments/06_external_validation/reference/smc_lud_reference.json"
+        images = [entry for entry in json.loads(reference_path.read_text())["images"]
+                  if entry["patient"] == "HCC_1146"]
+        self.assertEqual(len(images), 7)
+        self.assertEqual(sum(entry["subset"] == "clean" for entry in images), 3)
+        self.assertEqual(sum(entry["split"] == "train" for entry in images), 5)
+        self.assertEqual(sum(entry["split"] == "test" for entry in images), 2)
+        self.assertEqual(sum(entry["clean_split"] == "val" for entry in images), 2)
+        for entry in images:
+            self.assertEqual((entry["height"], entry["width"], entry["tumor_max_diameter_cm"]),
+                             (512, 512, 1.2))
+
+    def test_example_batch_timing_is_supported_by_original_log(self):
+        log_path = analysis.PROJECT_ROOT / "archives/06_external_validation/clean/logs/runner.log"
+        lines = log_path.read_text().splitlines()
+        report = analysis.build_example_report(self.data, self.manifest, self.raw)
+        start = 0
+        for fold, (line_number, seconds) in enumerate(
+                [(13303, "281.9"), (26607, "281.5"), (39911, "279.1"),
+                 (53215, "280.6"), (66519, "278.4")]):
+            batch = lines[start:line_number]
+            self.assertEqual(batch[0], f"Predicting data_efficiency_588images_seed42_fold{fold}_final...")
+            self.assertEqual(batch[-1], f"  {seconds}s")
+            self.assertIn(f"fold {fold} {seconds} s", report)
+            self.assertIn("overwrite was set to False, so I am only working on cases that haven't been predicted yet. That's 2656 cases.", batch)
+            for suffix in ("0e8bba85", "10b944a1", "a0d5a81f"):
+                self.assertIn(f"Predicting smc_HCC_1146_{suffix}:", batch)
+                self.assertIn(f"done with smc_HCC_1146_{suffix}", batch)
+            start = line_number + 1
 
     def test_view_tables_partition_each_cohort(self):
         report = analysis.build_report(self.data, self.manifest, self.raw)

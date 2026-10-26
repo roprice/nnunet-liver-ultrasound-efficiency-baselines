@@ -518,6 +518,47 @@ def build_summary(archive, zone, max_gap_seconds, billing_csv=None, resource_id=
     return stages, summary, allocations
 
 
+def study_cost_totals():
+    experiments = []
+    for name, runner_path in (
+        ("01_training_efficiency", "training_efficiency.log"),
+        ("02_data_efficiency", "logs/data_efficiency_runner.log"),
+        ("03_augmentation_ablation", "logs/augmentation_ablation_runner.log"),
+        ("04_gaussian_noise_ablation", "logs/gaussian_noise_ablation_recovery.log"),
+    ):
+        logs = ROOT / "archives" / name / "repo/logs" / name
+        events = {}
+        for row in csv_rows(logs / "gpu_events.csv"):
+            events[row["event"]] = aware_time(row["utc"])
+        rate = Decimal(csv_rows(logs / "gpu_rate.csv")[0]["hourly_rate_usd"])
+        seconds = Decimal(microseconds(events["recording_ended"] - events["recording_started"])) / 1000000
+        runner_log = (logs.parents[1] / runner_path).read_text()
+        finish = aware_time(re.findall(r"^End time: (.+)$", runner_log, re.MULTILINE)[-1])
+        if not events["recording_started"] <= finish <= events["recording_ended"]:
+            raise ValueError(f"Runner finish outside recording window: {name}")
+        delay_seconds = Decimal(microseconds(events["recording_ended"] - finish)) / 1000000
+        experiments.append({"name": name, "rate": rate, "seconds": seconds,
+                            "cost": seconds * rate / 3600, "runner_path": runner_path,
+                            "finish": iso(finish), "delay_seconds": delay_seconds,
+                            "delay_cost": delay_seconds * rate / 3600})
+    logs = DEFAULT_ARCHIVE / "repo/logs/02_data_efficiency"
+    recovery = json.loads((logs / "recovery_restart_size294_fold3/recovery.json").read_text(),
+                          parse_float=Decimal)
+    events = {row["event"]: aware_time(row["utc"]) for row in csv_rows(logs / "gpu_events.csv")}
+    restart = Decimal(str(events["recovery_size294_fold3_started"].timestamp()))
+    stopped_seconds = restart - recovery["failed_attempt_end_unix"]
+    rate = experiments[1]["rate"]
+    total = sum(experiment["cost"] for experiment in experiments)
+    stopped_cost = stopped_seconds * rate / 3600
+    delay_seconds = sum(experiment["delay_seconds"] for experiment in experiments)
+    delay_cost = sum(experiment["delay_cost"] for experiment in experiments)
+    return {"experiments": experiments, "total": total,
+            "excluding_stopped": total - stopped_cost,
+            "excluding_stopped_and_delay": total - stopped_cost - delay_cost,
+            "stopped_seconds": stopped_seconds, "stopped_cost": stopped_cost,
+            "delay_seconds": delay_seconds, "delay_cost": delay_cost}
+
+
 def render_markdown(summary):
     recording = summary["recording"]
     lines = ["# Experiment02 GPU energy and compute cost", "",
@@ -568,6 +609,32 @@ def render_markdown(summary):
         for currency, totals in billing["currencies"].items():
             lines.append(f"| {currency} | {totals['original_total']} | {totals['stage_allocated']} | {totals['unallocated']} | {totals['reconciliation_residual']} |")
         lines.append("\nMatched-resource nonstage remainder, other resources and noncompute charges stay distinctly unallocated. See billing_allocations.csv and per-charge reconciliation in summary.json.")
+    if (ROOT / summary["archive"]).resolve() == DEFAULT_ARCHIVE.resolve():
+        totals = study_cost_totals()
+        prefix = ["# Total GPU costs of study", "",
+                  f"- Total cost of processing, compute, and predictions: **${totals['excluding_stopped_and_delay']:.2f}**",
+                  f"- Total cost including stopped workload error and recording delay: **${totals['total']:.2f}**", "",
+                  "Recorded-rate estimates for Experiments 01–04, in USD; cross-referenced against Verda invoice data "
+                  "`verda_compute_events.json` and costs recorded at time of instance rental.", "",
+                  "Totals use each experiment's exact recorded rate and recording duration, summed before rounding.", "",
+                  "| Experiment | USD/hour | Recording seconds | Unadjusted USD | Post-run delay seconds | Delay USD |",
+                  "|---|---:|---:|---:|---:|---:|"]
+        for experiment in totals["experiments"]:
+            prefix.append(f"| {experiment['name']} | {experiment['rate']} | {experiment['seconds']} | {experiment['cost']:.6f} | {experiment['delay_seconds']} | {experiment['delay_cost']:.6f} |")
+        prefix.extend(["", f"Experiment02 stopped workload: {totals['stopped_seconds']} seconds "
+                       f"(${totals['stopped_cost']:.6f}), from the failed-attempt end in "
+                       "`recovery_restart_size294_fold3/recovery.json` to recovery start in `gpu_events.csv`.",
+                       f"Combined post-run recording delay: {totals['delay_seconds']} seconds "
+                       f"(${totals['delay_cost']:.6f}), from each experiment's final runner-log finish to `recording_ended`.", "",
+                       "Runner completion sources (paths relative to each archived `repo/`):"])
+        for experiment in totals["experiments"]:
+            prefix.append(f"- {experiment['name']}: `{experiment['runner_path']}`, `End time: {experiment['finish']}`.")
+        prefix.extend(["",
+                       "Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and "
+                       "`gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. "
+                       "Failed computation remains included. Dry runs and Experiments 05–06 are outside this scope. "
+                       "Excluding time changes the estimate, not the provider's actual charges.", ""])
+        lines = prefix + lines
     return "\n".join(lines) + "\n"
 
 

@@ -1,6 +1,6 @@
 # Detection rates by training-set size
 
-Data-efficiency experiment, 5880 rows, dataset snapshot b63d4754f920 (schema version 2). Rates are mean ± sample SD across the five folds.
+Data-efficiency experiment, 5880 rows, dataset snapshot 195716b4a6ec (schema version 4). Rates are mean ± sample SD across the five folds.
 
 ## Final
 

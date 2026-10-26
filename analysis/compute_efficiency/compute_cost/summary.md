@@ -1,3 +1,30 @@
+# Total GPU costs of study
+
+- Total cost of processing, compute, and predictions: **$92.99**
+- Total cost including stopped workload error and recording delay: **$117.96**
+
+Recorded-rate estimates for Experiments 01–04, in USD; cross-referenced against Verda invoice data `verda_compute_events.json` and costs recorded at time of instance rental.
+
+Totals use each experiment's exact recorded rate and recording duration, summed before rounding.
+
+| Experiment | USD/hour | Recording seconds | Unadjusted USD | Post-run delay seconds | Delay USD |
+|---|---:|---:|---:|---:|---:|
+| 01_training_efficiency | 0.666 | 226351 | 41.874935 | 6641 | 1.228585 |
+| 02_data_efficiency | 1.226 | 147107 | 50.098106 | 24150 | 8.224417 |
+| 03_augmentation_ablation | 1.277 | 42579 | 15.103718 | 7712 | 2.735618 |
+| 04_gaussian_noise_ablation | 1.290 | 30378 | 10.885450 | 1375 | 0.492708 |
+
+Experiment02 stopped workload: 36095.6805265 seconds ($12.292585), from the failed-attempt end in `recovery_restart_size294_fold3/recovery.json` to recovery start in `gpu_events.csv`.
+Combined post-run recording delay: 39878 seconds ($12.681328), from each experiment's final runner-log finish to `recording_ended`.
+
+Runner completion sources (paths relative to each archived `repo/`):
+- 01_training_efficiency: `training_efficiency.log`, `End time: 2026-10-05T16:44:10Z`.
+- 02_data_efficiency: `logs/data_efficiency_runner.log`, `End time: 2026-10-12T05:56:08Z`.
+- 03_augmentation_ablation: `logs/augmentation_ablation_runner.log`, `End time: 2026-10-14T11:54:51Z`.
+- 04_gaussian_noise_ablation: `logs/gaussian_noise_ablation_recovery.log`, `End time: 2026-10-15T03:35:27Z`.
+
+Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and `gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. Failed computation remains included. Dry runs and Experiments 05–06 are outside this scope. Excluding time changes the estimate, not the provider's actual charges.
+
 # Experiment02 GPU energy and compute cost
 
 Device: NVIDIA RTX 6000 Ada Generation; naive GPU timestamps interpreted as `UTC`.
