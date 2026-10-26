@@ -15,11 +15,11 @@ rates = importlib.import_module("analysis.02_data_efficiency.detection_rates.det
 HERE = Path(__file__).resolve().parent
 CHECKPOINTS = ["epoch5", "epoch25", "epoch75", "epoch100", "epoch125", "final", "best"]
 SERIES = [
-    ("Malignant triage", "triage_detection_flag", "#27ae60", "o", "-"),
-    ("Malignant IoU > 0", "overlap_detection_iou_00_flag", "#2a78d6", "s", "-"),
-    ("Malignant IoU > 0.2", "overlap_detection_iou_02_flag", "#eb6834", "^", "-"),
+    ("Presence-based", "triage_detection_flag", "#27ae60", "o", "-"),
+    ("IoU > 0", "overlap_detection_iou_00_flag", "#2a78d6", "s", "-"),
+    ("IoU > 0.2", "overlap_detection_iou_02_flag", "#eb6834", "^", "-"),
     ("FP/image (IoU > 0)", "overlap_detection_iou_00_fp_count", "#898781", "D", "--"),
-    ("Normal-image flagged fraction", "triage_detection_flag", "#898781", "D", "--"),
+    ("Normal images flagged", "triage_detection_flag", "#898781", "D", "--"),
 ]
 
 
@@ -83,10 +83,22 @@ def charts(results):
     final = [results["final", size] for size in rates.SIZES]
     fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True, layout="constrained")
     curves(axes[0], rates.SIZES, final, range(3))
-    curves(axes[1], rates.SIZES, final, [3])
+    curves(axes[1], rates.SIZES, final, [4])
     axes[0].set(ylabel="Malignant detection rate", ylim=(0, 1.05), title="Data efficiency: final checkpoint (150 epochs)")
-    axes[1].set(ylabel="FP per evaluated image", xlabel="Training-pool size (images)", ylim=(0, 1.05))
+    axes[1].set(ylabel="Normal-image flagged fraction", xlabel="Training-pool size (images)", ylim=(0, 1.05))
+    endpoint_text_colors = {0: "#18713e", 1: "#1c57a0", 2: "#b04a22", 4: "#5e5c58"}
+    for ax, indices, offsets in ((axes[0], range(3), [16, 0, -16]),
+                                 (axes[1], [4], [0])):
+        for index, offset in zip(indices, offsets):
+            mean = final[-1]["stats"][index][0]
+            ax.annotate(f"{mean:.3f}", (rates.SIZES[-1], mean),
+                        xytext=(8, offset), textcoords="offset points",
+                        color=endpoint_text_colors[index], va="center", fontsize=9)
+        ax.margins(x=.12)
     for ax in axes:
+        ax.set_yticks([.1, .3, .5, .7, .9], minor=True)
+        ax.tick_params(axis="y", which="minor", left=False, labelleft=False)
+        ax.grid(axis="y", which="minor", alpha=.25)
         ax.legend(fontsize=9)
     fig.savefig(HERE / "data_efficiency_report.png", dpi=200)
     plt.close(fig)
