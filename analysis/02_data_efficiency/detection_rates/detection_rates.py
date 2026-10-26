@@ -137,16 +137,18 @@ def triage_section(rows, pathology=None):
 
 def detection_section(rows, pathology=None):
     mass_rows = cohort_rows(rows, pathology)
+    normal_rows = [row for row in rows if not row.mass_present]
+    fp_normal = detection_cell(normal_rows, "triage_detection_flag")
     lines = [
         "##### Proximity-based detection",
         "",
-        "| criterion | detection rate | FP/image |",
-        "|---|---|---|",
+        "| criterion | detection rate | FP/image | FP/normal image |",
+        "|---|---|---|---|",
     ]
     for name, flag_field, fp_field in DETECTION_CRITERIA:
         detection = detection_cell(mass_rows, flag_field)
         fp_per_image = fp_per_image_cell(rows, fp_field)
-        lines.append(f"| {name} | {detection} | {fp_per_image} |")
+        lines.append(f"| {name} | {detection} | {fp_per_image} | {fp_normal} |")
     lines.append("")
     return lines
 
@@ -195,6 +197,10 @@ def build_report(data, manifest, pathology=None):
         f"Data-efficiency experiment, {row_count} rows, dataset snapshot "
         f"{data.snapshot_id} (schema version {manifest['schema_version']}). "
         "Rates are mean ± sample SD across the five folds.",
+        "",
+        "FP/normal image is the fraction of normal images with any retained "
+        "predicted component, regardless of proximity criterion; FP/image "
+        "counts unmatched predicted components per evaluated image.",
         "",
     ]
     for checkpoint in CHECKPOINTS:

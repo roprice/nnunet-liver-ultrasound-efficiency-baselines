@@ -12,7 +12,7 @@ and combined mass images:
   1. presence-based detection: image-level screen (detection rate on mass
      images, flagged normal images)
   2. proximity-based detection: overlap and centroid criteria (detection rate
-     on mass images, uncredited retained components per image)
+     on mass images, uncredited retained components per image, flagged normal images)
 
 All rates are mean +/- sample SD across the five cross-validation folds.
 """
@@ -134,18 +134,20 @@ def triage_section(checkpoint_rows, pathology=None, heading_level=4):
 
 
 def detection_section(checkpoint_rows, pathology=None, heading_level=4):
-    """Write cohort detection and FP per evaluated image."""
+    """Write cohort detection, component FP rates, and normal flagged fractions."""
     mass_rows = cohort_rows(checkpoint_rows, pathology)
+    normal_rows = [row for row in checkpoint_rows if not row.mass_present]
+    fp_normal = detection_cell(normal_rows, "triage_detection_flag")
     lines = [
         f"{'#' * heading_level} Proximity-based detection",
         "",
-        "| criterion | detection rate | FP/image |",
-        "|---|---|---|",
+        "| criterion | detection rate | FP/image | FP/normal image |",
+        "|---|---|---|---|",
     ]
     for name, flag_field, fp_field in DETECTION_CRITERIA:
         detection = detection_cell(mass_rows, flag_field)
         fp_per_image = fp_per_image_cell(checkpoint_rows, fp_field)
-        lines.append(f"| {name} | {detection} | {fp_per_image} |")
+        lines.append(f"| {name} | {detection} | {fp_per_image} | {fp_normal} |")
     lines.append("")
     return lines
 
@@ -170,6 +172,10 @@ def main():
         f"Training-efficiency experiment, {len(rows)} rows, dataset snapshot "
         f"{data.snapshot_id} (schema version {manifest['schema_version']}). "
         "Rates are mean ± sample SD across the five folds.",
+        "",
+        "FP/normal image is the fraction of normal images with any retained "
+        "predicted component, regardless of proximity criterion; FP/image "
+        "counts unmatched predicted components per evaluated image.",
         "",
     ]
     for checkpoint in CHECKPOINTS:
