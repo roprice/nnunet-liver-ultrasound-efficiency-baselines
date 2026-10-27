@@ -12,7 +12,8 @@ the triage metric plus the two adjacent overlap criteria, on malignant masses
 (the registered selection population), with the registered false-positive
 companion of the dedicated triage metric (overlap_iou_00). The winning budget
 per the registered selection criterion is computed and marked in bold, and a
-convergence chart plots the same four metrics against training epochs.
+convergence chart plots the three detection metrics and the normal-image
+flagged fraction against training epochs.
 
 All rates are mean +/- sample SD across the five cross-validation folds.
 """
@@ -119,13 +120,13 @@ def write_chart(results, winner):
 
     fig, ax = plt.subplots(figsize=(8, 6))
     series = [
-        ("triage detection", "triage_mean", "triage_sd",
+        ("Presence-based", "triage_mean", "triage_sd",
          TRIAGE_COLOR, "o", "-"),
-        ("overlap_iou_00 detection", "iou_00_mean", "iou_00_sd",
+        ("IoU > 0", "iou_00_mean", "iou_00_sd",
          IOU_00_COLOR, "s", "-"),
-        ("overlap_iou_02 detection", "iou_02_mean", "iou_02_sd",
+        ("IoU > 0.2", "iou_02_mean", "iou_02_sd",
          IOU_02_COLOR, "^", "-"),
-        ("FP/image (overlap_iou_00)", "fp_mean", "fp_sd",
+        ("Normal images flagged", "normal_flagged_mean", "normal_flagged_sd",
          FP_COLOR, "D", "--"),
     ]
     for label, mean_key, sd_key, color, marker, linestyle in series:
@@ -167,7 +168,7 @@ def write_chart(results, winner):
     ax.set_xlim(20, 1200)
     ax.set_ylim(0.0, 1.05)
     ax.set_xlabel("training epochs (milestones)")
-    ax.set_ylabel("detection rate / FP per image")
+    ax.set_ylabel("detection rate / normal-image flagged fraction")
     ax.set_title("Training-efficiency: metric convergence by training budget")
     ax.grid(axis="y", alpha=0.25)
     ax.legend(loc="center right", fontsize=9)
@@ -198,9 +199,13 @@ def main():
         malignant_rows = [
             row for row in checkpoint_rows if row.pathology == "malignant"
         ]
+        normal_rows = [row for row in checkpoint_rows if not row.mass_present]
+        normal_flagged = detection_folds(normal_rows, "triage_detection_flag")
         results.append({
             "checkpoint": checkpoint,
             "epoch": checkpoint_rows[0].epoch,
+            "normal_flagged_mean": statistics.mean(normal_flagged),
+            "normal_flagged_sd": statistics.stdev(normal_flagged),
             "triage": detection_cell(malignant_rows, "triage_detection_flag"),
             "iou_02": detection_cell(
                 malignant_rows, "overlap_detection_iou_02_flag"),

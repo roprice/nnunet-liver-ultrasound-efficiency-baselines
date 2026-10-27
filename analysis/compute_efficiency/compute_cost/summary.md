@@ -1,9 +1,18 @@
 # Total GPU costs of study
 
-- Total cost of processing, compute, and predictions: **$92.99**
-- Total cost including stopped workload error and recording delay: **$117.96**
+- Total cost of processing, compute, and predictions: **$90.92**
+- Total cost including all excluded time: **$117.96**
 
 Recorded-rate estimates for Experiments 01–04, in USD; cross-referenced against Verda invoice data `verda_compute_events.json` and costs recorded at time of instance rental.
+
+Per experiment totals:
+
+- Experiment 01: $40.65
+- Experiment 02: $29.58
+- Experiment 03: $12.37
+- Experiment 04: $8.32
+
+These totals exclude post-run recording delay, Experiment 02 stopped-workload time, and Experiment 04 setup and benchmark-recovery interruption. See `summary.csv` for per-experiment exclusions and totals.
 
 Totals use each experiment's exact recorded rate and recording duration, summed before rounding.
 
@@ -17,13 +26,16 @@ Totals use each experiment's exact recorded rate and recording duration, summed 
 Experiment02 stopped workload: 36095.6805265 seconds ($12.292585), from the failed-attempt end in `recovery_restart_size294_fold3/recovery.json` to recovery start in `gpu_events.csv`.
 Combined post-run recording delay: 39878 seconds ($12.681328), from each experiment's final runner-log finish to `recording_ended`.
 
+Experiment04 setup: 1374 seconds ($0.492350), from `recording_started` (2026-10-14T19:32:04Z) to `experiment_started` (2026-10-14T19:54:58Z) in `gpu_events.csv`.
+Experiment04 benchmark-recovery interruption: 4405.024 seconds ($1.578467), from the final sample of `gpu_predict_best_size588_fold0.csv` (2026-10-14T21:12:03.696000Z) to the first sample of `gpu_benchmark_size588_fold0.csv` (2026-10-14T22:25:28.720000Z); timestamps interpreted as UTC. The original runner log records the failed benchmark and the recovery log resumes it. This observed gap includes recovery overhead and any failed benchmark work within it; exact failure boundaries are not preserved. Other failed computation remains included.
+
 Runner completion sources (paths relative to each archived `repo/`):
 - 01_training_efficiency: `training_efficiency.log`, `End time: 2026-10-05T16:44:10Z`.
 - 02_data_efficiency: `logs/data_efficiency_runner.log`, `End time: 2026-10-12T05:56:08Z`.
 - 03_augmentation_ablation: `logs/augmentation_ablation_runner.log`, `End time: 2026-10-14T11:54:51Z`.
 - 04_gaussian_noise_ablation: `logs/gaussian_noise_ablation_recovery.log`, `End time: 2026-10-15T03:35:27Z`.
 
-Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and `gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. Failed computation remains included. Dry runs and Experiments 05–06 are outside this scope. Excluding time changes the estimate, not the provider's actual charges.
+Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and `gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. Dry runs and Experiments 05–06 are outside this scope. Excluding time changes the estimate, not the provider's actual charges.
 
 # Experiment02 GPU energy and compute cost
 

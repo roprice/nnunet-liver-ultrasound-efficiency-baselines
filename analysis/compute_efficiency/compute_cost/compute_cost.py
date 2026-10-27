@@ -30,7 +30,7 @@ ALLOCATION_FIELDS = (
     "charge_id", "resource_id", "charge_type", "currency", "allocation_kind",
     "stage_id", "category", "overlap_seconds", "allocated_amount",
 )
-REPORT_FILES = ("stages.csv", "training_by_pool.csv", "summary.json", "summary.md", "billing_allocations.csv")
+REPORT_FILES = ("stages.csv", "training_by_pool.csv", "summary.json", "summary.md", "summary.csv", "billing_allocations.csv")
 BOUNDARY_NOTE = (
     "Stage bounds are observed first/last GPU samples, not exact process boundaries. "
     "Coverage can exceed 100% because monitors surround commands and command times are integer seconds. "
@@ -541,6 +541,15 @@ def study_cost_totals():
                             "cost": seconds * rate / 3600, "runner_path": runner_path,
                             "finish": iso(finish), "delay_seconds": delay_seconds,
                             "delay_cost": delay_seconds * rate / 3600})
+    setup_start, setup_end = events["recording_started"], events["experiment_started"]
+    prediction_trace = logs / "gpu_predict_best_size588_fold0.csv"
+    benchmark_trace = logs / "gpu_benchmark_size588_fold0.csv"
+    interruption_start = gpu_time(csv_rows(prediction_trace)[-1]["timestamp"].strip(), UTC)
+    interruption_end = gpu_time(csv_rows(benchmark_trace)[0]["timestamp"].strip(), UTC)
+    if not setup_start <= setup_end <= interruption_start < events["recovery_started"] <= interruption_end <= finish:
+        raise ValueError("Invalid Experiment04 exclusion bounds")
+    setup_seconds = Decimal(microseconds(setup_end - setup_start)) / 1000000
+    interruption_seconds = Decimal(microseconds(interruption_end - interruption_start)) / 1000000
     logs = DEFAULT_ARCHIVE / "repo/logs/02_data_efficiency"
     recovery = json.loads((logs / "recovery_restart_size294_fold3/recovery.json").read_text(),
                           parse_float=Decimal)
@@ -550,13 +559,46 @@ def study_cost_totals():
     rate = experiments[1]["rate"]
     total = sum(experiment["cost"] for experiment in experiments)
     stopped_cost = stopped_seconds * rate / 3600
+    for experiment in experiments:
+        experiment["stopped_seconds"] = Decimal(0)
+        experiment["setup_seconds"] = Decimal(0)
+        experiment["interruption_seconds"] = Decimal(0)
+        experiment["adjusted_cost"] = experiment["cost"] - experiment["delay_cost"]
+    experiments[1]["stopped_seconds"] = stopped_seconds
+    experiments[1]["adjusted_cost"] -= stopped_cost
+    experiments[3]["setup_seconds"] = setup_seconds
+    experiments[3]["interruption_seconds"] = interruption_seconds
+    for experiment in experiments:
+        for kind in ("setup", "interruption", "stopped"):
+            experiment[kind + "_cost"] = experiment[kind + "_seconds"] * experiment["rate"] / 3600
+        experiment["adjusted_cost"] -= experiment["setup_cost"] + experiment["interruption_cost"]
     delay_seconds = sum(experiment["delay_seconds"] for experiment in experiments)
     delay_cost = sum(experiment["delay_cost"] for experiment in experiments)
     return {"experiments": experiments, "total": total,
+            "adjusted_total": sum(experiment["adjusted_cost"] for experiment in experiments),
+            "setup_start": iso(setup_start), "setup_end": iso(setup_end),
+            "interruption_start": iso(interruption_start), "interruption_end": iso(interruption_end),
             "excluding_stopped": total - stopped_cost,
             "excluding_stopped_and_delay": total - stopped_cost - delay_cost,
             "stopped_seconds": stopped_seconds, "stopped_cost": stopped_cost,
             "delay_seconds": delay_seconds, "delay_cost": delay_cost}
+
+
+def study_cost_rows(totals):
+    rows = []
+    for experiment in totals["experiments"]:
+        row = {"experiment": experiment["name"], "rate_usd_per_hour": experiment["rate"]}
+        for source, target in (("seconds", "recording_seconds"), ("cost", "unadjusted_usd"),
+                               ("delay_seconds", "post_run_delay_seconds"), ("delay_cost", "post_run_delay_usd"),
+                               ("stopped_seconds", "stopped_workload_seconds"), ("stopped_cost", "stopped_workload_usd"),
+                               ("setup_seconds", "setup_seconds"), ("setup_cost", "setup_usd"),
+                               ("interruption_seconds", "recovery_interruption_seconds"),
+                               ("interruption_cost", "recovery_interruption_usd"), ("adjusted_cost", "adjusted_usd")):
+            row[target] = experiment[source]
+        rows.append(row)
+    rows.append({key: "TOTAL" if key == "experiment" else "" if key == "rate_usd_per_hour" else
+                 sum(row[key] for row in rows) for key in rows[0]})
+    return rows
 
 
 def render_markdown(summary):
@@ -612,27 +654,40 @@ def render_markdown(summary):
     if (ROOT / summary["archive"]).resolve() == DEFAULT_ARCHIVE.resolve():
         totals = study_cost_totals()
         prefix = ["# Total GPU costs of study", "",
-                  f"- Total cost of processing, compute, and predictions: **${totals['excluding_stopped_and_delay']:.2f}**",
-                  f"- Total cost including stopped workload error and recording delay: **${totals['total']:.2f}**", "",
-                  "Recorded-rate estimates for Experiments 01–04, in USD; cross-referenced against Verda invoice data "
-                  "`verda_compute_events.json` and costs recorded at time of instance rental.", "",
-                  "Totals use each experiment's exact recorded rate and recording duration, summed before rounding.", "",
-                  "| Experiment | USD/hour | Recording seconds | Unadjusted USD | Post-run delay seconds | Delay USD |",
-                  "|---|---:|---:|---:|---:|---:|"]
+                   f"- Total cost of processing, compute, and predictions: **${totals['adjusted_total']:.2f}**",
+                  f"- Total cost including all excluded time: **${totals['total']:.2f}**", "",
+                   "Recorded-rate estimates for Experiments 01–04, in USD; cross-referenced against Verda invoice data "
+                   "`verda_compute_events.json` and costs recorded at time of instance rental.", "",
+                  "Per experiment totals:", ""]
+        for number, experiment in enumerate(totals["experiments"], start=1):
+            prefix.append(f"- Experiment {number:02d}: ${experiment['adjusted_cost']:.2f}")
+        prefix.extend(["", "These totals exclude post-run recording delay, Experiment 02 stopped-workload time, and Experiment 04 setup and benchmark-recovery interruption. See `summary.csv` for per-experiment exclusions and totals.", "",
+                   "Totals use each experiment's exact recorded rate and recording duration, summed before rounding.", "",
+                   "| Experiment | USD/hour | Recording seconds | Unadjusted USD | Post-run delay seconds | Delay USD |",
+                  "|---|---:|---:|---:|---:|---:|"])
         for experiment in totals["experiments"]:
             prefix.append(f"| {experiment['name']} | {experiment['rate']} | {experiment['seconds']} | {experiment['cost']:.6f} | {experiment['delay_seconds']} | {experiment['delay_cost']:.6f} |")
         prefix.extend(["", f"Experiment02 stopped workload: {totals['stopped_seconds']} seconds "
                        f"(${totals['stopped_cost']:.6f}), from the failed-attempt end in "
                        "`recovery_restart_size294_fold3/recovery.json` to recovery start in `gpu_events.csv`.",
                        f"Combined post-run recording delay: {totals['delay_seconds']} seconds "
-                       f"(${totals['delay_cost']:.6f}), from each experiment's final runner-log finish to `recording_ended`.", "",
+                       f"(${totals['delay_cost']:.6f}), from each experiment's final runner-log finish to `recording_ended`.", ""])
+        experiment04 = totals["experiments"][3]
+        prefix.extend([f"Experiment04 setup: {experiment04['setup_seconds']} seconds (${experiment04['setup_cost']:.6f}), "
+                       f"from `recording_started` ({totals['setup_start']}) to `experiment_started` ({totals['setup_end']}) in `gpu_events.csv`.",
+                       f"Experiment04 benchmark-recovery interruption: {experiment04['interruption_seconds']} seconds "
+                       f"(${experiment04['interruption_cost']:.6f}), from the final sample of `gpu_predict_best_size588_fold0.csv` "
+                       f"({totals['interruption_start']}) to the first sample of `gpu_benchmark_size588_fold0.csv` "
+                       f"({totals['interruption_end']}); timestamps interpreted as UTC. The original runner log records the failed "
+                       "benchmark and the recovery log resumes it. This observed gap includes recovery overhead and any failed "
+                       "benchmark work within it; exact failure boundaries are not preserved. Other failed computation remains included.", "",
                        "Runner completion sources (paths relative to each archived `repo/`):"])
         for experiment in totals["experiments"]:
             prefix.append(f"- {experiment['name']}: `{experiment['runner_path']}`, `End time: {experiment['finish']}`.")
         prefix.extend(["",
                        "Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and "
                        "`gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. "
-                       "Failed computation remains included. Dry runs and Experiments 05–06 are outside this scope. "
+                        "Dry runs and Experiments 05–06 are outside this scope. "
                        "Excluding time changes the estimate, not the provider's actual charges.", ""])
         lines = prefix + lines
     return "\n".join(lines) + "\n"
@@ -685,6 +740,12 @@ def main(argv=None):
         write_csv(args.output_dir / "billing_allocations.csv", allocations, ALLOCATION_FIELDS)
         (args.output_dir / "summary.json").write_text(json.dumps(summary, indent=2, allow_nan=False) + "\n")
         (args.output_dir / "summary.md").write_text(render_markdown(summary))
+        if archive == DEFAULT_ARCHIVE.resolve():
+            rows = study_cost_rows(study_cost_totals())
+            with (args.output_dir / "summary.csv").open("w", newline="") as stream:
+                writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
+                writer.writeheader()
+                writer.writerows(rows)
     except (OSError, ValueError, KeyError, InvalidOperation, ZoneInfoNotFoundError) as error:
         parser.error(str(error))
     print(f"Wrote {len(stages)} stages to {args.output_dir}; successful training: "
