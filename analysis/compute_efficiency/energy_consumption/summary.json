@@ -1,0 +1,451 @@
+{
+  "scope": "Observed instance-level GPU electricity, Experiments 01\u201304; not whole-system energy",
+  "methodology": {
+    "gpu_timezone": "UTC",
+    "timezone_basis": "Explicit interpretation of naive GPU timestamps; UTC inferred from alignment with UTC events, not encoded in telemetry",
+    "integration": "Trapezoids over actual sample intervals using GPU power.draw only",
+    "max_gap_seconds": 2.0,
+    "rejected_sample_policy": "Preserve rejected rows and line numbers; do not repair or bridge across rejected samples",
+    "gap_policy": "Exclude intervals above the threshold; missing energy is unknown, not zero",
+    "boundaries": "Integrate the full instance trace, not event-clipped windows; no endpoint extrapolation",
+    "coverage_basis": "Accepted interval seconds / first-to-last valid sample span; not provider-lifecycle coverage",
+    "included": "Setup, idle, recovery, failed work, and post-run monitoring where telemetry exists",
+    "excluded": "Stage-monitor sums, CPU/RAM/host/storage/network energy, facility overhead, local development, dry runs, Experiments 05\u201306, embodied emissions"
+  },
+  "sources": {
+    "analysis_script": {
+      "path": "analysis/compute_efficiency/energy_consumption/energy_consumption.py",
+      "sha256": "ef00103a620c5b33cea75b1f2648744eedfca461528cb53014733ca4c5b0ee7e"
+    },
+    "provider_events": {
+      "path": "analysis/compute_efficiency/compute_cost/verda_compute_events.json",
+      "sha256": "ae4b7b5c5861e37f1983752d0c18ba30b01aae90d66570c9e4d3bb7038d4df18"
+    },
+    "datacenter_metadata": {
+      "path": "analysis/compute_efficiency/energy_consumption/datacenter_metadata.json",
+      "sha256": "4f34f7bcaa7c25550e3c4874ea0d403e07ade0d91c4ab6f75844f8005960a8ff"
+    }
+  },
+  "datacenter_metadata": {
+    "provider": "Verda",
+    "sources": {
+      "verda_locations": {
+        "url": "https://docs.verda.com/welcome-to-verda/locations-and-sustainability/",
+        "retrieved_date": "2026-10-27",
+        "displayed_last_updated": "04.08.2026",
+        "role": "Primary provider-reported location, electricity mix, and PUE ratings"
+      },
+      "datacenters_fin01": {
+        "url": "https://www.datacenters.com/verda-fin-01",
+        "retrieved_date": "2026-10-27",
+        "role": "Supplementary listing; not an independent energy measurement"
+      },
+      "datacenters_fin02": {
+        "url": "https://www.datacenters.com/verda-fin-02",
+        "retrieved_date": "2026-10-27",
+        "role": "Supplementary listing; not an independent energy measurement"
+      }
+    },
+    "locations": {
+      "FIN-01": {
+        "city": "Helsinki",
+        "country": "Finland",
+        "published_pue": 1.2,
+        "published_electricity_mix": "50% hydroelectric, 50% wind power",
+        "sources": [
+          "verda_locations",
+          "datacenters_fin01"
+        ]
+      },
+      "FIN-02": {
+        "city": "Helsinki",
+        "country": "Finland",
+        "published_pue": 1.3,
+        "published_electricity_mix": "50% hydroelectric, 50% wind power",
+        "sources": [
+          "verda_locations",
+          "datacenters_fin02"
+        ]
+      },
+      "FIN-03": {
+        "city": "Helsinki",
+        "country": "Finland",
+        "published_pue": 1.2,
+        "published_electricity_mix": "100% renewable energy; generation breakdown unspecified",
+        "sources": [
+          "verda_locations"
+        ]
+      }
+    },
+    "limitations": [
+      "Location, electricity mix, and PUE are published claims, not measurements of these workloads.",
+      "The PUE measurement period and basis are unspecified; applicability to October 2026 is unconfirmed.",
+      "Renewable electricity claims do not supply a numerical emissions factor or establish zero emissions.",
+      "GPU energy multiplied by PUE does not include non-GPU IT energy and is not total cloud electricity consumption."
+    ],
+    "carbon_factors": null,
+    "carbon_status": "Unavailable: no sourced emissions factors with units, period, geography, and accounting basis supplied"
+  },
+  "estimates": {
+    "pue_adjusted_kwh": null,
+    "carbon_kgco2e": null,
+    "status": "Not calculated; published PUE is contextual metadata, not a whole-instance energy model. No emissions factors supplied."
+  },
+  "experiments": [
+    {
+      "experiment": "01_training_efficiency",
+      "gpu_model": "NVIDIA RTX A6000",
+      "hostname": "happy-seed-rings-fin-01",
+      "instance_id": "6c87a39f-3534-4b7a-88d6-26a0a84c4a14",
+      "location_code": "FIN-01",
+      "instance_type": "1A6000.10V",
+      "contract": "PAY_AS_YOU_GO",
+      "created_utc": "2026-10-03T02:41:21.422000Z",
+      "deleted_utc": "2026-10-05T18:43:52.844000Z",
+      "lifecycle_seconds": 230551.422,
+      "provider_event_ids": [
+        "log_034an5vKfGUE5CjIFCAIsf",
+        "log_034ZGnMcn6DrUQk7WdQZo9"
+      ],
+      "trace_start_utc": "2026-10-03T03:42:20.143000Z",
+      "trace_end_utc": "2026-10-05T18:34:35.816000Z",
+      "trace_span_seconds": 226335.673,
+      "observed_seconds": 226335.67299999998,
+      "gap_seconds": 0.0,
+      "coverage_pct": 99.99999999999999,
+      "sample_count": 226277,
+      "rejected_sample_count": 0,
+      "rejected_samples": [],
+      "gaps": [],
+      "gpu_index": 0,
+      "gpu_kwh": 17.197677932654166,
+      "mean_observed_power_w": 273.5390304892636,
+      "max_accepted_interval_seconds": 1.225,
+      "published_pue": 1.2,
+      "recording_seconds": 226351.0,
+      "recording": {
+        "start_utc": "2026-10-03T03:42:20Z",
+        "end_utc": "2026-10-05T18:34:51Z",
+        "seconds": 226351.0,
+        "events": [
+          {
+            "event": "recording_started",
+            "utc": "2026-10-03T03:42:20Z"
+          },
+          {
+            "event": "setup_complete",
+            "utc": "2026-10-03T03:46:29Z"
+          },
+          {
+            "event": "experiment_started",
+            "utc": "2026-10-03T03:46:42Z"
+          },
+          {
+            "event": "experiment_complete",
+            "utc": "2026-10-05T17:02:38Z"
+          },
+          {
+            "event": "recording_ended",
+            "utc": "2026-10-05T18:34:36Z"
+          },
+          {
+            "event": "recording_ended",
+            "utc": "2026-10-05T18:34:51Z"
+          }
+        ]
+      },
+      "trace_start_minus_recording_start_seconds": 0.143,
+      "trace_end_minus_recording_end_seconds": -15.184,
+      "lifecycle_before_trace_seconds": 3658.721,
+      "lifecycle_after_trace_seconds": 557.028,
+      "lifecycle_unobserved_seconds": 4215.749000000011,
+      "sources": {
+        "telemetry": {
+          "path": "archives/01_training_efficiency/repo/logs/01_training_efficiency/gpu_monitor_instance.csv",
+          "sha256": "45e1e6673c671dc6a50fe0a3dd1c9f0a71b2601e844dfcfe952472faf663e1e8"
+        },
+        "recording_events": {
+          "path": "archives/01_training_efficiency/repo/logs/01_training_efficiency/gpu_events.csv",
+          "sha256": "c0b9a7b3d82f24919d98b7ead4d5c446599d6d23cfb9e5b5d77afcca8901c679"
+        },
+        "hardware_settings": {
+          "path": "archives/01_training_efficiency/repo/logs/01_training_efficiency/inference/fold0/inference_settings_cuda_fold0.json",
+          "sha256": "2333d904ec9a9d441838f1fdf9a3431eacb8fc85b87b0422baa187c566a59382"
+        }
+      }
+    },
+    {
+      "experiment": "02_data_efficiency",
+      "gpu_model": "NVIDIA RTX 6000 Ada Generation",
+      "hostname": "pale-face-welcomes-fin-01",
+      "instance_id": "ba717a0e-f765-4bc4-889d-dd929496919a",
+      "location_code": "FIN-01",
+      "instance_type": "1RTX6000ADA.10V",
+      "contract": "PAY_AS_YOU_GO",
+      "created_utc": "2026-10-10T19:38:53.575000Z",
+      "deleted_utc": "2026-10-12T17:20:07.468000Z",
+      "lifecycle_seconds": 164473.893,
+      "provider_event_ids": [
+        "log_034ekPcrBzqTNaH7TeVwbz",
+        "log_034df8jAObCl64ILdhEPRA"
+      ],
+      "trace_start_utc": "2026-10-10T19:46:51.989000Z",
+      "trace_end_utc": "2026-10-12T12:38:37.791000Z",
+      "trace_span_seconds": 147105.802,
+      "observed_seconds": 128630.951,
+      "gap_seconds": 18474.851,
+      "coverage_pct": 87.44111330156781,
+      "sample_count": 128599,
+      "rejected_sample_count": 1,
+      "rejected_samples": [
+        {
+          "line": 57327,
+          "reason": "Invalid GPU timestamp: 2026/2026/10/11 16:50:24.342",
+          "row": {
+            "timestamp": "2026/2026/10/11 16:50:24.342",
+            "index": "0",
+            "utilization.gpu [%]": "0 %",
+            "memory.used [MiB]": "0 MiB",
+            "power.draw [W]": "25.05 W"
+          }
+        }
+      ],
+      "gaps": [
+        {
+          "start_utc": "2026-10-11T11:42:30.491000Z",
+          "end_utc": "2026-10-11T16:50:25.342000Z",
+          "seconds": 18474.851,
+          "reason": "sampling_gap"
+        }
+      ],
+      "gpu_index": 0,
+      "gpu_kwh": 6.581005196605555,
+      "mean_observed_power_w": 184.18287763246033,
+      "max_accepted_interval_seconds": 1.036,
+      "published_pue": 1.2,
+      "recording_seconds": 147107.0,
+      "recording": {
+        "start_utc": "2026-10-10T19:46:51Z",
+        "end_utc": "2026-10-12T12:38:38Z",
+        "seconds": 147107.0,
+        "events": [
+          {
+            "event": "recording_started",
+            "utc": "2026-10-10T19:46:51Z"
+          },
+          {
+            "event": "setup_complete",
+            "utc": "2026-10-10T19:50:59Z"
+          },
+          {
+            "event": "experiment_started",
+            "utc": "2026-10-10T19:51:15Z"
+          },
+          {
+            "event": "recovery_size294_fold3_started",
+            "utc": "2026-10-11T17:39:57Z"
+          },
+          {
+            "event": "experiment_complete",
+            "utc": "2026-10-12T12:38:38Z"
+          },
+          {
+            "event": "recording_ended",
+            "utc": "2026-10-12T12:38:38Z"
+          }
+        ]
+      },
+      "trace_start_minus_recording_start_seconds": 0.989,
+      "trace_end_minus_recording_end_seconds": -0.209,
+      "lifecycle_before_trace_seconds": 478.414,
+      "lifecycle_after_trace_seconds": 16889.677,
+      "lifecycle_unobserved_seconds": 35842.94200000001,
+      "sources": {
+        "telemetry": {
+          "path": "archives/02_data_efficiency/repo/logs/02_data_efficiency/gpu_monitor_instance.csv",
+          "sha256": "f6bd9a907e42dc349ce02cf8c8695e42ac6bbc5af269e9095b862799d86a3054"
+        },
+        "recording_events": {
+          "path": "archives/02_data_efficiency/repo/logs/02_data_efficiency/gpu_events.csv",
+          "sha256": "a48bc3a52dcd0cf9b5708c9031583ffbc1326e6ff3c5a4b344ee51a8564c2315"
+        },
+        "hardware_settings": {
+          "path": "archives/02_data_efficiency/repo/logs/02_data_efficiency/inference/size588/fold4/inference_settings_cuda_fold4.json",
+          "sha256": "704f35c2882724dc03d4179b1e433e71948ef14cbb4f1c31fd93b317f3d0db78"
+        }
+      }
+    },
+    {
+      "experiment": "03_augmentation_ablation",
+      "gpu_model": "NVIDIA RTX 6000 Ada Generation",
+      "hostname": "hard-rain-embraces-fin-02",
+      "instance_id": "98d9f476-6f62-4fa4-a757-2b656718662a",
+      "location_code": "FIN-02",
+      "instance_type": "1RTX6000ADA.10V",
+      "contract": "PAY_AS_YOU_GO",
+      "created_utc": "2026-10-14T02:08:28.801000Z",
+      "deleted_utc": "2026-10-14T14:52:49.710000Z",
+      "lifecycle_seconds": 45860.909,
+      "provider_event_ids": [
+        "log_034fpTY6mM32LNveYiMiMI",
+        "log_034fWiYr7ADkqgICz1uiGL"
+      ],
+      "trace_start_utc": "2026-10-14T02:13:44.875000Z",
+      "trace_end_utc": "2026-10-14T14:03:22.209000Z",
+      "trace_span_seconds": 42577.334,
+      "observed_seconds": 42577.333999999995,
+      "gap_seconds": 0.0,
+      "coverage_pct": 99.99999999999999,
+      "sample_count": 42567,
+      "rejected_sample_count": 0,
+      "rejected_samples": [],
+      "gaps": [],
+      "gpu_index": 0,
+      "gpu_kwh": 2.6527851698513887,
+      "mean_observed_power_w": 224.29836991355543,
+      "max_accepted_interval_seconds": 1.023,
+      "published_pue": 1.3,
+      "recording_seconds": 42579.0,
+      "recording": {
+        "start_utc": "2026-10-14T02:13:44Z",
+        "end_utc": "2026-10-14T14:03:23Z",
+        "seconds": 42579.0,
+        "events": [
+          {
+            "event": "recording_started",
+            "utc": "2026-10-14T02:13:44Z"
+          },
+          {
+            "event": "setup_complete",
+            "utc": "2026-10-14T02:19:36Z"
+          },
+          {
+            "event": "experiment_started",
+            "utc": "2026-10-14T02:19:51Z"
+          },
+          {
+            "event": "experiment_complete",
+            "utc": "2026-10-14T14:03:23Z"
+          },
+          {
+            "event": "recording_ended",
+            "utc": "2026-10-14T14:03:23Z"
+          }
+        ]
+      },
+      "trace_start_minus_recording_start_seconds": 0.875,
+      "trace_end_minus_recording_end_seconds": -0.791,
+      "lifecycle_before_trace_seconds": 316.074,
+      "lifecycle_after_trace_seconds": 2967.501,
+      "lifecycle_unobserved_seconds": 3283.5750000000044,
+      "sources": {
+        "telemetry": {
+          "path": "archives/03_augmentation_ablation/repo/logs/03_augmentation_ablation/gpu_monitor_instance.csv",
+          "sha256": "6bf3123d973ff46c25573821d64adfa67bae8b86b3ca7bf34eb413f2ae1be94f"
+        },
+        "recording_events": {
+          "path": "archives/03_augmentation_ablation/repo/logs/03_augmentation_ablation/gpu_events.csv",
+          "sha256": "12dcb72b8f59ed5b33dd18a43d39b528a705c75f84bf39b2c1e074d11fc7ba19"
+        },
+        "hardware_settings": {
+          "path": "archives/03_augmentation_ablation/repo/logs/03_augmentation_ablation/inference/size588/fold0/inference_settings_cuda_fold0.json",
+          "sha256": "4fa4357bfc4e7d37fd8a822c791c797461258a977e3b92e0296b9ef1b11b8048"
+        }
+      }
+    },
+    {
+      "experiment": "04_gaussian_noise_ablation",
+      "gpu_model": "NVIDIA RTX 6000 Ada Generation",
+      "hostname": "loud-game-writes-fin-02",
+      "instance_id": "95bdaa14-4578-4295-a08f-f1c1f555db73",
+      "location_code": "FIN-02",
+      "instance_type": "1RTX6000ADA.10V",
+      "contract": "PAY_AS_YOU_GO",
+      "created_utc": "2026-10-14T19:27:06.763000Z",
+      "deleted_utc": "2026-10-15T04:40:51.219000Z",
+      "lifecycle_seconds": 33224.456,
+      "provider_event_ids": [
+        "log_034g9nQMzbADAOleMfZVbZ",
+        "log_034fwCssl1gy8C9zShQptN"
+      ],
+      "trace_start_utc": "2026-10-14T19:32:04.958000Z",
+      "trace_end_utc": "2026-10-15T03:58:22.846000Z",
+      "trace_span_seconds": 30377.888,
+      "observed_seconds": 30377.888,
+      "gap_seconds": 0.0,
+      "coverage_pct": 100.0,
+      "sample_count": 30370,
+      "rejected_sample_count": 0,
+      "rejected_samples": [],
+      "gaps": [],
+      "gpu_index": 0,
+      "gpu_kwh": 1.8463829243194443,
+      "mean_observed_power_w": 218.80976477199468,
+      "max_accepted_interval_seconds": 1.025,
+      "published_pue": 1.3,
+      "recording_seconds": 30378.0,
+      "recording": {
+        "start_utc": "2026-10-14T19:32:04Z",
+        "end_utc": "2026-10-15T03:58:22Z",
+        "seconds": 30378.0,
+        "events": [
+          {
+            "event": "recording_started",
+            "utc": "2026-10-14T19:32:04Z"
+          },
+          {
+            "event": "setup_complete",
+            "utc": "2026-10-14T19:54:44Z"
+          },
+          {
+            "event": "experiment_started",
+            "utc": "2026-10-14T19:54:58Z"
+          },
+          {
+            "event": "recovery_started",
+            "utc": "2026-10-14T22:25:28Z"
+          },
+          {
+            "event": "experiment_complete",
+            "utc": "2026-10-15T03:58:14Z"
+          },
+          {
+            "event": "recording_ended",
+            "utc": "2026-10-15T03:58:22Z"
+          }
+        ]
+      },
+      "trace_start_minus_recording_start_seconds": 0.958,
+      "trace_end_minus_recording_end_seconds": 0.846,
+      "lifecycle_before_trace_seconds": 298.195,
+      "lifecycle_after_trace_seconds": 2548.373,
+      "lifecycle_unobserved_seconds": 2846.5679999999993,
+      "sources": {
+        "telemetry": {
+          "path": "archives/04_gaussian_noise_ablation/repo/logs/04_gaussian_noise_ablation/gpu_monitor_instance.csv",
+          "sha256": "07c058fc3cce68d69f6f393a945a884ddbdfe2497bbb5ceb19b857135485e658"
+        },
+        "recording_events": {
+          "path": "archives/04_gaussian_noise_ablation/repo/logs/04_gaussian_noise_ablation/gpu_events.csv",
+          "sha256": "4370366849cbde203e1bf8fff4a6a054c34ba6ec0cf32d2e9db88071e07234e5"
+        },
+        "hardware_settings": {
+          "path": "archives/04_gaussian_noise_ablation/repo/logs/04_gaussian_noise_ablation/inference/size588/fold0/inference_settings_cuda_fold0.json",
+          "sha256": "d389b971e1cbd75eb39159067eaf0ce630e7c7ffc7cfca239ac24815eae95ea2"
+        }
+      }
+    }
+  ],
+  "totals": {
+    "gpu_kwh": 28.277851223430552,
+    "recording_seconds": 446415.0,
+    "trace_span_seconds": 446396.697,
+    "observed_seconds": 427921.84599999996,
+    "gap_seconds": 18474.851,
+    "lifecycle_seconds": 474110.68,
+    "lifecycle_unobserved_seconds": 46188.834000000024,
+    "sample_count": 427813,
+    "rejected_sample_count": 1,
+    "coverage_pct": 95.86133788082216
+  }
+}

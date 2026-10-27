@@ -1,0 +1,5 @@
+experiment,gpu_model,hostname,instance_id,location_code,recording_seconds,trace_span_seconds,observed_seconds,gap_seconds,coverage_pct,sample_count,rejected_sample_count,gpu_kwh,published_pue
+01_training_efficiency,NVIDIA RTX A6000,happy-seed-rings-fin-01,6c87a39f-3534-4b7a-88d6-26a0a84c4a14,FIN-01,226351.0,226335.673,226335.67299999998,0.0,99.99999999999999,226277,0,17.197677932654166,1.2
+02_data_efficiency,NVIDIA RTX 6000 Ada Generation,pale-face-welcomes-fin-01,ba717a0e-f765-4bc4-889d-dd929496919a,FIN-01,147107.0,147105.802,128630.951,18474.851,87.44111330156781,128599,1,6.581005196605555,1.2
+03_augmentation_ablation,NVIDIA RTX 6000 Ada Generation,hard-rain-embraces-fin-02,98d9f476-6f62-4fa4-a757-2b656718662a,FIN-02,42579.0,42577.334,42577.333999999995,0.0,99.99999999999999,42567,0,2.6527851698513887,1.3
+04_gaussian_noise_ablation,NVIDIA RTX 6000 Ada Generation,loud-game-writes-fin-02,95bdaa14-4578-4295-a08f-f1c1f555db73,FIN-02,30378.0,30377.888,30377.888,0.0,100.0,30370,0,1.8463829243194443,1.3
