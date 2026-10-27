@@ -11,6 +11,7 @@ Per experiment totals:
 - Experiment 02: $29.58
 - Experiment 03: $12.37
 - Experiment 04: $8.32
+- Experiments 05–06 (local-device predictions): $0.00
 
 These totals exclude post-run recording delay, Experiment 02 stopped-workload time, and Experiment 04 setup and benchmark-recovery interruption. See `summary.csv` for per-experiment exclusions and totals.
 
@@ -22,6 +23,7 @@ Totals use each experiment's exact recorded rate and recording duration, summed 
 | 02_data_efficiency | 1.226 | 147107 | 50.098106 | 24150 | 8.224417 |
 | 03_augmentation_ablation | 1.277 | 42579 | 15.103718 | 7712 | 2.735618 |
 | 04_gaussian_noise_ablation | 1.290 | 30378 | 10.885450 | 1375 | 0.492708 |
+| 05_06_local_device_predictions | 0 | 7831.6910957089857 | 0.000000 | 0 | 0.000000 |
 
 Experiment02 stopped workload: 36095.6805265 seconds ($12.292585), from the failed-attempt end in `recovery_restart_size294_fold3/recovery.json` to recovery start in `gpu_events.csv`.
 Combined post-run recording delay: 39878 seconds ($12.681328), from each experiment's final runner-log finish to `recording_ended`.
@@ -35,7 +37,7 @@ Runner completion sources (paths relative to each archived `repo/`):
 - 03_augmentation_ablation: `logs/augmentation_ablation_runner.log`, `End time: 2026-10-14T11:54:51Z`.
 - 04_gaussian_noise_ablation: `logs/gaussian_noise_ablation_recovery.log`, `End time: 2026-10-15T03:35:27Z`.
 
-Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and `gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. Dry runs and Experiments 05–06 are outside this scope. Excluding time changes the estimate, not the provider's actual charges.
+Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and `gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. Dry runs, the superseded Experiment06 local run, and Experiment06's remote A100 predictions are outside this scope. Excluding time changes the estimate, not the provider's actual charges.
 
 # Experiment02 GPU energy and compute cost
 

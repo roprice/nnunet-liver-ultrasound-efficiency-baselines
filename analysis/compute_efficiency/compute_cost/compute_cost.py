@@ -31,6 +31,11 @@ ALLOCATION_FIELDS = (
     "stage_id", "category", "overlap_seconds", "allocated_amount",
 )
 REPORT_FILES = ("stages.csv", "training_by_pool.csv", "summary.json", "summary.md", "summary.csv", "billing_allocations.csv")
+LOCAL_PREDICTION_RUNS = (
+    ROOT / "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/run_settings.json",
+    ROOT / "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/run_settings.json",
+    ROOT / "archives/06_external_validation/caliper/logs/run_settings.json",
+)
 BOUNDARY_NOTE = (
     "Stage bounds are observed first/last GPU samples, not exact process boundaries. "
     "Coverage can exceed 100% because monitors surround commands and command times are integer seconds. "
@@ -518,6 +523,34 @@ def build_summary(archive, zone, max_gap_seconds, billing_csv=None, resource_id=
     return stages, summary, allocations
 
 
+def local_device_prediction_totals():
+    """Wall time and prediction counts for the Experiment05–06 local-device prediction runs."""
+    runs, seconds, predictions = [], Decimal(0), 0
+    for settings_path in LOCAL_PREDICTION_RUNS:
+        settings = json.loads(settings_path.read_text())
+        if settings.get("status") not in (None, "completed"):
+            raise ValueError(f"Local prediction run not completed: {settings_path}")
+        directory = settings_path.parent
+        if "wall_seconds" in settings:
+            device = directory.name
+            single = json.loads((directory / f"inference/single_case_{device}.json").read_text())
+            latency = csv_rows(directory / f"inference/inference_summary_{device}_fold4.csv")
+            throughput = csv_rows(directory / f"inference/inference_throughput_{device}_fold4.csv")
+            run_seconds = Decimal(str(settings["wall_seconds"]))
+            run_predictions = (int(single["case_count"]) + int(latency[0]["n_measurements"])
+                               + sum(int(row["case_count"]) for row in throughput))
+        else:
+            run_seconds = Decimal(microseconds(aware_time(settings["end_utc"])
+                                               - aware_time(settings["start_utc"]))) / 1000000
+            run_predictions = len(csv_rows(directory / "per_image_results.csv"))
+        seconds += run_seconds
+        predictions += run_predictions
+        runs.append({"run": str(settings_path.relative_to(ROOT)), "wall_seconds": run_seconds,
+                     "predictions": run_predictions})
+    return {"name": "05_06_local_device_predictions", "rate": Decimal(0), "seconds": seconds,
+            "cost": Decimal(0), "predictions": predictions, "runs": runs}
+
+
 def study_cost_totals():
     experiments = []
     for name, runner_path in (
@@ -581,7 +614,8 @@ def study_cost_totals():
             "excluding_stopped": total - stopped_cost,
             "excluding_stopped_and_delay": total - stopped_cost - delay_cost,
             "stopped_seconds": stopped_seconds, "stopped_cost": stopped_cost,
-            "delay_seconds": delay_seconds, "delay_cost": delay_cost}
+            "delay_seconds": delay_seconds, "delay_cost": delay_cost,
+            "local_device": local_device_prediction_totals()}
 
 
 def study_cost_rows(totals):
@@ -596,6 +630,14 @@ def study_cost_rows(totals):
                                ("interruption_cost", "recovery_interruption_usd"), ("adjusted_cost", "adjusted_usd")):
             row[target] = experiment[source]
         rows.append(row)
+    local = totals["local_device"]
+    rows.append({"experiment": local["name"], "rate_usd_per_hour": local["rate"],
+                 "recording_seconds": local["seconds"], "unadjusted_usd": local["cost"],
+                 "post_run_delay_seconds": Decimal(0), "post_run_delay_usd": Decimal(0),
+                 "stopped_workload_seconds": Decimal(0), "stopped_workload_usd": Decimal(0),
+                 "setup_seconds": Decimal(0), "setup_usd": Decimal(0),
+                 "recovery_interruption_seconds": Decimal(0), "recovery_interruption_usd": Decimal(0),
+                 "adjusted_usd": local["cost"]})
     rows.append({key: "TOTAL" if key == "experiment" else "" if key == "rate_usd_per_hour" else
                  sum(row[key] for row in rows) for key in rows[0]})
     return rows
@@ -661,12 +703,15 @@ def render_markdown(summary):
                   "Per experiment totals:", ""]
         for number, experiment in enumerate(totals["experiments"], start=1):
             prefix.append(f"- Experiment {number:02d}: ${experiment['adjusted_cost']:.2f}")
+        prefix.append(f"- Experiments 05–06 (local-device predictions): ${totals['local_device']['cost']:.2f}")
         prefix.extend(["", "These totals exclude post-run recording delay, Experiment 02 stopped-workload time, and Experiment 04 setup and benchmark-recovery interruption. See `summary.csv` for per-experiment exclusions and totals.", "",
                    "Totals use each experiment's exact recorded rate and recording duration, summed before rounding.", "",
                    "| Experiment | USD/hour | Recording seconds | Unadjusted USD | Post-run delay seconds | Delay USD |",
                   "|---|---:|---:|---:|---:|---:|"])
         for experiment in totals["experiments"]:
             prefix.append(f"| {experiment['name']} | {experiment['rate']} | {experiment['seconds']} | {experiment['cost']:.6f} | {experiment['delay_seconds']} | {experiment['delay_cost']:.6f} |")
+        local = totals["local_device"]
+        prefix.append(f"| {local['name']} | {local['rate']} | {local['seconds']} | {local['cost']:.6f} | 0 | 0.000000 |")
         prefix.extend(["", f"Experiment02 stopped workload: {totals['stopped_seconds']} seconds "
                        f"(${totals['stopped_cost']:.6f}), from the failed-attempt end in "
                        "`recovery_restart_size294_fold3/recovery.json` to recovery start in `gpu_events.csv`.",
@@ -687,7 +732,7 @@ def render_markdown(summary):
         prefix.extend(["",
                        "Rates and recording endpoints come from each experiment's archived `gpu_rate.csv` and "
                        "`gpu_events.csv`; Experiment01 uses its final `recording_ended` entry. "
-                        "Dry runs and Experiments 05–06 are outside this scope. "
+                        "Dry runs, the superseded Experiment06 local run, and Experiment06's remote A100 predictions are outside this scope. "
                        "Excluding time changes the estimate, not the provider's actual charges.", ""])
         lines = prefix + lines
     return "\n".join(lines) + "\n"
