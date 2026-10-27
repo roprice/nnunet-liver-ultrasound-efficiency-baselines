@@ -1,10 +1,16 @@
 # Study log
 
+## 2026-10-25
+_Estimated development effort: 2 through today, 173 total_
+
+We refined energy consumption anaysis and metrics by cross-referencing a broader set of log data captured during experiments with new vendor supplied data from Verda.com, evaluating datacenter profiles.
+
+We also formed a speculative carbon footprint, by cross referencing Verda datacenter documentation with Fingrid energy usage reports related to hydro and wind power.
 
 ## 2026-10-25
 _Estimated development effort: 4 through today, 171 total_
 
-In drafting our paper, we saw fit to do extended analysis on detection rates, particularly around multi-pass per patient data.
+We extended analysis on detection rates, particularly around multi-pass per patient data.
 
 We also finalized and concretized the project budget at $92.99, reported as $93 throughout the study.
 
