@@ -115,19 +115,37 @@ class HccCaliperCsvTests(unittest.TestCase):
 
 
 class SmallHccTests(unittest.TestCase):
-    def test_strict_size_filter_and_shared_images(self):
-        sizes = (2.49, 2.5, None, 1.0)
+    def test_inclusive_size_filter_and_shared_images(self):
+        sizes = (2.49, 2.5, None, 1.0, 2.51)
         cases = {str(i): {"patient": "patient", "tumor_max_diameter_cm": size}
                  for i, size in enumerate(sizes)}
-        rows = [SimpleNamespace(image_id=str(i), triage_detection_flag=True) for i in range(4)]
+        rows = [SimpleNamespace(image_id=str(i), triage_detection_flag=True) for i in range(len(sizes))]
         cohort = SimpleNamespace(
             cases=cases, groups={(analysis.MODEL, f): rows for f in analysis.FOLDS},
             evaluations={(analysis.MODEL, f): {str(i): SimpleNamespace(
-                detected={"overlap_iou_00": i == 0}) for i in range(4)} for f in analysis.FOLDS})
+                detected={"overlap_iou_00": i == 0}) for i in range(len(sizes))} for f in analysis.FOLDS})
         counts = analysis.small_hcc_counts(cohort)
         for fold in analysis.FOLDS:
-            self.assertEqual(counts["presence"][fold], [(2, 2)])
-            self.assertEqual(counts["overlap_iou_00"][fold], [(2, 1)])
+            self.assertEqual(counts["presence"][fold], [(3, 3)])
+            self.assertEqual(counts["overlap_iou_00"][fold], [(3, 1)])
+
+    def test_section_shows_presence_and_overlap_at_one_to_twenty_passes(self):
+        counts = {key: {fold: [(2, 1)] * 20 for fold in analysis.FOLDS}
+                  for key in ("presence", "overlap_iou_00")}
+        parameters = [(2.0, b) for b in (0.3, 0.4, 0.5, 0.6, 0.7)]
+        overlap_parameters = [(1.0, b) for b in (0.4, 0.5, 0.6, 0.7, 0.8)]
+        with patch.object(analysis, "fit_beta_binomial",
+                          side_effect=parameters + overlap_parameters) as fit:
+            text = analysis.small_hcc_section(counts)
+        self.assertEqual(fit.call_count, 10)
+        table = [line for line in text.splitlines() if line.startswith("|")]
+        self.assertEqual(table[0], "| passes | presence | overlap (IoU > 0) |")
+        self.assertEqual(len(table), 22)
+        for passes, row in enumerate(table[2:], start=1):
+            expected = [analysis.mean_sd(
+                [analysis.detection_probability(a, b, passes) for a, b in fitted], digits=6)
+                for fitted in (parameters, overlap_parameters)]
+            self.assertEqual(row, f"| {passes} | " + " | ".join(expected) + " |")
 
     def test_target_is_first_integer_using_mean_not_every_fold(self):
         parameters = [(1.0, b) for b in (0.01, 0.01, 0.01, 0.01, 0.2)]

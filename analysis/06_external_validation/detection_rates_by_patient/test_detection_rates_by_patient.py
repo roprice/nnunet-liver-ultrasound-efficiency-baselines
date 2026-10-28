@@ -4,7 +4,10 @@ import importlib
 import json
 import statistics
 import unittest
+from unittest.mock import patch
 from types import SimpleNamespace
+
+import numpy as np
 
 analysis = importlib.import_module(
     "analysis.06_external_validation.detection_rates_by_patient.detection_rates_by_patient"
@@ -13,6 +16,9 @@ analysis = importlib.import_module(
 
 class DetectionRatesByPatientTests(unittest.TestCase):
     def setUp(self):
+        agreement = patch.object(analysis, "spatial_agreement_score", return_value=1.0)
+        agreement.start()
+        self.addCleanup(agreement.stop)
         self.entries, self.flags = [], []
         for patient, class_name, diameter, flags in (
             ("small", "HCC", 1.9, [True]),
@@ -83,7 +89,7 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         self.assertEqual([result["any_image_rate"] for result in results], [0.75, 0.5, 0.75, 0.5, 0.75])
         self.assertEqual([result["all_image_rate"] for result in results], [0.5, 0.25, 0.5, 0.25, 0.5])
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
-        self.assertIn("| 1 | 1 | 1 | 0.600 ± 0.548 / 0.600 ± 0.548 |", report)
+        self.assertIn("| 1 | 1 | 1 | 0.600 ± 0.548 | 0.600 ± 0.548 |", report)
 
     def test_view_tables_separate_cohorts_and_handle_empty_bins(self):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
@@ -92,14 +98,14 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         _, hcc, hemangioma = report.split("## View-count effects: ")
         self.assertTrue(hemangioma.startswith("hemangioma cohort\n"))
         self.assertTrue(hcc.startswith("HCC cohort\n"))
-        self.assertIn("| 6+ | 1 | 6 | 0.600 ± 0.548 / 0.600 ± 0.548 |", hemangioma)
-        self.assertIn("| 1 | 0 | 0 | NA / NA | NA / NA | NA / NA |", hemangioma)
-        self.assertIn("| 1 | 1 | 1 | 0.600 ± 0.548 / 0.600 ± 0.548 |", hcc)
-        self.assertIn("| 2 | 1 | 2 | 1.000 ± 0.000 / 0.000 ± 0.000 |", hcc)
-        self.assertIn("| 3 | 1 | 3 | 0.400 ± 0.548 / 0.400 ± 0.548 |", hcc)
-        self.assertIn("| 4 | 0 | 0 | NA / NA | NA / NA | NA / NA |", hcc)
-        self.assertIn("| 5 | 0 | 0 | NA / NA | NA / NA | NA / NA |", hcc)
-        self.assertIn("| 6+ | 0 | 0 | NA / NA | NA / NA | NA / NA |", hcc)
+        self.assertIn("| 6+ | 1 | 6 | 0.600 ± 0.548 | 0.600 ± 0.548 |", hemangioma)
+        self.assertIn("| 1 | 0 | 0 | NA | NA |", hemangioma)
+        self.assertIn("| 1 | 1 | 1 | 0.600 ± 0.548 | 0.600 ± 0.548 |", hcc)
+        self.assertIn("| 2 | 1 | 2 | 1.000 ± 0.000 | 0.000 ± 0.000 |", hcc)
+        self.assertIn("| 3 | 1 | 3 | 0.400 ± 0.548 | 0.400 ± 0.548 |", hcc)
+        self.assertIn("| 4 | 0 | 0 | NA | NA |", hcc)
+        self.assertIn("| 5 | 0 | 0 | NA | NA |", hcc)
+        self.assertIn("| 6+ | 0 | 0 | NA | NA |", hcc)
 
     def test_report_table_and_view_bin_order(self):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
@@ -121,13 +127,22 @@ class DetectionRatesByPatientTests(unittest.TestCase):
     def test_report_title_labels_and_paragraphs(self):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
         self.assertTrue(report.startswith("# External-validation patient presence-based detection rates\n"))
-        self.assertEqual(report.count("| nnU-Net default augmentation |"), 2)
+        self.assertEqual(report.count(
+            "| images per patient | patients | images | any-image rate | all-image rate |"), 2)
+        for label in analysis.MODELS.values():
+            self.assertNotIn(f"| {label} |", report)
+        for section in report.split("## View-count effects: ")[1:]:
+            table = section.split("## Cohort and view counts", 1)[0]
+            for line in table.splitlines():
+                if line.startswith("|"):
+                    self.assertEqual(len(line.split("|")), 9)
         self.assertNotIn("| Data efficiency |", report)
         self.assertEqual(analysis.external.MODELS["data_efficiency"], "nnU-Net default augmentation")
         self.assertNotIn("For each patient, n is", report)
         self.assertIn(
-            "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, for nnUnet default "
-            "augmentation and two augmentation ablations.\n\n"
+            "All tables use nnU-Net default augmentation (experiment02 data efficiency), "
+            "588-image AUL training pool, final checkpoints, seed 42, 150 epochs. "
+            "Rates are mean ± sample SD across folds 0–4.\n\n"
             "Patients are joined by manifest case ID; every model/fold is checked against the full "
             "Clean cohort. Hem_87 is included.\n\n", report)
         self.assertTrue(report.endswith(
@@ -142,10 +157,14 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         raw = json.dumps(self.archived).encode()
         report = analysis.build_example_report(self.data, self.manifest, raw)
         for entry in self.entries[1:3]:
-            self.assertIn(f"| `{entry['case']}` | `{entry['case']}.jpg` | "
+            self.assertIn(f"| `{entry['case']}` | "
                           f"`{entry['source_relative_path']}` |", report)
-        self.assertIn("| 1 | 0 | 1 | 0 | 1 |", report)
-        self.assertIn("| 0 | 1 | 0 | 1 | 0 |", report)
+        self.assertIn("| mean GT diameter (cm) | mean predicted diameter | folds (0-4) |", report)
+        self.assertNotIn("original filename", report)
+        self.assertIn("| 0.90 | 6.8px (~0.1cm) | 1 0 1 0 1 |", report)
+        self.assertIn("| 0.90 | 4.5px (~0.1cm) | 0 1 0 1 0 |", report)
+        self.assertIn("\n\nParenthetical values are estimated physical diameters of the predictions, "
+                      "using an assumed scale of 0.013 cm/px.\n\nSpatial agreement", report)
         for fold in analysis.FOLDS:
             self.assertIn(f"| {fold} | 1 | 1 | 2 |", report)
         self.assertIn(hashlib.sha256(raw).hexdigest(), report)
@@ -232,6 +251,78 @@ class DetectionRatesByPatientTests(unittest.TestCase):
             self.assertIn(hashlib.sha256(archive_bytes).hexdigest(), report)
 
 
+class SpatialAgreementTests(unittest.TestCase):
+    def test_patient_weighting_coverage_and_quartiles(self):
+        patients = [analysis.PatientCounts("a", "malignant", None, n=3),
+                    analysis.PatientCounts("b", "malignant", None, n=1),
+                    analysis.PatientCounts("c", "malignant", None, n=2)]
+        agreements = {"a": [0.0, 1.0, None], "b": [1.0], "c": [None, None]}
+        self.assertEqual(analysis.summarize_spatial_agreements(patients, agreements),
+                         ("3/6 (50.0%) images; 2/3 patients", "75.0% [62.5%, 87.5%]"))
+        self.assertEqual(analysis.summarize_spatial_agreements(patients[:1], agreements),
+                         ("2/3 (66.7%) images; 1/1 patients", "50.0% [50.0%, 50.0%]"))
+        self.assertEqual(analysis.summarize_spatial_agreements(patients[2:], agreements),
+                         ("0/2 (0.0%) images; 0/1 patients", "NA"))
+        self.assertEqual(analysis.summarize_spatial_agreements([], agreements), ("NA", "NA"))
+
+    def test_cohort_scores_use_default_model_and_all_folds(self):
+        rows = []
+        for model in analysis.MODELS:
+            for fold in analysis.FOLDS:
+                rows.append(SimpleNamespace(
+                    experiment_name=model, evaluation_split="external_clean",
+                    configuration_id=f"{model}_{fold}", training_set_size=588,
+                    seed=42, checkpoint="final", epoch=150, encoder="PlainConvUNet",
+                    fold=fold, image_id="image", mass_present=True, evaluation_unit="image",
+                ))
+        with patch.object(analysis, "spatial_agreement_score", return_value=0.25) as score:
+            result = analysis.patient_spatial_agreements(
+                rows, {"cases": [{"case": "image", "patient": "patient"}]})
+        self.assertEqual(result, {"patient": [0.25]})
+        selected = score.call_args.args[0]
+        self.assertEqual([row.fold for row in selected], list(analysis.FOLDS))
+        self.assertTrue(all(row.experiment_name == "data_efficiency" for row in selected))
+
+    def evaluate(self, masks, area_override=None, shape_override=None, flag_override=None):
+        rows = [SimpleNamespace(
+            image_id="example", prediction_path="example.png",
+            image_height_px=mask.shape[0], image_width_px=mask.shape[1],
+            predicted_mass_area_retained_px=int((mask == 2).sum()),
+            triage_detection_flag=bool((mask == 2).any()),
+        ) for mask in masks]
+        if area_override is not None:
+            rows[0].predicted_mass_area_retained_px = area_override
+        if shape_override is not None:
+            rows[0].image_height_px = shape_override
+        if flag_override is not None:
+            rows[0].triage_detection_flag = flag_override
+        with patch.object(analysis.external.proxy_detection, "case_mask_path"), \
+                patch.object(analysis.builder, "read_mask", side_effect=masks):
+            return analysis.spatial_agreement(rows)
+
+    def test_positive_pairs_exclude_empty_and_nonmass_masks(self):
+        a = np.array([[2, 2, 0, 0]], dtype=np.uint8)
+        b = np.array([[0, 2, 2, 0]], dtype=np.uint8)
+        empty = np.ones_like(a)
+        self.assertEqual(self.evaluate([a, b, empty]), "33.3%")
+        self.assertEqual(self.evaluate([a, a, b]), "55.6%")
+        self.assertEqual(self.evaluate([a, a]), "100.0%")
+        self.assertEqual(self.evaluate([a, np.array([[0, 0, 2, 2]])]), "0.0%")
+        self.assertEqual(self.evaluate([empty, empty]), "N/A")
+        self.assertEqual(self.evaluate([a, empty]), "N/A")
+
+    def test_canonical_area_shape_and_presence_are_checked(self):
+        mask = np.full((10, 10), 2, dtype=np.uint8)
+        for overrides in ({"area_override": 99}, {"shape_override": 11}, {"flag_override": False}):
+            with self.subTest(overrides=overrides), self.assertRaises(RuntimeError):
+                self.evaluate([mask], **overrides)
+
+    def test_small_components_are_filtered(self):
+        mask = np.zeros((512, 512), dtype=np.uint8)
+        mask[0, 0] = 2
+        self.assertEqual(self.evaluate([mask], area_override=0, flag_override=False), "N/A")
+
+
 class CurrentDetectionRatesByPatientTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -239,10 +330,11 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
         cls.manifest = json.loads(analysis.MANIFEST_PATH.read_text())
         cls.raw = analysis.ARCHIVED_MANIFEST_PATH.read_bytes()
         cls.groups = analysis.patient_groups(cls.data.rows, json.loads(cls.raw))
+        cls.report = analysis.build_report(cls.data, cls.manifest, cls.raw)
 
     def test_current_report_matches_inputs(self):
         self.assertEqual(analysis.OUTPUT_PATH.read_text(),
-                         analysis.build_report(self.data, self.manifest, self.raw))
+                         self.report)
 
     def test_current_example_matches_all_patient_images_and_totals(self):
         report = analysis.build_example_report(self.data, self.manifest, self.raw)
@@ -250,13 +342,15 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
         entries = [entry for entry in json.loads(self.raw)["cases"]
                    if entry["patient"] == "HCC_1146"]
         self.assertEqual(len(entries), 3)
+        for cell in ("114.6px (~1.5cm)", "0.0px (~0.0cm)", "19.9px (~0.3cm)"):
+            self.assertIn(cell, report)
         groups = analysis.select_groups(self.data.rows)
         for entry in entries:
             flags = [next(row.triage_detection_flag for row in groups["data_efficiency", fold]
                           if row.image_id == entry["case"]) for fold in analysis.FOLDS]
-            self.assertIn(f"| `{entry['case']}` | `{entry['source_relative_path'].split('/')[-1]}` | "
-                          f"`{entry['source_relative_path']}` | "
-                          + " | ".join(str(int(flag)) for flag in flags) + " |", report)
+            self.assertIn(f"| `{entry['case']}` | "
+                          f"`{entry['source_relative_path']}` | 0.90 | ", report)
+            self.assertIn(" | " + " ".join(str(int(flag)) for flag in flags) + " |", report)
         for fold in analysis.FOLDS:
             patient = next(patient for patient in self.groups["data_efficiency", fold]
                            if patient.patient == "HCC_1146")
@@ -325,7 +419,7 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
             start = line_number + 1
 
     def test_view_tables_partition_each_cohort(self):
-        report = analysis.build_report(self.data, self.manifest, self.raw)
+        report = self.report
         for section, (patients, images) in zip(
                 report.split("## View-count effects: ")[1:], ((421, 1389), (323, 1267))):
             rows = [line.split("|") for line in section.splitlines()

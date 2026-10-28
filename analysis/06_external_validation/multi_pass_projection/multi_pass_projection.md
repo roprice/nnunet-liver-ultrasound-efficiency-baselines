@@ -4,16 +4,36 @@ Prediction snapshot `195716b4a6ec`. nnU-Net default-augmentation final models (5
 
 Each patient has a latent per-image detection probability, Beta-distributed across patients. Detection in n passes is the probability that at least one of n images is detected: 1 − B(a, b + n) / B(a, b). The model has two parameters: the mean per-image rate and the within-patient correlation ρ. ρ = 0 means a patient's images behave independently; larger ρ means misses concentrate in particular patients, so extra passes help less. A patient's images are treated as interchangeable draws. Presence uses every Clean image; overlap uses the caliper-derived circular proxies.
 
-## HCC strictly <2.5 cm: target projections
+## HCC ≤2.5 cm: target projections
 
-Caliper-marked, proxy-eligible images only: 30 patients, 124 images, 25 patients with 2+ images. Presence and overlap use the same images. Circular caliper proxies are approximate lesion references.
+Caliper-marked, proxy-eligible images only: 32 patients, 128 images, 26 patients with 2+ images. Presence and overlap use the same images. Circular caliper proxies are approximate lesion references.
 
 The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. Values are mean ± sample SD across five separately fitted fold models, not confidence intervals. Pass counts beyond the observed maximum of 11 images per patient are extrapolations.
 
-| outcome | first passes to 99% mean | projected detection (mean ± sample SD) |
-|---|---:|---|
-| HCC presence | 7 | 0.991560 ± 0.006011 |
-| HCC overlap (IoU > 0) | 15 | 0.990787 ± 0.007096 |
+Projected detection (mean ± sample SD) is shown for presence and overlap at 1–20 passes.
+
+| passes | presence | overlap (IoU > 0) |
+|---:|---|---|
+| 1 | 0.837149 ± 0.044020 | 0.712755 ± 0.036295 |
+| 2 | 0.937179 ± 0.024725 | 0.856079 ± 0.035455 |
+| 3 | 0.966973 ± 0.016919 | 0.910784 ± 0.031012 |
+| 4 | 0.979480 ± 0.011978 | 0.937979 ± 0.026799 |
+| 5 | 0.985905 ± 0.008772 | 0.953683 ± 0.023321 |
+| 6 | 0.989664 ± 0.006645 | 0.963680 ± 0.020513 |
+| 7 | 0.992066 ± 0.005189 | 0.970494 ± 0.018239 |
+| 8 | 0.993702 ± 0.004159 | 0.975381 ± 0.016375 |
+| 9 | 0.994870 ± 0.003407 | 0.979026 ± 0.014829 |
+| 10 | 0.995734 ± 0.002843 | 0.981830 ± 0.013530 |
+| 11 | 0.996393 ± 0.002411 | 0.984043 ± 0.012427 |
+| 12 | 0.996907 ± 0.002071 | 0.985826 ± 0.011479 |
+| 13 | 0.997317 ± 0.001800 | 0.987289 ± 0.010657 |
+| 14 | 0.997649 ± 0.001580 | 0.988506 ± 0.009939 |
+| 15 | 0.997922 ± 0.001400 | 0.989533 ± 0.009306 |
+| 16 | 0.998149 ± 0.001249 | 0.990409 ± 0.008745 |
+| 17 | 0.998339 ± 0.001122 | 0.991163 ± 0.008244 |
+| 18 | 0.998502 ± 0.001015 | 0.991819 ± 0.007795 |
+| 19 | 0.998641 ± 0.000922 | 0.992393 ± 0.007389 |
+| 20 | 0.998761 ± 0.000843 | 0.992900 ± 0.007022 |
 
 ## Fitted parameters
 

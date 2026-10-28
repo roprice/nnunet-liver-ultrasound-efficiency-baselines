@@ -185,7 +185,7 @@ def small_hcc_counts(cohort):
         for row in cohort.groups[MODEL, fold]:
             case = cohort.cases[row.image_id]
             diameter = case["tumor_max_diameter_cm"]
-            if diameter is None or diameter >= 2.5:
+            if diameter is None or diameter > 2.5:
                 continue
             detected = cohort.evaluations[MODEL, fold][row.image_id].detected
             for outcome in counts:
@@ -210,25 +210,30 @@ def small_hcc_section(counts):
     multi = sum(n >= 2 for n, _ in first)
     maximum = max(n for n, _ in first)
     lines = [
-        "## HCC strictly <2.5 cm: target projections", "",
+        "## HCC ≤2.5 cm: target projections", "",
         f"Caliper-marked, proxy-eligible images only: {len(first)} patients, "
         f"{sum(n for n, _ in first)} images, {multi} patients with 2+ images. "
         "Presence and overlap use the same images. Circular caliper proxies are approximate lesion references.", "",
         "The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. "
         "Values are mean ± sample SD across five separately fitted fold models, not confidence intervals. "
         f"Pass counts beyond the observed maximum of {maximum} images per patient are extrapolations.", "",
-        "| outcome | first passes to 99% mean | projected detection (mean ± sample SD) |",
-        "|---|---:|---|",
+        "Projected detection (mean ± sample SD) is shown for presence and overlap at 1–20 passes.", "",
+        "| passes | presence | overlap (IoU > 0) |",
+        "|---:|---|---|",
     ]
-    for outcome, label in (("presence", "HCC presence"), ("overlap_iou_00", "HCC overlap (IoU > 0)")):
+    outcome_parameters = []
+    for outcome in ("presence", "overlap_iou_00"):
         parameters = []
         for fold in FOLDS:
             patients = counts[outcome][fold]
             if sum(n >= 2 for n, _ in patients) < MIN_MULTI_IMAGE_PATIENTS:
                 raise RuntimeError("Too few multi-image patients for small-HCC fit")
             parameters.append(fit_beta_binomial(patients, check_convergence=True))
-        passes, values = passes_to_mean_target(parameters)
-        lines.append(f"| {label} | {passes} | {mean_sd(values, digits=6)} |")
+        outcome_parameters.append(parameters)
+    for passes in range(1, 21):
+        cells = [mean_sd([detection_probability(a, b, passes) for a, b in parameters], digits=6)
+                 for parameters in outcome_parameters]
+        lines.append(f"| {passes} | " + " | ".join(cells) + " |")
     return "\n".join(lines) + "\n\n"
 
 

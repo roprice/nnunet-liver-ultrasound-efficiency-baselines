@@ -26,11 +26,17 @@ The same log records full 2,656-image prediction subprocess durations: fold 0 28
 
 ## Per-image presence flags
 
-| case ID | original filename | source path | fold 0 | fold 1 | fold 2 | fold 3 | fold 4 |
-|---|---|---|---:|---:|---:|---:|---:|
-| `smc_HCC_1146_0e8bba85` | `0e8bba85-452d-45e5-a5f0-92b5ad9131b5.jpg` | `original_data/HCC/HCC_clean (wo caliper)/HCC_1146/0e8bba85-452d-45e5-a5f0-92b5ad9131b5.jpg` | 1 | 1 | 1 | 1 | 1 |
-| `smc_HCC_1146_10b944a1` | `10b944a1-7c00-4151-9f60-7091830cd1e9.jpg` | `original_data/HCC/HCC_clean (wo caliper)/HCC_1146/10b944a1-7c00-4151-9f60-7091830cd1e9.jpg` | 0 | 0 | 0 | 0 | 0 |
-| `smc_HCC_1146_a0d5a81f` | `a0d5a81f-8ddd-470b-ad50-8950fdcf8fc6.jpg` | `original_data/HCC/HCC_clean (wo caliper)/HCC_1146/a0d5a81f-8ddd-470b-ad50-8950fdcf8fc6.jpg` | 0 | 0 | 1 | 1 | 0 |
+Mean GT diameter is the arithmetic mean of the audited patient-level dimensions (1.2, 0.8, 0.7 cm), not an image-specific measurement. Mean predicted diameter is the mean across folds 0–4 of the equivalent-circle diameter (2 × √(retained predicted area / π)), including zeros.
+
+| case ID | source path | mean GT diameter (cm) | mean predicted diameter | folds (0-4) | spatial agreement |
+|---|---|---:|---:|---|---:|
+| `smc_HCC_1146_0e8bba85` | `original_data/HCC/HCC_clean (wo caliper)/HCC_1146/0e8bba85-452d-45e5-a5f0-92b5ad9131b5.jpg` | 0.90 | 114.6px (~1.5cm) | 1 1 1 1 1 | 59.3% |
+| `smc_HCC_1146_10b944a1` | `original_data/HCC/HCC_clean (wo caliper)/HCC_1146/10b944a1-7c00-4151-9f60-7091830cd1e9.jpg` | 0.90 | 0.0px (~0.0cm) | 0 0 0 0 0 | N/A |
+| `smc_HCC_1146_a0d5a81f` | `original_data/HCC/HCC_clean (wo caliper)/HCC_1146/a0d5a81f-8ddd-470b-ad50-8950fdcf8fc6.jpg` | 0.90 | 19.9px (~0.3cm) | 0 0 1 1 0 | 10.6% |
+
+Parenthetical values are estimated physical diameters of the predictions, using an assumed scale of 0.013 cm/px.
+
+Spatial agreement is mean pairwise IoU of retained masks among positive fold models (N/A for fewer than two); it measures model agreement, not ground-truth accuracy.
 
 ## Per-fold totals
 

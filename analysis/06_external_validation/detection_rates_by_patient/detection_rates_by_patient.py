@@ -9,10 +9,12 @@ import importlib
 import json
 import math
 import statistics
+from itertools import combinations
 from dataclasses import dataclass
 from pathlib import Path
 
 from analysis.predictions_dataset.constants import SCHEMA_VERSION
+from analysis.predictions_dataset import build_predictions_dataset as builder
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
 
 external = importlib.import_module("analysis.06_external_validation.detection_rates.detection_rates")
@@ -128,6 +130,39 @@ def mean_sd(values, digits=6):
     return f"{statistics.mean(values):.{digits}f} ± {statistics.stdev(values):.{digits}f}"
 
 
+def patient_spatial_agreements(rows, manifest):
+    groups = select_groups(rows)
+    image_rows = {}
+    for fold in FOLDS:
+        for row in groups["data_efficiency", fold]:
+            image_rows.setdefault(row.image_id, []).append(row)
+    patients = {}
+    for entry in manifest["cases"]:
+        score = spatial_agreement_score(image_rows[entry["case"]])
+        patients.setdefault(entry["patient"], []).append(score)
+    return patients
+
+
+def summarize_spatial_agreements(patients, agreements):
+    image_count = sum(patient.n for patient in patients)
+    eligible_images = 0
+    patient_means = []
+    for patient in patients:
+        scores = [score for score in agreements[patient.patient] if score is not None]
+        eligible_images += len(scores)
+        if scores:
+            patient_means.append(statistics.mean(scores))
+    coverage = (f"{eligible_images}/{image_count} ({eligible_images / image_count:.1%}) images; "
+                f"{len(patient_means)}/{len(patients)} patients") if patients else "NA"
+    if not patient_means:
+        return coverage, "NA"
+    if len(patient_means) == 1:
+        q1 = q3 = patient_means[0]
+    else:
+        q1, _, q3 = statistics.quantiles(patient_means, n=4, method="inclusive")
+    return coverage, f"{statistics.median(patient_means):.1%} [{q1:.1%}, {q3:.1%}]"
+
+
 def build_report(data, manifest, archived_manifest_bytes):
     if manifest.get("snapshot_id") != data.snapshot_id:
         raise RuntimeError("predictions_dataset.csv does not match its build manifest")
@@ -136,6 +171,7 @@ def build_report(data, manifest, archived_manifest_bytes):
     archived_manifest = json.loads(archived_manifest_bytes)
     groups = patient_groups(data.rows, archived_manifest)
     reference = groups["data_efficiency", 0]
+    agreements = patient_spatial_agreements(data.rows, archived_manifest)
     archive_hash = hashlib.sha256(archived_manifest_bytes).hexdigest()
     lines = [
         "# External-validation patient presence-based detection rates",
@@ -147,8 +183,9 @@ def build_report(data, manifest, archived_manifest_bytes):
         f"Patient/size input: `{ARCHIVED_MANIFEST_PATH.relative_to(PROJECT_ROOT).as_posix()}` "
         f"(schema {archived_manifest['schema_version']}); SHA-256 `{archive_hash}`.",
         "",
-        "Final checkpoints, 588-image AUL training pool, seed 42, 150 epochs, for nnUnet default "
-        "augmentation and two augmentation ablations.",
+        "All tables use nnU-Net default augmentation (experiment02 data efficiency), "
+        "588-image AUL training pool, final checkpoints, seed 42, 150 epochs. "
+        "Rates are mean ± sample SD across folds 0–4.",
         "",
         "Patients are joined by manifest case ID; every model/fold is checked against the full "
         "Clean cohort. Hem_87 is included.",
@@ -157,23 +194,27 @@ def build_report(data, manifest, archived_manifest_bytes):
         cohort_groups = {key: cohort_patients(patients, cohort) for key, patients in groups.items()}
         lines.extend([
             "", f"## View-count effects: {cohort} cohort", "",
-            "Cells show any-image / all-image rates (three decimals); NA means no patients.", "",
-            "| images per patient | patients | images | " + " | ".join(MODELS.values()) + " |",
-            "|---|---:|---:|---|---|---|",
+            "Detection rates are mean ± sample SD across folds (three decimals). "
+            "Agreement coverage counts images with at least two positive fold models and patients "
+            "with at least one such image. Spatial agreement is median [Q1, Q3] of patient-level "
+            "means of eligible-image pairwise IoUs; quartiles use linear interpolation. "
+            "Patients without eligible images are excluded, not assigned zero. NA means no evaluable observations.", "",
+            "| images per patient | patients | images | any-image rate | all-image rate | "
+            "agreement coverage | spatial agreement |",
+            "|---|---:|---:|---|---|---|---|",
         ])
         for label, lower, upper in reversed(VIEW_BINS):
-            views = [patient.n for patient in cohort_groups["data_efficiency", 0]
-                     if lower <= patient.n <= upper]
-            cells = []
-            for model in MODELS:
-                if not views:
-                    cells.append("NA / NA")
-                    continue
-                summaries = [summarize([patient for patient in cohort_groups[model, fold]
+            bin_patients = [patient for patient in cohort_groups["data_efficiency", 0]
+                            if lower <= patient.n <= upper]
+            views = [patient.n for patient in bin_patients]
+            cell = "NA | NA"
+            if views:
+                summaries = [summarize([patient for patient in cohort_groups["data_efficiency", fold]
                                         if lower <= patient.n <= upper]) for fold in FOLDS]
-                cells.append(" / ".join(mean_sd([summary[metric] for summary in summaries], 3)
-                                        for metric in ("any_image_rate", "all_image_rate")))
-            lines.append(f"| {label} | {len(views)} | {sum(views)} | " + " | ".join(cells) + " |")
+                cell = " | ".join(mean_sd([summary[metric] for summary in summaries], 3)
+                                  for metric in ("any_image_rate", "all_image_rate"))
+            coverage, agreement = summarize_spatial_agreements(bin_patients, agreements)
+            lines.append(f"| {label} | {len(views)} | {sum(views)} | {cell} | {coverage} | {agreement} |")
     lines.extend([
         "",
         "## Cohort and view counts",
@@ -189,6 +230,10 @@ def build_report(data, manifest, archived_manifest_bytes):
     largest = max(patient.n for patient in reference)
     largest_patients = ", ".join(sorted(patient.patient for patient in reference if patient.n == largest))
     lines.extend(["", f"Largest image contribution: {largest_patients} ({largest} images)."])
+    lines.extend(["", "Spatial agreement compares retained predicted mass masks across positive fold models "
+                  "on the same image, then weights evaluable patients equally. It is a secondary consistency "
+                  "analysis, not localization accuracy, calibrated confidence, or evidence of fewer false positives; "
+                  "the detection definitions are unchanged."])
     lines.extend([
         "",
         "All cases are mass-positive; flags do not confirm lesion localization or cancer, and "
@@ -197,6 +242,29 @@ def build_report(data, manifest, archived_manifest_bytes):
         "HCC size is the patient-table maximum diameter; missing sizes are separate.",
     ])
     return "\n".join(lines) + "\n"
+
+
+def spatial_agreement_score(rows):
+    masks = []
+    for row in rows:
+        prediction = builder.read_mask(external.proxy_detection.case_mask_path(
+            row.prediction_path, row.image_id))
+        if prediction.shape != (row.image_height_px, row.image_width_px):
+            raise RuntimeError(f"{row.image_id}: invalid prediction dimensions")
+        retained = builder.retained_mass_mask(prediction == builder.MASS_VALUE)
+        if (int(retained.sum()) != row.predicted_mass_area_retained_px
+                or bool(retained.any()) != row.triage_detection_flag):
+            raise RuntimeError(f"{row.image_id}: prediction does not match canonical retained facts")
+        if row.triage_detection_flag:
+            masks.append(retained)
+    if len(masks) < 2:
+        return None
+    return statistics.mean(builder.iou_score(a, b) for a, b in combinations(masks, 2))
+
+
+def spatial_agreement(rows):
+    score = spatial_agreement_score(rows)
+    return "N/A" if score is None else f"{score:.1%}"
 
 
 def build_example_report(data, manifest, archived_manifest_bytes):
@@ -264,15 +332,31 @@ def build_example_report(data, manifest, archived_manifest_bytes):
         "CSV build times, training times, image/ZIP timestamps and file modification times are "
         "not inference timestamps and are not used to infer durations.", "",
         "## Per-image presence flags", "",
-        "| case ID | original filename | source path | "
-        + " | ".join(f"fold {fold}" for fold in FOLDS) + " |",
-        "|---|---|---|" + "---:|" * len(FOLDS),
+        "Mean GT diameter is the arithmetic mean of the audited patient-level dimensions "
+        "(1.2, 0.8, 0.7 cm), not an image-specific measurement. Mean predicted diameter is "
+        "the mean across folds 0–4 of the equivalent-circle diameter "
+        "(2 × √(retained predicted area / π)), including zeros.", "",
+        "| case ID | source path | mean GT diameter (cm) | "
+        "mean predicted diameter | folds (0-4) | spatial agreement |",
+        "|---|---|---:|---:|---|---:|",
     ]
     for entry in entries:
         source = entry["source_relative_path"]
-        cells = " | ".join(str(int(flags[fold][entry["case"]])) for fold in FOLDS)
-        lines.append(f"| `{entry['case']}` | `{Path(source).name}` | `{source}` | {cells} |")
-    lines.extend(["", "## Per-fold totals", "", "| fold | flagged | unflagged | total |",
+        cells = " ".join(str(int(flags[fold][entry["case"]])) for fold in FOLDS)
+        image_rows = [row for fold in FOLDS for row in groups["data_efficiency", fold]
+                      if row.image_id == entry["case"]]
+        diameters = [2 * math.sqrt(row.predicted_mass_area_retained_px / math.pi)
+                     for row in image_rows]
+        mean_gt = statistics.mean((1.2, 0.8, 0.7))
+        mean_predicted = statistics.mean(diameters)
+        lines.append(f"| `{entry['case']}` | `{source}` | "
+                     f"{mean_gt:.2f} | {mean_predicted:.1f}px (~{mean_predicted * 0.013:.1f}cm) | {cells} | "
+                     f"{spatial_agreement(image_rows)} |")
+    lines.extend(["", "Parenthetical values are estimated physical diameters of the predictions, "
+                  "using an assumed scale of 0.013 cm/px.",
+                  "", "Spatial agreement is mean pairwise IoU of retained masks among positive fold models "
+                  "(N/A for fewer than two); it measures model agreement, not ground-truth accuracy.",
+                  "", "## Per-fold totals", "", "| fold | flagged | unflagged | total |",
                   "|---:|---:|---:|---:|"])
     for fold in FOLDS:
         flagged = sum(flags[fold][entry["case"]] for entry in entries)
