@@ -21,6 +21,18 @@ Detection rates are mean ± sample SD across folds (three decimals). Agreement c
 | 2 | 99 | 198 | 0.988 ± 0.008 | 0.903 ± 0.029 | 193/198 (97.5%) images; 98/99 patients | 77.9% [52.2%, 89.2%] |
 | 1 | 129 | 129 | 0.916 ± 0.014 | 0.916 ± 0.014 | 126/129 (97.7%) images; 126/129 patients | 78.3% [49.8%, 90.7%] |
 
+## View-count effects: HCC cohort at ≤2.0 cm
+
+Detection rates are mean ± sample SD across folds (three decimals). Agreement coverage counts images with at least two positive fold models and patients with at least one such image. Spatial agreement is median [Q1, Q3] of patient-level means of eligible-image pairwise IoUs; quartiles use linear interpolation. Patients without eligible images are excluded, not assigned zero. NA means no evaluable observations.
+
+| images per patient | patients | images | any-image rate | all-image rate | agreement coverage | spatial agreement |
+|---|---:|---:|---|---|---|---|
+| 1 | 26 | 26 | 0.869 ± 0.044 | 0.869 ± 0.044 | 24/26 (92.3%) images; 24/26 patients | 85.7% [54.3%, 91.6%] |
+| 2 | 21 | 42 | 1.000 ± 0.000 | 0.952 ± 0.048 | 42/42 (100.0%) images; 21/21 patients | 81.3% [74.5%, 88.4%] |
+| 3 | 14 | 42 | 1.000 ± 0.000 | 0.800 ± 0.060 | 41/42 (97.6%) images; 14/14 patients | 75.9% [55.4%, 92.3%] |
+| 4 | 8 | 32 | 1.000 ± 0.000 | 0.700 ± 0.143 | 31/32 (96.9%) images; 8/8 patients | 68.4% [39.7%, 86.7%] |
+| 5 | 9 | 45 | 1.000 ± 0.000 | 0.800 ± 0.145 | 44/45 (97.8%) images; 9/9 patients | 82.7% [69.8%, 88.3%] |
+
 ## View-count effects: hemangioma cohort
 
 Detection rates are mean ± sample SD across folds (three decimals). Agreement coverage counts images with at least two positive fold models and patients with at least one such image. Spatial agreement is median [Q1, Q3] of patient-level means of eligible-image pairwise IoUs; quartiles use linear interpolation. Patients without eligible images are excluded, not assigned zero. NA means no evaluable observations.

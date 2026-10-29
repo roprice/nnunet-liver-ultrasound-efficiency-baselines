@@ -68,7 +68,7 @@ class DetectionRatesByPatientTests(unittest.TestCase):
 
     def test_strict_size_boundary_and_missing_size_are_separate(self):
         patients = analysis.patient_groups(self.rows, self.archived)["data_efficiency", 0]
-        expected = {"HCC<2cm": ["small"], "HCC>=2cm": ["boundary"],
+        expected = {"HCC<2cm": ["small"], "HCC<=2cm": ["small", "boundary"], "HCC>=2cm": ["boundary"],
                     "HCCmissingSize": ["missing"], "hemangioma": ["Hem_87"]}
         for cohort, names in expected.items():
             with self.subTest(cohort=cohort):
@@ -91,7 +91,11 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
         self.assertNotIn("## Model summaries", report)
         self.assertNotIn("## View-count effects: combined cohort", report)
-        _, hcc, hemangioma = report.split("## View-count effects: ")
+        _, hcc, small_hcc, hemangioma = report.split("## View-count effects: ")
+        self.assertTrue(small_hcc.startswith("HCC cohort at ≤2.0 cm\n"))
+        self.assertIn("| 2 | 1 | 2 | 1.000 ± 0.000 | 0.000 ± 0.000 |", small_hcc)
+        self.assertIn("| 3 | 0 | 0 | NA | NA |", small_hcc)
+        self.assertNotIn("| 6+ |", small_hcc)
         self.assertTrue(hemangioma.startswith("hemangioma cohort\n"))
         self.assertTrue(hcc.startswith("HCC cohort\n"))
         self.assertIn("| 6+ | 1 | 6 | 0.600 ± 0.548 | 0.600 ± 0.548 |", hemangioma)
@@ -106,7 +110,7 @@ class DetectionRatesByPatientTests(unittest.TestCase):
     def test_agreement_columns_preserve_detection_rates(self):
         raw = json.dumps(self.archived).encode()
         report = analysis.build_report(self.data, self.manifest, raw)
-        self.assertEqual(report.count("| agreement coverage | spatial agreement |"), 2)
+        self.assertEqual(report.count("| agreement coverage | spatial agreement |"), 3)
         self.assertIn("| 2 | 1 | 2 | 1.000 ± 0.000 | 0.000 ± 0.000 | "
                       "2/2 (100.0%) images; 1/1 patients | 37.5% [37.5%, 37.5%] |", report)
         self.assertIn("| 3 | 1 | 3 | 0.400 ± 0.548 | 0.400 ± 0.548 | "
@@ -123,6 +127,7 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
         headings = [line for line in report.splitlines() if line.startswith("## ")]
         self.assertEqual(headings, ["## View-count effects: HCC cohort",
+                                    "## View-count effects: HCC cohort at ≤2.0 cm",
                                     "## View-count effects: hemangioma cohort",
                                     "## Cohort and view counts"])
         self.assertNotIn("| Combined |", report)
@@ -133,14 +138,16 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         for section in report.split("## View-count effects: ")[1:]:
             labels = [line.split("|")[1].strip() for line in section.splitlines()
                       if line.startswith(("| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |", "| 6+ |"))]
-            self.assertEqual(labels, ["6+", "5", "4", "3", "2", "1"])
+            expected = ["1", "2", "3", "4", "5"] if section.startswith("HCC cohort at ≤2.0 cm") else [
+                "6+", "5", "4", "3", "2", "1"]
+            self.assertEqual(labels, expected)
         self.assertNotIn("| 3–5 |", report)
 
     def test_report_title_labels_and_paragraphs(self):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
         self.assertTrue(report.startswith("# External-validation patient presence-based detection rates\n"))
         self.assertEqual(report.count(
-            "| images per patient | patients | images | any-image rate | all-image rate |"), 2)
+            "| images per patient | patients | images | any-image rate | all-image rate |"), 3)
         for label in analysis.MODELS.values():
             self.assertNotIn(f"| {label} |", report)
         for section in report.split("## View-count effects: ")[1:]:
@@ -445,8 +452,9 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
 
     def test_view_tables_partition_each_cohort(self):
         report = self.report
+        sections = report.split("## View-count effects: ")[1:]
         for section, (patients, images) in zip(
-                report.split("## View-count effects: ")[1:], ((421, 1389), (323, 1267))):
+                (sections[0], sections[2]), ((421, 1389), (323, 1267))):
             rows = [line.split("|") for line in section.splitlines()
                     if line.startswith(("| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |", "| 6+ |"))]
             self.assertEqual(len(rows), 6)
@@ -455,6 +463,23 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
             expected_counts = [(29, 145), (43, 172), (67, 201)] if patients == 421 else [
                 (21, 105), (21, 84), (34, 102)]
             self.assertEqual([(int(row[2]), int(row[3])) for row in rows[1:4]], expected_counts)
+
+    def test_small_hcc_table_has_only_observed_one_to_five_view_rows(self):
+        section = self.report.split("## View-count effects: HCC cohort at ≤2.0 cm\n", 1)[1].split("## ", 1)[0]
+        rows = [line.split("|") for line in section.splitlines()
+                if line.startswith(("| 1 |", "| 2 |", "| 3 |", "| 4 |", "| 5 |"))]
+        self.assertEqual([(int(row[1]), int(row[2]), int(row[3])) for row in rows],
+                         [(1, 26, 26), (2, 21, 42), (3, 14, 42), (4, 8, 32), (5, 9, 45)])
+        self.assertNotIn("| 6+ |", section)
+        self.assertNotIn("projected", section.lower())
+        for row in rows:
+            views = int(row[1])
+            summaries = [analysis.summarize([
+                patient for patient in analysis.cohort_patients(self.groups["data_efficiency", fold], "HCC<=2cm")
+                if patient.n == views]) for fold in analysis.FOLDS]
+            for column, metric in ((4, "any_image_rate"), (5, "all_image_rate")):
+                self.assertEqual(row[column].strip(), analysis.mean_sd(
+                    [summary[metric] for summary in summaries], 3))
 
     def test_current_counts_views_and_baseline_rates(self):
         expected = {"all": (744, 2656), "HCC": (421, 1389), "hemangioma": (323, 1267),

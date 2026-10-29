@@ -103,6 +103,8 @@ def cohort_patients(patients, cohort):
     sized = [patient for patient in hcc if patient.diameter_cm is not None]
     if cohort == "HCC<2cm":
         return [patient for patient in sized if patient.diameter_cm < 2]
+    if cohort == "HCC<=2cm":
+        return [patient for patient in sized if patient.diameter_cm <= 2]
     if cohort == "HCC>=2cm":
         return [patient for patient in sized if patient.diameter_cm >= 2]
     raise ValueError(f"Unknown cohort: {cohort}")
@@ -188,10 +190,14 @@ def build_report(data, manifest, archived_manifest_bytes):
         "Patients are joined by manifest case ID; every model/fold is checked against the full "
         "Clean cohort. Hem_87 is included.",
     ]
-    for cohort in ("HCC", "hemangioma"):
+    for cohort, title, bins in (
+        ("HCC", "HCC cohort", list(reversed(VIEW_BINS))),
+        ("HCC<=2cm", "HCC cohort at ≤2.0 cm", VIEW_BINS[:5]),
+        ("hemangioma", "hemangioma cohort", list(reversed(VIEW_BINS))),
+    ):
         cohort_groups = {key: cohort_patients(patients, cohort) for key, patients in groups.items()}
         lines.extend([
-            "", f"## View-count effects: {cohort} cohort", "",
+            "", f"## View-count effects: {title}", "",
             "Detection rates are mean ± sample SD across folds (three decimals). "
             "Agreement coverage counts images with at least two positive fold models and patients "
             "with at least one such image. Spatial agreement is median [Q1, Q3] of patient-level "
@@ -201,7 +207,7 @@ def build_report(data, manifest, archived_manifest_bytes):
             "agreement coverage | spatial agreement |",
             "|---|---:|---:|---|---|---|---|",
         ])
-        for label, lower, upper in reversed(VIEW_BINS):
+        for label, lower, upper in bins:
             bin_patients = [patient for patient in cohort_groups["data_efficiency", 0]
                             if lower <= patient.n <= upper]
             views = [patient.n for patient in bin_patients]

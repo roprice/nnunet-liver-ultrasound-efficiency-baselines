@@ -115,19 +115,41 @@ class HccCaliperCsvTests(unittest.TestCase):
 
 
 class SmallHccTests(unittest.TestCase):
-    def test_inclusive_size_filter_and_shared_images(self):
-        sizes = (2.49, 2.5, None, 1.0, 2.51)
-        cases = {str(i): {"patient": "patient", "tumor_max_diameter_cm": size}
-                 for i, size in enumerate(sizes)}
-        rows = [SimpleNamespace(image_id=str(i), triage_detection_flag=True) for i in range(len(sizes))]
-        cohort = SimpleNamespace(
-            cases=cases, groups={(analysis.MODEL, f): rows for f in analysis.FOLDS},
-            evaluations={(analysis.MODEL, f): {str(i): SimpleNamespace(
-                detected={"overlap_iou_00": i == 0}) for i in range(len(sizes))} for f in analysis.FOLDS})
-        counts = analysis.small_hcc_counts(cohort)
+    def test_inclusive_size_filter_on_clean_hcc_patient_groups(self):
+        sizes = (2.49, 2.5, None, 2.0, 2.51, 1.99)
+        patients = [analysis.by_patient.PatientCounts(str(i), "malignant", size, i + 1, i)
+                    for i, size in enumerate(sizes)]
+        patients.append(analysis.by_patient.PatientCounts("benign", "benign", 1.0, 10, 10))
+        groups = {(analysis.MODEL, fold): patients for fold in analysis.FOLDS}
+        counts = analysis.small_hcc_counts(groups)
+        self.assertEqual(set(counts), {"presence"})
         for fold in analysis.FOLDS:
-            self.assertEqual(counts["presence"][fold], [(3, 3)])
-            self.assertEqual(counts["overlap_iou_00"][fold], [(3, 1)])
+            self.assertEqual(counts["presence"][fold], [(1, 0), (2, 1), (4, 3), (6, 5)])
+        smaller = analysis.small_hcc_counts(groups, max_diameter_cm=2.0)
+        for fold in analysis.FOLDS:
+            self.assertEqual(smaller["presence"][fold], [(4, 3), (6, 5)])
+
+    def test_exploratory_section_retains_fit_checks_and_precedes_existing_section(self):
+        counts = {"presence": {fold: [(1, 0)] + [(2, 1)] * 20 for fold in analysis.FOLDS}}
+        with patch.object(analysis, "fit_beta_binomial", return_value=(2.0, 0.5)) as fit:
+            section = analysis.small_hcc_section(counts, max_diameter_cm=2.0, exploratory=True)
+        self.assertEqual(fit.call_count, 5)
+        for call in fit.call_args_list:
+            self.assertTrue(call.kwargs["check_convergence"])
+        self.assertIn("## HCC ≤2.0 cm: target projections", section)
+        self.assertIn("Exploratory analysis only", section)
+        self.assertIn("21 patients, 41 images, 20 patients with 2+ images", section)
+        self.assertIn("Clean HCC images", section)
+        self.assertNotIn("minimum", section)
+        with patch.object(analysis, "fit_beta_binomial", return_value=(2.0, 0.5)):
+            larger = {"presence": {fold: [(2, 1)] * 20 for fold in analysis.FOLDS}}
+            text = analysis.build_report(SimpleNamespace(snapshot_id="synthetic"), {}, None,
+                                         small_hcc=larger, very_small_hcc=counts)
+            self.assertLess(text.index("## HCC ≤2.0 cm"), text.index("## HCC ≤2.5 cm"))
+            self.assertIn(analysis.small_hcc_section(larger), text)
+        sparse = {"presence": {fold: [(2, 1)] * 19 for fold in analysis.FOLDS}}
+        with self.assertRaisesRegex(RuntimeError, "Too few"):
+            analysis.small_hcc_section(sparse, max_diameter_cm=2.0, exploratory=True)
 
     def test_section_shows_observed_and_projected_presence_at_one_to_twenty_passes(self):
         patients = [(1, 0)] * 3 + [(2, 1)] * 20 + [(4, 2)] * 2

@@ -178,22 +178,14 @@ def mean_sd(values, digits=3):
     return f"{statistics.mean(values):.{digits}f} ± {statistics.stdev(values):.{digits}f}"
 
 
-def small_hcc_counts(cohort):
-    counts = {outcome: {} for outcome in ("presence", "overlap_iou_00")}
+def small_hcc_counts(groups, max_diameter_cm=2.5):
+    counts = {"presence": {}}
     for fold in FOLDS:
-        per_patient = {outcome: {} for outcome in counts}
-        for row in cohort.groups[MODEL, fold]:
-            case = cohort.cases[row.image_id]
-            diameter = case["tumor_max_diameter_cm"]
-            if diameter is None or diameter > 2.5:
-                continue
-            detected = cohort.evaluations[MODEL, fold][row.image_id].detected
-            for outcome in counts:
-                n, k = per_patient[outcome].get(case["patient"], (0, 0))
-                hit = row.triage_detection_flag if outcome == "presence" else detected[outcome]
-                per_patient[outcome][case["patient"]] = (n + 1, k + hit)
-        for outcome in counts:
-            counts[outcome][fold] = list(per_patient[outcome].values())
+        counts["presence"][fold] = [
+            (patient.n, patient.k) for patient in groups[MODEL, fold]
+            if patient.pathology == "malignant" and patient.diameter_cm is not None
+            and patient.diameter_cm <= max_diameter_cm
+        ]
     return counts
 
 
@@ -205,15 +197,15 @@ def passes_to_mean_target(parameters, target=0.99, max_passes=TARGET_SEARCH_MAX_
     raise RuntimeError(f"Mean target not reached within {max_passes} passes")
 
 
-def small_hcc_section(counts):
+def small_hcc_section(counts, max_diameter_cm=2.5, exploratory=False):
     first = counts["presence"][FOLDS[0]]
     multi = sum(n >= 2 for n, _ in first)
     maximum = max(n for n, _ in first)
     lines = [
-        "## HCC ≤2.5 cm: target projections", "",
-        f"Caliper-marked, proxy-eligible images only: {len(first)} patients, "
+        f"## HCC ≤{max_diameter_cm:.1f} cm: target projections", "",
+        f"Clean HCC images with recorded patient tumor diameter ≤{max_diameter_cm:.1f} cm: {len(first)} patients, "
         f"{sum(n for n, _ in first)} images, {multi} patients with 2+ images. "
-        "Presence does not require overlap with a proxy mask.", "",
+        "Size comes from the HCC patient table; no proxy-mask eligibility restriction is applied.", "",
         "The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. "
         "Values are mean ± sample SD across five fold models, not confidence intervals. "
         f"Pass counts beyond the observed maximum of {maximum} images per patient are extrapolations.", "",
@@ -224,10 +216,16 @@ def small_hcc_section(counts):
         "| passes | actual patients | actual images | observed presence | projected presence |",
         "|---:|---:|---:|---|---|",
     ]
+    if exploratory:
+        lines[2:2] = [
+            "Exploratory analysis only, not a study finding; "
+            "fold-to-fold SD does not quantify patient-sampling uncertainty.", "",
+        ]
     parameters = []
     for fold in FOLDS:
         patients = counts["presence"][fold]
-        if sum(n >= 2 for n, _ in patients) < MIN_MULTI_IMAGE_PATIENTS:
+        multi_image_patients = sum(n >= 2 for n, _ in patients)
+        if multi_image_patients < MIN_MULTI_IMAGE_PATIENTS:
             raise RuntimeError("Too few multi-image patients for small-HCC fit")
         parameters.append(fit_beta_binomial(patients, check_convergence=True))
     for passes in range(1, 21):
@@ -243,7 +241,7 @@ def small_hcc_section(counts):
     return "\n".join(lines) + "\n\n"
 
 
-def build_report(data, results, transferred, small_hcc=None):
+def build_report(data, results, transferred, small_hcc=None, very_small_hcc=None):
     fitted = [key for key in OUTCOMES if key in results and "projection" in results[key][0]]
     lines = [
         "# Multi-pass detection projected with a beta-binomial model",
@@ -337,6 +335,10 @@ def build_report(data, results, transferred, small_hcc=None):
     text = "\n".join(lines) + "\n"
     if small_hcc is not None:
         text = text.replace("## Fitted parameters", small_hcc_section(small_hcc) + "## Fitted parameters", 1)
+    if very_small_hcc is not None:
+        heading = "## HCC ≤2.5 cm: target projections" if small_hcc is not None else "## Fitted parameters"
+        text = text.replace(heading, small_hcc_section(
+            very_small_hcc, max_diameter_cm=2.0, exploratory=True) + heading, 1)
     return text
 
 
@@ -358,8 +360,10 @@ def main(argv=None):
         args.hcc_caliper_results, "centroid_detection_deq_100_flag")
     results = {key: analyze(outcome_counts) for key, outcome_counts in counts.items()}
     transferred = transferred_projection(results) if "hcc_overlap" in results else None
-    small_hcc = small_hcc_counts(external.load_hcc_caliper(root=args.hcc_caliper_results.parent.parent))
-    OUTPUT_PATH.write_text(build_report(data, results, transferred, small_hcc))
+    clean_patient_groups = by_patient.patient_groups(data.rows, archived)
+    small_hcc = small_hcc_counts(clean_patient_groups)
+    very_small_hcc = small_hcc_counts(clean_patient_groups, max_diameter_cm=2.0)
+    OUTPUT_PATH.write_text(build_report(data, results, transferred, small_hcc, very_small_hcc))
     print(f"Wrote {OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
 
 

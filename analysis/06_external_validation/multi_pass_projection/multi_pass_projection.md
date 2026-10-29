@@ -4,36 +4,69 @@ Prediction snapshot `eb8bd31e22f0`. nnU-Net default-augmentation final models (5
 
 Each patient has a latent per-image detection probability, Beta-distributed across patients. Detection in n passes is the probability that at least one of n images is detected: 1 − B(a, b + n) / B(a, b). The model has two parameters: the mean per-image rate and the within-patient correlation ρ. ρ = 0 means a patient's images behave independently; larger ρ means misses concentrate in particular patients, so extra passes help less. A patient's images are treated as interchangeable draws. Presence uses every Clean image; overlap uses the caliper-derived circular proxies.
 
-## HCC ≤2.5 cm: target projections
+## HCC ≤2.0 cm: target projections
 
-Caliper-marked, proxy-eligible images only: 32 patients, 128 images, 26 patients with 2+ images. Presence does not require overlap with a proxy mask.
+Exploratory analysis only, not a study finding; fold-to-fold SD does not quantify patient-sampling uncertainty.
 
-The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. Values are mean ± sample SD across five fold models, not confidence intervals. Pass counts beyond the observed maximum of 11 images per patient are extrapolations.
+Clean HCC images with recorded patient tumor diameter ≤2.0 cm: 90 patients, 331 images, 64 patients with 2+ images. Size comes from the HCC patient table; no proxy-mask eligibility restriction is applied.
+
+The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. Values are mean ± sample SD across five fold models, not confidence intervals. Pass counts beyond the observed maximum of 28 images per patient are extrapolations.
 
 Observed and projected presence are shown at 1–20 passes. Actual patients have exactly the listed number of eligible images; actual images is their total. Observed presence is the fraction of those patients with at least one detected image; NA means no patients had that image count. Projected presence uses all patients in each fold's fit.
 
 | passes | actual patients | actual images | observed presence | projected presence |
 |---:|---:|---:|---|---|
-| 1 | 6 | 6 | 0.933333 ± 0.091287 | 0.837149 ± 0.044020 |
-| 2 | 2 | 4 | 1.000000 ± 0.000000 | 0.937179 ± 0.024725 |
-| 3 | 6 | 18 | 1.000000 ± 0.000000 | 0.966973 ± 0.016919 |
-| 4 | 8 | 32 | 1.000000 ± 0.000000 | 0.979480 ± 0.011978 |
-| 5 | 4 | 20 | 0.850000 ± 0.136931 | 0.985905 ± 0.008772 |
-| 6 | 1 | 6 | 1.000000 ± 0.000000 | 0.989664 ± 0.006645 |
-| 7 | 2 | 14 | 1.000000 ± 0.000000 | 0.992066 ± 0.005189 |
-| 8 | 1 | 8 | 1.000000 ± 0.000000 | 0.993702 ± 0.004159 |
-| 9 | 1 | 9 | 1.000000 ± 0.000000 | 0.994870 ± 0.003407 |
-| 10 | 0 | 0 | NA | 0.995734 ± 0.002843 |
-| 11 | 1 | 11 | 1.000000 ± 0.000000 | 0.996393 ± 0.002411 |
-| 12 | 0 | 0 | NA | 0.996907 ± 0.002071 |
-| 13 | 0 | 0 | NA | 0.997317 ± 0.001800 |
-| 14 | 0 | 0 | NA | 0.997649 ± 0.001580 |
-| 15 | 0 | 0 | NA | 0.997922 ± 0.001400 |
-| 16 | 0 | 0 | NA | 0.998149 ± 0.001249 |
-| 17 | 0 | 0 | NA | 0.998339 ± 0.001122 |
-| 18 | 0 | 0 | NA | 0.998502 ± 0.001015 |
-| 19 | 0 | 0 | NA | 0.998641 ± 0.000922 |
-| 20 | 0 | 0 | NA | 0.998761 ± 0.000843 |
+| 1 | 26 | 26 | 0.869231 ± 0.043853 | 0.896807 ± 0.019589 |
+| 2 | 21 | 42 | 1.000000 ± 0.000000 | 0.966985 ± 0.007205 |
+| 3 | 14 | 42 | 1.000000 ± 0.000000 | 0.984829 ± 0.005435 |
+| 4 | 8 | 32 | 1.000000 ± 0.000000 | 0.991526 ± 0.004206 |
+| 5 | 9 | 45 | 1.000000 ± 0.000000 | 0.994655 ± 0.003269 |
+| 6 | 2 | 12 | 1.000000 ± 0.000000 | 0.996340 ± 0.002579 |
+| 7 | 1 | 7 | 1.000000 ± 0.000000 | 0.997343 ± 0.002072 |
+| 8 | 1 | 8 | 1.000000 ± 0.000000 | 0.997985 ± 0.001694 |
+| 9 | 1 | 9 | 1.000000 ± 0.000000 | 0.998420 ± 0.001407 |
+| 10 | 1 | 10 | 1.000000 ± 0.000000 | 0.998727 ± 0.001186 |
+| 11 | 0 | 0 | NA | 0.998953 ± 0.001012 |
+| 12 | 1 | 12 | 1.000000 ± 0.000000 | 0.999124 ± 0.000873 |
+| 13 | 2 | 26 | 1.000000 ± 0.000000 | 0.999255 ± 0.000761 |
+| 14 | 0 | 0 | NA | 0.999359 ± 0.000668 |
+| 15 | 1 | 15 | 1.000000 ± 0.000000 | 0.999443 ± 0.000592 |
+| 16 | 0 | 0 | NA | 0.999511 ± 0.000528 |
+| 17 | 1 | 17 | 1.000000 ± 0.000000 | 0.999567 ± 0.000473 |
+| 18 | 0 | 0 | NA | 0.999615 ± 0.000427 |
+| 19 | 0 | 0 | NA | 0.999654 ± 0.000387 |
+| 20 | 0 | 0 | NA | 0.999688 ± 0.000353 |
+
+## HCC ≤2.5 cm: target projections
+
+Clean HCC images with recorded patient tumor diameter ≤2.5 cm: 169 patients, 597 images, 118 patients with 2+ images. Size comes from the HCC patient table; no proxy-mask eligibility restriction is applied.
+
+The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. Values are mean ± sample SD across five fold models, not confidence intervals. Pass counts beyond the observed maximum of 28 images per patient are extrapolations.
+
+Observed and projected presence are shown at 1–20 passes. Actual patients have exactly the listed number of eligible images; actual images is their total. Observed presence is the fraction of those patients with at least one detected image; NA means no patients had that image count. Projected presence uses all patients in each fold's fit.
+
+| passes | actual patients | actual images | observed presence | projected presence |
+|---:|---:|---:|---|---|
+| 1 | 51 | 51 | 0.874510 ± 0.010740 | 0.903580 ± 0.014890 |
+| 2 | 41 | 82 | 1.000000 ± 0.000000 | 0.968522 ± 0.003395 |
+| 3 | 28 | 84 | 0.971429 ± 0.015972 | 0.985381 ± 0.001869 |
+| 4 | 14 | 56 | 1.000000 ± 0.000000 | 0.991850 ± 0.001499 |
+| 5 | 12 | 60 | 1.000000 ± 0.000000 | 0.994913 ± 0.001231 |
+| 6 | 2 | 12 | 1.000000 ± 0.000000 | 0.996571 ± 0.001011 |
+| 7 | 3 | 21 | 1.000000 ± 0.000000 | 0.997556 ± 0.000836 |
+| 8 | 2 | 16 | 1.000000 ± 0.000000 | 0.998182 ± 0.000697 |
+| 9 | 3 | 27 | 1.000000 ± 0.000000 | 0.998603 ± 0.000587 |
+| 10 | 4 | 40 | 1.000000 ± 0.000000 | 0.998897 ± 0.000500 |
+| 11 | 1 | 11 | 1.000000 ± 0.000000 | 0.999110 ± 0.000430 |
+| 12 | 1 | 12 | 1.000000 ± 0.000000 | 0.999269 ± 0.000373 |
+| 13 | 2 | 26 | 1.000000 ± 0.000000 | 0.999390 ± 0.000326 |
+| 14 | 0 | 0 | NA | 0.999484 ± 0.000287 |
+| 15 | 1 | 15 | 1.000000 ± 0.000000 | 0.999559 ± 0.000255 |
+| 16 | 1 | 16 | 1.000000 ± 0.000000 | 0.999619 ± 0.000227 |
+| 17 | 1 | 17 | 1.000000 ± 0.000000 | 0.999668 ± 0.000204 |
+| 18 | 0 | 0 | NA | 0.999708 ± 0.000184 |
+| 19 | 0 | 0 | NA | 0.999742 ± 0.000167 |
+| 20 | 0 | 0 | NA | 0.999770 ± 0.000152 |
 
 ## Fitted parameters
 
