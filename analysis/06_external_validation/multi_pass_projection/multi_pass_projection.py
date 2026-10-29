@@ -213,27 +213,33 @@ def small_hcc_section(counts):
         "## HCC ≤2.5 cm: target projections", "",
         f"Caliper-marked, proxy-eligible images only: {len(first)} patients, "
         f"{sum(n for n, _ in first)} images, {multi} patients with 2+ images. "
-        "Presence and overlap use the same images. Circular caliper proxies are approximate lesion references.", "",
+        "Presence does not require overlap with a proxy mask.", "",
         "The target is a fold-mean detection probability ≥0.99, not ≥0.99 in every fold. "
-        "Values are mean ± sample SD across five separately fitted fold models, not confidence intervals. "
+        "Values are mean ± sample SD across five fold models, not confidence intervals. "
         f"Pass counts beyond the observed maximum of {maximum} images per patient are extrapolations.", "",
-        "Projected detection (mean ± sample SD) is shown for presence and overlap at 1–20 passes.", "",
-        "| passes | presence | overlap (IoU > 0) |",
-        "|---:|---|---|",
+        "Observed and projected presence are shown at 1–20 passes. "
+        "Actual patients have exactly the listed number of eligible images; actual images is their total. "
+        "Observed presence is the fraction of those patients with at least one detected image; "
+        "NA means no patients had that image count. Projected presence uses all patients in each fold's fit.", "",
+        "| passes | actual patients | actual images | observed presence | projected presence |",
+        "|---:|---:|---:|---|---|",
     ]
-    outcome_parameters = []
-    for outcome in ("presence", "overlap_iou_00"):
-        parameters = []
-        for fold in FOLDS:
-            patients = counts[outcome][fold]
-            if sum(n >= 2 for n, _ in patients) < MIN_MULTI_IMAGE_PATIENTS:
-                raise RuntimeError("Too few multi-image patients for small-HCC fit")
-            parameters.append(fit_beta_binomial(patients, check_convergence=True))
-        outcome_parameters.append(parameters)
+    parameters = []
+    for fold in FOLDS:
+        patients = counts["presence"][fold]
+        if sum(n >= 2 for n, _ in patients) < MIN_MULTI_IMAGE_PATIENTS:
+            raise RuntimeError("Too few multi-image patients for small-HCC fit")
+        parameters.append(fit_beta_binomial(patients, check_convergence=True))
     for passes in range(1, 21):
-        cells = [mean_sd([detection_probability(a, b, passes) for a, b in parameters], digits=6)
-                 for parameters in outcome_parameters]
-        lines.append(f"| {passes} | " + " | ".join(cells) + " |")
+        actual_patients = sum(n == passes for n, _ in first)
+        actual_images = passes * actual_patients
+        observed = []
+        for fold in FOLDS:
+            detected = [k > 0 for n, k in counts["presence"][fold] if n == passes]
+            observed.append(statistics.mean(detected) if detected else None)
+        cells = [mean_sd(observed, digits=6),
+                 mean_sd([detection_probability(a, b, passes) for a, b in parameters], digits=6)]
+        lines.append(f"| {passes} | {actual_patients} | {actual_images} | " + " | ".join(cells) + " |")
     return "\n".join(lines) + "\n\n"
 
 

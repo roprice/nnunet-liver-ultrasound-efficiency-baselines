@@ -129,23 +129,28 @@ class SmallHccTests(unittest.TestCase):
             self.assertEqual(counts["presence"][fold], [(3, 3)])
             self.assertEqual(counts["overlap_iou_00"][fold], [(3, 1)])
 
-    def test_section_shows_presence_and_overlap_at_one_to_twenty_passes(self):
-        counts = {key: {fold: [(2, 1)] * 20 for fold in analysis.FOLDS}
-                  for key in ("presence", "overlap_iou_00")}
+    def test_section_shows_observed_and_projected_presence_at_one_to_twenty_passes(self):
+        patients = [(1, 0)] * 3 + [(2, 1)] * 20 + [(4, 2)] * 2
+        counts = {"presence": {fold: patients.copy() for fold in analysis.FOLDS}}
+        for fold in analysis.FOLDS:
+            counts["presence"][fold][3:3 + fold] = [(2, 0)] * fold
         parameters = [(2.0, b) for b in (0.3, 0.4, 0.5, 0.6, 0.7)]
-        overlap_parameters = [(1.0, b) for b in (0.4, 0.5, 0.6, 0.7, 0.8)]
         with patch.object(analysis, "fit_beta_binomial",
-                          side_effect=parameters + overlap_parameters) as fit:
+                          side_effect=parameters) as fit:
             text = analysis.small_hcc_section(counts)
-        self.assertEqual(fit.call_count, 10)
+        self.assertEqual(fit.call_count, 5)
+        self.assertNotIn("overlap (IoU > 0)", text)
         table = [line for line in text.splitlines() if line.startswith("|")]
-        self.assertEqual(table[0], "| passes | presence | overlap (IoU > 0) |")
+        self.assertEqual(table[0], "| passes | actual patients | actual images | observed presence | projected presence |")
         self.assertEqual(len(table), 22)
         for passes, row in enumerate(table[2:], start=1):
-            expected = [analysis.mean_sd(
-                [analysis.detection_probability(a, b, passes) for a, b in fitted], digits=6)
-                for fitted in (parameters, overlap_parameters)]
-            self.assertEqual(row, f"| {passes} | " + " | ".join(expected) + " |")
+            observed = {1: [0] * 5, 2: [(20 - fold) / 20 for fold in analysis.FOLDS],
+                        4: [1] * 5}.get(passes, [None] * 5)
+            expected = [analysis.mean_sd(observed, digits=6), analysis.mean_sd(
+                [analysis.detection_probability(a, b, passes) for a, b in parameters], digits=6)]
+            actual_patients = {1: 3, 2: 20, 4: 2}.get(passes, 0)
+            self.assertEqual(row, f"| {passes} | {actual_patients} | {passes * actual_patients} | "
+                             + " | ".join(expected) + " |")
 
     def test_target_is_first_integer_using_mean_not_every_fold(self):
         parameters = [(1.0, b) for b in (0.01, 0.01, 0.01, 0.01, 0.2)]

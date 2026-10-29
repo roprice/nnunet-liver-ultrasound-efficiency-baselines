@@ -2,10 +2,13 @@
 
 
 ## 2026-10-25
-_Estimated development effort: - through today, 175 total_
+_Estimated development effort: 4 through today, 179 total_
+
+We deepened our analysis of presence-based detection for the external dataset by adding a paired twin spatial agreement analysis - specifically, we rebuilt the predictions dastaset to include a calculated mass prediction field data (a mean_pairwise_iou column) allowing for agreement coverage and spatial coverage analysis of predictions.
+
+This could in theory be used elsewhere to add depth to the reliability and consistency of predictions; not as important on internal testing wehre we have annotated segmenations in place.
 
 
-We deepened our analysis of presence-based detection for the external dataset by adding a paired twin spatial agreement analysis across five folds. This gives a better sense of the reliability of predictions.
 
 ## 2026-10-25
 _Estimated development effort: 4 through today, 175 total_
