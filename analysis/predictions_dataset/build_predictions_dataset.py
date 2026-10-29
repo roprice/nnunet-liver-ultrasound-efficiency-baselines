@@ -7,10 +7,10 @@ Output:
     analysis/predictions_dataset/predictions_dataset.csv
     analysis/predictions_dataset/predictions_dataset_manifest.json
 
-The CSV records direct image-level facts for segmentation, overlap-based
-detection, and triage, for every evaluated prediction run. It intentionally
-contains no aggregate statistics, confidence intervals, quartiles, or
-interpretation; those live in downstream analyses.
+The CSV records image-level facts for segmentation, overlap-based detection,
+triage, and cross-fold spatial agreement, for every evaluated prediction run.
+Cohort aggregate statistics, confidence intervals, quartiles, and interpretation
+live in downstream analyses.
 
 This builder discovers prediction directories under each experiment archive in
 ``archives/`` and each amendment archive in ``archives_amendments/``.
@@ -28,7 +28,7 @@ import hashlib
 import json
 import re
 import subprocess
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -136,6 +136,7 @@ FIELDNAMES = (
     "proxy_mass_reference_path",
     "proxy_mass_method",
     "proxy_mass_area_px",
+    "mean_pairwise_positive_fold_retained_mask_iou",
 )
 
 
@@ -455,6 +456,74 @@ def add_proxy_mass_columns(rows):
             raise InputValidationError(f"Prediction/proxy cohort mismatch for {row['image_id']}")
         if row["image_id"] in references:
             row.update(references[row["image_id"]])
+
+
+def add_cross_fold_spatial_agreement(rows):
+    """Attach positive-fold agreement, loading retained masks one group at a time."""
+    field = "mean_pairwise_positive_fold_retained_mask_iou"
+    groups = defaultdict(list)
+    for row in rows:
+        row[field] = None
+        if row["fold"] is None:
+            continue
+        tokens = list(re.finditer(r"_fold([0-9]+)(?=_|$)", row["configuration_id"]))
+        if len(tokens) != 1 or int(tokens[0].group(1)) != row["fold"]:
+            raise InputValidationError(f"Invalid configuration fold token: {row['configuration_id']}")
+        token = tokens[0]
+        family = row["configuration_id"][:token.start()] + row["configuration_id"][token.end():]
+        key = tuple(row[name] for name in (
+            "image_id", "experiment_name", "evaluation_split", "training_set_size",
+            "seed", "encoder", "checkpoint",
+        )) + (family,)
+        groups[key].append(row)
+
+    for group in groups.values():
+        agreement = positive_fold_retained_mask_agreement(group)
+        for row in group:
+            row[field] = agreement
+
+
+def positive_fold_retained_mask_agreement(group):
+    """Validate one image/run family and average IoU over distinct positive folds."""
+    source_fields = (
+        "original_data_path", "reference_path", "pathology", "mass_present",
+        "evaluation_unit", "image_height_px", "image_width_px",
+    )
+    source = tuple(group[0][name] for name in source_fields)
+    seen_folds = set()
+    seen_paths = set()
+    positive_masks = []
+    for row in group:
+        if row["fold"] in seen_folds:
+            raise InputValidationError(f"Duplicate fold for spatial agreement: {row['configuration_id']}")
+        seen_folds.add(row["fold"])
+        if tuple(row[name] for name in source_fields) != source:
+            raise InputValidationError(f"Spatial agreement source mismatch for {row['image_id']}")
+        path = (PROJECT_ROOT / row["prediction_path"]).resolve()
+        if path in seen_paths:
+            raise InputValidationError(f"Duplicate prediction source for spatial agreement: {path}")
+        seen_paths.add(path)
+        prediction = read_mask(path)
+        shape = (row["image_height_px"], row["image_width_px"])
+        if prediction.shape != shape:
+            raise InputValidationError(f"Spatial agreement shape mismatch: {row['prediction_path']}")
+        retained = retained_mass_mask(prediction == MASS_VALUE)
+        area = int(retained.sum())
+        if area != row["predicted_mass_area_retained_px"]:
+            raise InputValidationError(f"Spatial agreement retained area mismatch: {row['prediction_path']}")
+        if bool(area) != row["triage_detection_flag"]:
+            raise InputValidationError(f"Spatial agreement triage flag mismatch: {row['prediction_path']}")
+        if area:
+            positive_masks.append(retained)
+    if len(positive_masks) < 2:
+        return None
+    total_iou = 0.0
+    pair_count = 0
+    for index, first in enumerate(positive_masks):
+        for second in positive_masks[index + 1:]:
+            total_iou += iou_score(first, second)
+            pair_count += 1
+    return total_iou / pair_count
 
 
 def fold_training_logs(experiment_archive, fold, seed):
@@ -1188,6 +1257,7 @@ def main():
         )
 
     add_proxy_mass_columns(rows)
+    add_cross_fold_spatial_agreement(rows)
     write_rows(rows)
     write_manifest(rows)
     print(f"Wrote {relative_path(OUTPUT_PATH)} ({len(rows)} rows)")

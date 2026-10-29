@@ -1,8 +1,8 @@
 {
-  "schema_version": 4,
-  "snapshot_id": "195716b4a6ec",
-  "built_at_utc": "2026-10-22T17:10:02+00:00",
-  "git_sha": "8daae36dd4d7d4d7da4df5cb8554a74cd980f6c4",
+  "schema_version": 5,
+  "snapshot_id": "eb8bd31e22f0",
+  "built_at_utc": "2026-10-28T17:23:09+00:00",
+  "git_sha": "f0885a4eac5a1274615bd1de042d9c95db8de26a",
   "configurations": [
     {
       "configuration_id": "predictions_augmentation_ablation_588images_seed42_fold0_best",

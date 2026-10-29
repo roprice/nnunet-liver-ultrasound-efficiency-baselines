@@ -9,12 +9,10 @@ import importlib
 import json
 import math
 import statistics
-from itertools import combinations
 from dataclasses import dataclass
 from pathlib import Path
 
 from analysis.predictions_dataset.constants import SCHEMA_VERSION
-from analysis.predictions_dataset import build_predictions_dataset as builder
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
 
 external = importlib.import_module("analysis.06_external_validation.detection_rates.detection_rates")
@@ -245,21 +243,17 @@ def build_report(data, manifest, archived_manifest_bytes):
 
 
 def spatial_agreement_score(rows):
-    masks = []
-    for row in rows:
-        prediction = builder.read_mask(external.proxy_detection.case_mask_path(
-            row.prediction_path, row.image_id))
-        if prediction.shape != (row.image_height_px, row.image_width_px):
-            raise RuntimeError(f"{row.image_id}: invalid prediction dimensions")
-        retained = builder.retained_mass_mask(prediction == builder.MASS_VALUE)
-        if (int(retained.sum()) != row.predicted_mass_area_retained_px
-                or bool(retained.any()) != row.triage_detection_flag):
-            raise RuntimeError(f"{row.image_id}: prediction does not match canonical retained facts")
-        if row.triage_detection_flag:
-            masks.append(retained)
-    if len(masks) < 2:
-        return None
-    return statistics.mean(builder.iou_score(a, b) for a, b in combinations(masks, 2))
+    if not rows:
+        raise RuntimeError("Cannot read spatial agreement without fold rows")
+    score = rows[0].mean_pairwise_positive_fold_retained_mask_iou
+    if any(row.mean_pairwise_positive_fold_retained_mask_iou != score for row in rows):
+        raise RuntimeError(f"{rows[0].image_id}: inconsistent canonical spatial agreement across folds")
+    eligible = sum(row.triage_detection_flag for row in rows) >= 2
+    if (score is not None) != eligible:
+        raise RuntimeError(f"{rows[0].image_id}: canonical spatial agreement null does not match eligibility")
+    if score is not None and (not math.isfinite(score) or not 0 <= score <= 1):
+        raise RuntimeError(f"{rows[0].image_id}: canonical spatial agreement must be finite and in [0, 1]")
+    return score
 
 
 def spatial_agreement(rows):

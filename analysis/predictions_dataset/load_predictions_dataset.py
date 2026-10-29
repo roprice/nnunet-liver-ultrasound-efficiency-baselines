@@ -12,6 +12,8 @@ normal images; ``normal_false_positive`` on mass-present images) are returned as
 ``None`` and are neither filled nor dropped here. Reference-dependent fields
 are also null on classification-only external images.
 Proxy mass references are tracked separately and never replace annotations.
+``mean_pairwise_positive_fold_retained_mask_iou`` is null when fewer than two
+positive folds are available or the row has no fold.
 
 Usage:
     from analysis.predictions_dataset.load_predictions_dataset import (
@@ -26,6 +28,7 @@ Usage:
 
 import csv
 import hashlib
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -76,6 +79,7 @@ INT_FIELDS = {
     "proxy_mass_area_px",
 }
 FLOAT_FIELDS = {
+    "mean_pairwise_positive_fold_retained_mask_iou",
     "mass_dice",
     "liver_dice",
     "mass_iou",
@@ -94,6 +98,7 @@ BOOL_FIELDS = {
     "proxy_mass_available",
 }
 NULLABLE_FIELDS = {
+    "mean_pairwise_positive_fold_retained_mask_iou",
     "proxy_mass_reference_path",
     "proxy_mass_method",
     "proxy_mass_area_px",
@@ -179,6 +184,7 @@ EXPECTED_FIELDS = (
     "proxy_mass_reference_path",
     "proxy_mass_method",
     "proxy_mass_area_px",
+    "mean_pairwise_positive_fold_retained_mask_iou",
 )
 
 
@@ -240,6 +246,7 @@ class PredictionRow:
     proxy_mass_reference_path: Optional[str]
     proxy_mass_method: Optional[str]
     proxy_mass_area_px: Optional[int]
+    mean_pairwise_positive_fold_retained_mask_iou: Optional[float]
 
 
 @dataclass
@@ -304,6 +311,11 @@ def load_predictions_dataset(csv_path=None):
             field: _coerce(line[field], field)
             for field in EXPECTED_FIELDS
         })
+        agreement = row.mean_pairwise_positive_fold_retained_mask_iou
+        if agreement is not None and (not math.isfinite(agreement) or not 0 <= agreement <= 1):
+            raise DatasetValidationError(
+                "mean_pairwise_positive_fold_retained_mask_iou must be finite and in [0, 1]"
+            )
         proxy_metadata = (row.proxy_mass_reference_path, row.proxy_mass_method, row.proxy_mass_area_px)
         if row.proxy_mass_available:
             if (not all(value is not None for value in proxy_metadata)

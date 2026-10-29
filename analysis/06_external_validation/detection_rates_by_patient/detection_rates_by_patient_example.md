@@ -4,7 +4,7 @@ SMC-LUD Clean: 3 images; nnU-Net default augmentation, folds 0–4. Final checkp
 
 Dataset root (repository-relative): `experiments/06_external_validation/SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)`. Source paths below are relative to this root; filenames are preserved.
 
-Canonical dataset snapshot `195716b4a6ec` (schema 4; checked against `analysis/predictions_dataset/predictions_dataset_manifest.json`).
+Canonical dataset snapshot `eb8bd31e22f0` (schema 5; checked against `analysis/predictions_dataset/predictions_dataset_manifest.json`).
 
 Patient/source manifest: `archives/06_external_validation/clean/prepared/smc_lud_manifest.json` (schema 1); SHA-256 `379d7a561b0d0840526bf6cacfe8b43c3c8e280c1086dac95612c8c9f185a7f3`.
 

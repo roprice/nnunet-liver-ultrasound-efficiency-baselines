@@ -1,7 +1,30 @@
 # Study log
 
+
 ## 2026-10-25
-_Estimated development effort: 2 through today, 173 total_
+_Estimated development effort: - through today, 175 total_
+
+
+We deepened our analysis of presence-based detection for the external dataset by adding a paired twin spatial agreement analysis across five folds. This gives a better sense of the reliability of predictions.
+
+## 2026-10-25
+_Estimated development effort: 4 through today, 175 total_
+
+Looking at the study log history of registered hypotheses, we failed to write one down for experiment 02 and 05:
+
+| Experiment | Date | Criterion | Git commit |
+|---|---|---|---|
+| 01 Training efficiency  | 2026-09-28 | Winning epoch budget is the smallest one across seeds whose malignant-mass detection rate (IoU>0.0) comes within 0.03 of the highest, accounting for training cost and learning rate. | https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines/commit/279502383fbe5d30858f13d6800788362359d0ad |
+| 02 Data efficiency | - | None registered  | - |
+| 03 Augmentation ablation - brightness frequency | 2026-10-13 | Answer "probably" if two of three detection views (presence-based, IoU>0.0, IoU>0.2) improve by more than 0.03, or if false positives decrease by more than 0.03 on those views; "yes" if either metric improves by more than 0.05; "maybe" if improvements are between 0.01 and 0.03; "probably not" if both change by less than 0.01. | https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines/commit/4ea8dab324ba268e653cc138c49f02e94b8be96d |
+| 04 Augmentation ablation - Gaussian noise removal | 2026-10-14 | Detection improvements of 0.03 or better are significant, as are false-positive decreases of 0.03 or better; a preponderance of such results answers "is removing Gaussian noise a worthwhile, cost-efficient methodological approach?" with "probably". | https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines/commit/c8893de7b0c6382eb482d37ba16a1928c59ac5bd |
+| 05 Prediction efficiency | - | None registered   | - |
+| 06 External validation on SMC-LUD | 2026-10-16 | Results considered validating if triage detection rates (presence-based, IoU>0.0, IoU>0.2) come within 0.03 points of the corresponding AUL rates. | https://github.com/roprice/nnunet-liver-ultrasound-efficiency-baselines/commit/5e88e7912c22cdfd72e73982862f149946b3c1f1 |
+
+
+
+
+----
 
 We refined energy consumption anaysis and metrics by cross-referencing a broader set of log data captured during experiments with new vendor supplied data from Verda.com, evaluating datacenter profiles.
 

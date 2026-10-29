@@ -7,8 +7,6 @@ import unittest
 from unittest.mock import patch
 from types import SimpleNamespace
 
-import numpy as np
-
 analysis = importlib.import_module(
     "analysis.06_external_validation.detection_rates_by_patient.detection_rates_by_patient"
 )
@@ -16,9 +14,6 @@ analysis = importlib.import_module(
 
 class DetectionRatesByPatientTests(unittest.TestCase):
     def setUp(self):
-        agreement = patch.object(analysis, "spatial_agreement_score", return_value=1.0)
-        agreement.start()
-        self.addCleanup(agreement.stop)
         self.entries, self.flags = [], []
         for patient, class_name, diameter, flags in (
             ("small", "HCC", 1.9, [True]),
@@ -54,6 +49,7 @@ class DetectionRatesByPatientTests(unittest.TestCase):
                         triage_detection_flag=flagged,
                         retained_component_count=int(flagged),
                         predicted_mass_area_retained_px=100 * int(flagged),
+                        mean_pairwise_positive_fold_retained_mask_iou=0.75 if flag else 0.0,
                     ))
         self.data = SimpleNamespace(rows=self.rows, snapshot_id="test")
         self.manifest = {"snapshot_id": "test", "schema_version": analysis.SCHEMA_VERSION}
@@ -106,6 +102,22 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         self.assertIn("| 4 | 0 | 0 | NA | NA |", hcc)
         self.assertIn("| 5 | 0 | 0 | NA | NA |", hcc)
         self.assertIn("| 6+ | 0 | 0 | NA | NA |", hcc)
+
+    def test_agreement_columns_preserve_detection_rates(self):
+        raw = json.dumps(self.archived).encode()
+        report = analysis.build_report(self.data, self.manifest, raw)
+        self.assertEqual(report.count("| agreement coverage | spatial agreement |"), 2)
+        self.assertIn("| 2 | 1 | 2 | 1.000 ± 0.000 | 0.000 ± 0.000 | "
+                      "2/2 (100.0%) images; 1/1 patients | 37.5% [37.5%, 37.5%] |", report)
+        self.assertIn("| 3 | 1 | 3 | 0.400 ± 0.548 | 0.400 ± 0.548 | "
+                      "3/3 (100.0%) images; 1/1 patients | 0.0% [0.0%, 0.0%] |", report)
+        for row in self.rows:
+            row.mean_pairwise_positive_fold_retained_mask_iou = 1.0
+        changed = analysis.build_report(self.data, self.manifest, raw)
+        def detection_cells(text):
+            return [line.split("|")[:6] for line in text.splitlines() if line.startswith("|")]
+
+        self.assertEqual(detection_cells(report), detection_cells(changed))
 
     def test_report_table_and_view_bin_order(self):
         report = analysis.build_report(self.data, self.manifest, json.dumps(self.archived).encode())
@@ -163,6 +175,8 @@ class DetectionRatesByPatientTests(unittest.TestCase):
         self.assertNotIn("original filename", report)
         self.assertIn("| 0.90 | 6.8px (~0.1cm) | 1 0 1 0 1 |", report)
         self.assertIn("| 0.90 | 4.5px (~0.1cm) | 0 1 0 1 0 |", report)
+        self.assertIn("| 1 0 1 0 1 | 75.0% |", report)
+        self.assertIn("| 0 1 0 1 0 | 0.0% |", report)
         self.assertIn("\n\nParenthetical values are estimated physical diameters of the predictions, "
                       "using an assumed scale of 0.013 cm/px.\n\nSpatial agreement", report)
         for fold in analysis.FOLDS:
@@ -269,58 +283,69 @@ class SpatialAgreementTests(unittest.TestCase):
         rows = []
         for model in analysis.MODELS:
             for fold in analysis.FOLDS:
-                rows.append(SimpleNamespace(
-                    experiment_name=model, evaluation_split="external_clean",
-                    configuration_id=f"{model}_{fold}", training_set_size=588,
-                    seed=42, checkpoint="final", epoch=150, encoder="PlainConvUNet",
-                    fold=fold, image_id="image", mass_present=True, evaluation_unit="image",
-                ))
-        with patch.object(analysis, "spatial_agreement_score", return_value=0.25) as score:
+                for image, pathology in (("image", "malignant"), ("benign-image", "benign")):
+                    flagged = fold in (0, 4)
+                    rows.append(SimpleNamespace(
+                        experiment_name=model, evaluation_split="external_clean",
+                        configuration_id=f"{model}_{fold}", training_set_size=588,
+                        seed=42, checkpoint="final", epoch=150, encoder="PlainConvUNet",
+                        fold=fold, image_id=image, pathology=pathology,
+                        mass_present=True, evaluation_unit="image",
+                        image_height_px=512, image_width_px=640,
+                        triage_detection_flag=flagged, retained_component_count=int(flagged),
+                        predicted_mass_area_retained_px=100 * int(flagged),
+                        mean_pairwise_positive_fold_retained_mask_iou=(
+                            0.25 if model == "data_efficiency" else 0.9),
+                    ))
+        with patch.object(analysis, "spatial_agreement_score",
+                          wraps=analysis.spatial_agreement_score) as score:
             result = analysis.patient_spatial_agreements(
-                rows, {"cases": [{"case": "image", "patient": "patient"}]})
-        self.assertEqual(result, {"patient": [0.25]})
-        selected = score.call_args.args[0]
-        self.assertEqual([row.fold for row in selected], list(analysis.FOLDS))
-        self.assertTrue(all(row.experiment_name == "data_efficiency" for row in selected))
+                rows, {"cases": [{"case": "image", "patient": "patient"},
+                                 {"case": "benign-image", "patient": "benign-patient"}]})
+        self.assertEqual(result, {"patient": [0.25], "benign-patient": [0.25]})
+        self.assertEqual(score.call_count, 2)
+        for call in score.call_args_list:
+            selected = call.args[0]
+            self.assertEqual([row.fold for row in selected], list(analysis.FOLDS))
+            self.assertTrue(all(row.experiment_name == "data_efficiency" for row in selected))
 
-    def evaluate(self, masks, area_override=None, shape_override=None, flag_override=None):
-        rows = [SimpleNamespace(
-            image_id="example", prediction_path="example.png",
-            image_height_px=mask.shape[0], image_width_px=mask.shape[1],
-            predicted_mass_area_retained_px=int((mask == 2).sum()),
-            triage_detection_flag=bool((mask == 2).any()),
-        ) for mask in masks]
-        if area_override is not None:
-            rows[0].predicted_mass_area_retained_px = area_override
-        if shape_override is not None:
-            rows[0].image_height_px = shape_override
-        if flag_override is not None:
-            rows[0].triage_detection_flag = flag_override
-        with patch.object(analysis.external.proxy_detection, "case_mask_path"), \
-                patch.object(analysis.builder, "read_mask", side_effect=masks):
-            return analysis.spatial_agreement(rows)
+    def agreement_rows(self, scores, flags):
+        return [SimpleNamespace(
+            image_id="example", fold=fold, triage_detection_flag=flag,
+            mean_pairwise_positive_fold_retained_mask_iou=score,
+        ) for fold, (score, flag) in enumerate(zip(scores, flags))]
 
-    def test_positive_pairs_exclude_empty_and_nonmass_masks(self):
-        a = np.array([[2, 2, 0, 0]], dtype=np.uint8)
-        b = np.array([[0, 2, 2, 0]], dtype=np.uint8)
-        empty = np.ones_like(a)
-        self.assertEqual(self.evaluate([a, b, empty]), "33.3%")
-        self.assertEqual(self.evaluate([a, a, b]), "55.6%")
-        self.assertEqual(self.evaluate([a, a]), "100.0%")
-        self.assertEqual(self.evaluate([a, np.array([[0, 0, 2, 2]])]), "0.0%")
-        self.assertEqual(self.evaluate([empty, empty]), "N/A")
-        self.assertEqual(self.evaluate([a, empty]), "N/A")
+    def test_common_canonical_score_includes_unflagged_folds_and_zero(self):
+        for score, expected in ((0.0, "0.0%"), (0.25, "25.0%"), (1.0, "100.0%")):
+            rows = self.agreement_rows([score] * 5, [True, False, False, False, True])
+            with self.subTest(score=score):
+                self.assertEqual(analysis.spatial_agreement_score(rows), score)
+                self.assertEqual(analysis.spatial_agreement(rows), expected)
 
-    def test_canonical_area_shape_and_presence_are_checked(self):
-        mask = np.full((10, 10), 2, dtype=np.uint8)
-        for overrides in ({"area_override": 99}, {"shape_override": 11}, {"flag_override": False}):
-            with self.subTest(overrides=overrides), self.assertRaises(RuntimeError):
-                self.evaluate([mask], **overrides)
+    def test_canonical_values_must_agree_across_all_folds(self):
+        for different in (None, 0.5):
+            rows = self.agreement_rows([0.25, different, 0.25], [True, False, True])
+            with self.subTest(different=different), self.assertRaisesRegex(RuntimeError, "inconsistent"):
+                analysis.spatial_agreement_score(rows)
 
-    def test_small_components_are_filtered(self):
-        mask = np.zeros((512, 512), dtype=np.uint8)
-        mask[0, 0] = 2
-        self.assertEqual(self.evaluate([mask], area_override=0, flag_override=False), "N/A")
+    def test_null_exactly_when_fewer_than_two_positive_folds(self):
+        for flags in ([False] * 5, [True, False, False, False, False]):
+            with self.subTest(flags=flags):
+                self.assertIsNone(analysis.spatial_agreement_score(self.agreement_rows([None] * 5, flags)))
+                self.assertEqual(analysis.spatial_agreement(self.agreement_rows([None] * 5, flags)), "N/A")
+                with self.assertRaisesRegex(RuntimeError, "eligibility"):
+                    analysis.spatial_agreement_score(self.agreement_rows([0.0] * 5, flags))
+        with self.assertRaisesRegex(RuntimeError, "eligibility"):
+            analysis.spatial_agreement_score(self.agreement_rows([None] * 5, [True] * 5))
+
+    def test_canonical_score_must_be_finite_and_in_unit_interval(self):
+        for score in (-0.01, 1.01, float("inf"), -float("inf"), float("nan")):
+            with self.subTest(score=score), self.assertRaises(RuntimeError):
+                analysis.spatial_agreement_score(self.agreement_rows([score] * 5, [True] * 5))
+
+    def test_empty_fold_rows_are_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "without fold rows"):
+            analysis.spatial_agreement_score([])
 
 
 class CurrentDetectionRatesByPatientTests(unittest.TestCase):

@@ -1,6 +1,6 @@
 # External-validation patient presence-based detection rates
 
-SMC-LUD Clean: 744 patients, 2656 images per fold model. Canonical dataset snapshot `195716b4a6ec` (schema 4; checked against its build manifest).
+SMC-LUD Clean: 744 patients, 2656 images per fold model. Canonical dataset snapshot `eb8bd31e22f0` (schema 5; checked against its build manifest).
 
 Patient/size input: `archives/06_external_validation/clean/prepared/smc_lud_manifest.json` (schema 1); SHA-256 `379d7a561b0d0840526bf6cacfe8b43c3c8e280c1086dac95612c8c9f185a7f3`.
 

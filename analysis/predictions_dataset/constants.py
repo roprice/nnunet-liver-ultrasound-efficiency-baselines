@@ -8,4 +8,5 @@ MIN_PRED_AREA_FRACTION = 0.0003
 # a detected mass is no longer counted as a false positive.
 # v3: reference-dependent fields are nullable for classification-only external cases.
 # v4: separate proxy-mass availability, reference path, extraction method, and area.
-SCHEMA_VERSION = 4
+# v5: mean pairwise retained-mask IoU among positive folds of the same image/run family.
+SCHEMA_VERSION = 5
