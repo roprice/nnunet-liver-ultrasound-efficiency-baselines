@@ -1,0 +1,11 @@
+snapshot_id,experiment,split,training_set_size,seed,encoder,endpoint,cluster_unit,model,cohort,checkpoint,criterion,pathology,fold,n,detected,rate
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,malignant,0,87,83,0.9540229885057471
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,malignant,1,87,83,0.9540229885057471
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,malignant,2,87,80,0.9195402298850575
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,malignant,3,87,81,0.9310344827586207
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,malignant,4,87,82,0.9425287356321839
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,benign,0,40,26,0.65
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,benign,1,40,26,0.65
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,benign,2,40,27,0.675
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,benign,3,40,26,0.65
+eb8bd31e22f0,data_efficiency,test,588,42,PlainConvUNet,overlap_detection_iou_00_flag,image_id,detected ~ pathology + log2(area) + categorical fold,full,final,overlap_iou_00,benign,4,40,28,0.7
