@@ -18,6 +18,12 @@ size = importlib.import_module("analysis.02_data_efficiency.detection_rates_by_s
 FOLDS = size.FOLDS
 PATHOLOGIES = ("malignant", "benign")
 OUTPUT_DIR = Path(__file__).resolve().parent
+RESTRICTED_COHORT = "restricted_1500_9000"
+PREDICTION_AREAS = (3000, 6000, 12000, 25000, 50000, 100000)
+
+
+def restrict_area(rows):
+    return [r for r in rows if 1500 <= r.ground_truth_mass_area_px <= 9000]
 
 
 def select_rows(rows):
@@ -98,16 +104,21 @@ def fit_logistic(design, outcome, clusters):
     return result.x, covariance, correction
 
 
-def analyze(rows):
-    records = []
-    terms = ["intercept", "log2_area_centered", "malignant"] + [f"fold_{f}" for f in FOLDS[1:]]
+def prepare_design(rows):
     log_area = np.log2([r.ground_truth_mass_area_px for r in rows])
     center = float(log_area.mean())
     design = np.column_stack([np.ones(len(rows)), log_area - center,
                               [r.pathology == "malignant" for r in rows],
                               *[[r.fold == fold for r in rows] for fold in FOLDS[1:]]])
+    return design, center
+
+
+def analyze(rows, cohort="full"):
+    records = []
+    terms = ["intercept", "log2_area_centered", "malignant"] + [f"fold_{f}" for f in FOLDS[1:]]
+    design, center = prepare_design(rows)
     clusters = [r.image_id for r in rows]
-    base = dict(cohort="full", checkpoint="final", criterion="overlap_iou_00",
+    base = dict(cohort=cohort, checkpoint="final", criterion="overlap_iou_00",
                 n_images=len(set(clusters)), n_predictions=len(rows),
                 n_parameters=len(terms), log2_area_center=center)
     try:
@@ -133,13 +144,48 @@ def analyze(rows):
     return records
 
 
-def detection_counts(rows):
+def prediction_sweep(rows):
+    records = [dict(area=area, status="unavailable", reason="", malignant=None,
+                    benign=None, difference_pp=None) for area in PREDICTION_AREAS]
+    design, center = prepare_design(rows)
+    try:
+        beta, covariance, _ = fit_logistic(
+            design, [r.overlap_detection_iou_00_flag for r in rows],
+            [r.image_id for r in rows])
+        for record in records:
+            for pathology in PATHOLOGIES:
+                prediction_design = np.array([
+                    [1, math.log2(record["area"]) - center, pathology == "malignant",
+                     *[fold == reference for reference in FOLDS[1:]]]
+                    for fold in FOLDS], dtype=float)
+                probabilities = expit(prediction_design @ beta)
+                mean = float(probabilities.mean())
+                if not 0 < mean < 1:
+                    raise ValueError("Invalid mean predicted probability")
+                gradient = (prediction_design * (probabilities * (1 - probabilities))[:, None]).mean(axis=0)
+                logit_gradient = gradient / (mean * (1 - mean))
+                variance = float(logit_gradient @ covariance @ logit_gradient)
+                if not math.isfinite(variance) or variance < 0:
+                    raise ValueError("Invalid prediction variance")
+                logit_mean = math.log(mean / (1 - mean))
+                lower, upper = expit(logit_mean + np.array([-1, 1]) * norm.ppf(.975) * math.sqrt(variance))
+                record[pathology] = (mean, float(lower), float(upper))
+            record["difference_pp"] = 100 * (record["malignant"][0] - record["benign"][0])
+            record["status"] = "ok"
+    except ValueError as error:
+        for record in records:
+            record.update(status="unavailable", reason=str(error), malignant=None,
+                          benign=None, difference_pp=None)
+    return records
+
+
+def detection_counts(rows, cohort="full"):
     counts = []
     for pathology in PATHOLOGIES:
         for fold in FOLDS:
             selected = [r for r in rows if r.pathology == pathology and r.fold == fold]
             detected = sum(r.overlap_detection_iou_00_flag for r in selected)
-            counts.append(dict(cohort="full", checkpoint="final", criterion="overlap_iou_00",
+            counts.append(dict(cohort=cohort, checkpoint="final", criterion="overlap_iou_00",
                                pathology=pathology, fold=fold, n=len(selected), detected=detected,
                                rate=detected / len(selected) if selected else None))
     return counts
@@ -150,27 +196,52 @@ def build_report(rows, snapshot_id, counts, models):
              f"Canonical snapshot `{snapshot_id}`; internal test cohort; training pool 588; seed 42; "
              f"encoder `{rows[0].encoder}`; final checkpoints only. 127 mass-positive images "
              "(87 malignant, 40 benign), each evaluated by five fold-trained models; normals excluded.", "",
-             "## Full-cohort detection rates by pathology", "",
-             "Rates are mean ± sample SD across five folds, in percent; SD describes variation "
-             "between these models and is not a confidence interval.", "",
-             "| Pathology | Unique images | Mean ± SD (%) |", "|---|---|---|"]
-    for pathology in PATHOLOGIES:
-        group = [r for r in counts if r["pathology"] == pathology]
-        values = [r["rate"] for r in group]
-        rate = "NA" if any(v is None for v in values) else (
-            f"{100 * statistics.mean(values):.1f} ± {100 * statistics.stdev(values):.1f}")
-        lines.append(f"| {pathology} | {group[0]['n']} | {rate} |")
-    lines.extend(["", "## Size distribution by pathology", "",
-                  "Malignant images have larger annotated mass pixel areas (unique-image metadata).", "",
-                  "| Pathology | n | Minimum px | Q1 px | Median px | Q3 px | Maximum px |",
-                  "|---|---|---|---|---|---|---|"])
-    images = {r.image_id: r for r in rows}
-    areas = {p: sorted(r.ground_truth_mass_area_px for r in images.values()
-                       if r.pathology == p) for p in PATHOLOGIES}
-    for pathology, values in areas.items():
-        q1, median, q3 = statistics.quantiles(values, n=4, method="inclusive")
-        lines.append(f"| {pathology} | {len(values)} | {min(values):,} | {q1:,.1f} | {median:,.1f} | "
-                     f"{q3:,.1f} | {max(values):,} |")
+             "## Model-predicted detection probability by annotated pixel area", "",
+             "Full-cohort model predictions at exact annotated mass areas, not observed area bins, "
+             "for final-checkpoint any-overlap detection (IoU > 0). Malignant and benign probabilities "
+             "are each averaged with equal weight across the five folds.", "",
+             "| Area (pixels²) | Malignant probability (95% CI) | Benign probability (95% CI) | Difference (percentage points) |",
+             "|---|---|---|---|"]
+    sweep = prediction_sweep(rows)
+    for record in sweep:
+        estimates = []
+        for pathology in PATHOLOGIES:
+            estimate = record[pathology]
+            estimates.append(f"{estimate[0]:.3f} ({estimate[1]:.3f}–{estimate[2]:.3f})"
+                             if record["status"] == "ok" else "NA")
+        difference = f"{record['difference_pp']:+.1f}" if record["status"] == "ok" else "NA"
+        lines.append(f"| {record['area']:,} | {estimates[0]} | {estimates[1]} | {difference} |")
+    if sweep[0]["status"] != "ok":
+        lines.extend(["", f"Predictions unavailable: {sweep[0]['reason']}."])
+    benign_max = max(r.ground_truth_mass_area_px for r in rows if r.pathology == "benign")
+    lines.extend(["", "Intervals are pointwise 95% confidence intervals, not SDs: the delta method "
+                  "uses the full image-clustered sandwich covariance on the logit of each fold-averaged "
+                  "probability, then transforms the limits back to the probability scale. "
+                  "The difference is malignant minus benign, in percentage points.", "",
+                  f"The 100,000 pixels² benign prediction is extrapolation beyond the observed benign "
+                  f"maximum ({benign_max:,.0f} pixels²); upper-area support is sparse. "
+                  "The model assumes a constant malignant-versus-benign odds ratio with no "
+                  "pathology-by-area interaction; this assumption causes the predicted absolute risk "
+                  "gap to narrow as both probabilities approach 1.", "",
+                  "## Full-cohort detection rates by pathology", "",
+             "Rates are proportions (0–1), mean ± sample SD to three decimals across five folds; SD describes variation "
+             "between these models and is not a confidence interval.", ""])
+    for cohort in ("full", RESTRICTED_COHORT):
+        if cohort == RESTRICTED_COHORT:
+            lines.extend(["", "## Restricted 1500–9000 pixels² inclusive detection rates by pathology", "",
+                          "Annotated mass pixel area is restricted to 1500–9000 pixels² inclusive; "
+                          "all five predictions per eligible image are retained. Rates use the same "
+                          "proportion mean ± sample SD format as above.", "",
+                          "This range restriction does not exactly match the pathology-specific area "
+                          "distributions; the restricted analysis is a post-descriptive exploratory "
+                          "sensitivity analysis, not prespecified or causal.", ""])
+        lines.extend(["| Pathology | Unique images | Mean ± SD |", "|---|---|---|"])
+        for pathology in PATHOLOGIES:
+            group = [r for r in counts if r["cohort"] == cohort and r["pathology"] == pathology]
+            values = [r["rate"] for r in group]
+            rate = "NA" if any(v is None for v in values) else (
+                f"{statistics.mean(values):.3f} ± {statistics.stdev(values):.3f}")
+            lines.append(f"| {pathology} | {group[0]['n']} | {rate} |")
     lines.extend(["", "## Adjusted malignant vs benign association", "",
                   "| Cohort | Image clusters | Predictions | Adjusted OR (95% CI) | p |",
                   "|---|---|---|---|---|"])
@@ -180,10 +251,12 @@ def build_report(rows, snapshot_id, counts, models):
         estimate = (f"{record['odds_ratio']:.2f} ({record['ci_lower']:.2f}–{record['ci_upper']:.2f})"
                     if record["status"] == "ok" else f"Unavailable: {record['reason']}")
         p = f"{record['p_value']:.3g}" if record["status"] == "ok" else "NA"
-        lines.append(f"| {record['cohort']} | {record['n_images']} | {record['n_predictions']} | {estimate} | {p} |")
+        label = "full (primary)" if record["cohort"] == "full" else "restricted 1500–9000 pixels² (exploratory)"
+        lines.append(f"| {label} | {record['n_images']} | {record['n_predictions']} | {estimate} | {p} |")
     lines.extend(["", "Methods: Final-checkpoint any-overlap detection (IoU > 0) uses unpenalized "
                    "logistic MLE with an intercept, pathology (benign reference), centered log2 annotated "
-                   "mass pixel area and categorical fold (fold 0 reference), without interactions. "
+                    "mass pixel area and categorical fold (fold 0 reference), without interactions, "
+                    "in both the full cohort and the inclusive 1500–9000 pixels² subset. "
                    "Image-clustered sandwich covariance uses G/(G−1) × (N−1)/(N−K), K=7, with approximate "
                    "normal Wald 95% CIs and two-sided p values. "
                    "Pixel area is not physical size, adjustment depends on model form and support, and "
@@ -201,8 +274,9 @@ def main():
     if manifest["snapshot_id"] != data.snapshot_id:
         raise RuntimeError("Dataset does not match build manifest")
     rows = select_rows(data.rows)
-    models = analyze(rows)
-    counts = detection_counts(rows)
+    restricted = restrict_area(rows)
+    models = analyze(rows) + analyze(restricted, RESTRICTED_COHORT)
+    counts = detection_counts(rows) + detection_counts(restricted, RESTRICTED_COHORT)
     provenance = dict(snapshot_id=data.snapshot_id, experiment="data_efficiency", split="test",
                       training_set_size=588, seed=42, encoder=rows[0].encoder,
                       endpoint="overlap_detection_iou_00_flag", cluster_unit="image_id",

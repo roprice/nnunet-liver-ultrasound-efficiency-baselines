@@ -105,20 +105,12 @@ def build_report(rows, snapshot_id, assignments, records):
              "Seven approximately logarithmic bins use `ground_truth_mass_area_px`: total "
              "annotated mass pixel area per image, not individual lesion or physical area. "
              "Bounds are lower inclusive and upper exclusive; image scale and cropping vary.", "",
-             "Rates are percentages, mean ± sample SD across the five fold-trained models "
+             "Rates are proportions (0–1), mean ± sample SD to three decimals across the five fold-trained models "
              "evaluated on the same images. SD describes model variation, not a confidence "
              "interval; repeated images are not additional independent cases. Empty bins are NA.", "",
              "All seven existing image-level detection criteria and retained-component rules "
              "are reused: presence, overlap IoU > 0/0.2/0.5, and centroid equivalent-diameter "
-             "tolerances 0.25/0.5/1.0. Presence need not localize the mass.", "",
-             "## Unique image counts", "",
-             "| Pixel-area bin | Malignant | Benign | Combined |",
-             "|---|---|---|---|"]
-    for label, _, _ in BINS:
-        group = [r for key, r in images.items() if assignments[key] == label]
-        malignant = sum(r.pathology == "malignant" for r in group)
-        benign = sum(r.pathology == "benign" for r in group)
-        lines.append(f"| {label} | {malignant} | {benign} | {len(group)} |")
+             "tolerances 0.25/0.5/1.0. Presence need not localize the mass."]
     lines.extend(["", "## Majority detection by image", "",
                   "Final checkpoints only; one point per mass-positive test image. "
                   "Detected means any overlap (IoU > 0; `overlap_detection_iou_00_flag`) "
@@ -128,22 +120,36 @@ def build_report(rows, snapshot_id, assignments, records):
                   "the fixed-bin boundaries.", "",
                   "![Majority detection by annotated mass area](detection_rates_by_size.png)", "",
                   "[PDF](detection_rates_by_size.pdf)", ""])
+    leading_tables = []
     for checkpoint in CHECKPOINTS:
         for pathology in PATHOLOGIES:
-            lines.extend([f"## {checkpoint.title()} — {pathology}", "",
-                          "| Criterion | " + " | ".join(label for label, _, _ in BINS) + " |",
-                          "|---|" + "---|" * len(BINS)])
+            table_bins = BINS[::-1] if pathology in ("malignant", "benign") else BINS
+            table = [f"## {checkpoint.title()} — {pathology}", "",
+                          "| Criterion | " + " | ".join(label for label, _, _ in table_bins) + " |",
+                           "|---|" + "---|" * len(BINS)]
+            if checkpoint == "final" and pathology in ("malignant", "benign"):
+                counts = []
+                for label, _, _ in table_bins:
+                    count = sum(r.pathology == pathology and assignments[key] == label
+                                for key, r in images.items())
+                    counts.append(f"**{count}**")
+                table.append("| **Unique images (n)** | " + " | ".join(counts) + " |")
             for criterion, _ in CRITERIA:
                 cells = []
-                for label, _, _ in BINS:
+                for label, _, _ in table_bins:
                     values = [r["rate"] for r in records
                               if r["checkpoint"] == checkpoint and r["pathology"] == pathology
                               and r["bin"] == label and r["criterion"] == criterion]
                     cells.append("NA" if not values or any(v is None for v in values) else
-                                 f"{100 * statistics.mean(values):.1f} ± "
-                                 f"{100 * statistics.stdev(values):.1f}")
-                lines.append(f"| {criterion} | " + " | ".join(cells) + " |")
-            lines.append("")
+                                 f"{statistics.mean(values):.3f} ± "
+                                 f"{statistics.stdev(values):.3f}")
+                table.append(f"| {criterion} | " + " | ".join(cells) + " |")
+            table.append("")
+            if checkpoint == "final" and pathology in ("malignant", "benign"):
+                leading_tables.extend(table)
+            else:
+                lines.extend(table)
+    lines[2:2] = leading_tables
     return "\n".join(lines)
 
 

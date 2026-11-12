@@ -2,6 +2,9 @@
 
 Run from the repository root:
     python -m analysis.06_external_validation.detection_rates_by_patient.detection_rates_by_patient
+
+Writes the patient reports and an HCC any-image detection chart (PNG and PDF)
+for patients with one to five images.
 """
 
 import hashlib
@@ -11,6 +14,10 @@ import math
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 from analysis.predictions_dataset.constants import SCHEMA_VERSION
 from analysis.predictions_dataset.load_predictions_dataset import load_predictions_dataset
@@ -24,6 +31,8 @@ ARCHIVED_MANIFEST_PATH = (
     PROJECT_ROOT / "archives/06_external_validation/clean/prepared/smc_lud_manifest.json"
 )
 OUTPUT_PATH = Path(__file__).with_suffix(".md")
+CHART_PATH = Path(__file__).with_suffix(".png")
+PDF_PATH = Path(__file__).with_suffix(".pdf")
 EXAMPLE_OUTPUT_PATH = Path(__file__).with_name("detection_rates_by_patient_example.md")
 DATASET_ROOT = Path("experiments/06_external_validation/SMC-LUD Liver Ultrasound Dataset (HCC vs Hemangioma)")
 COHORTS = {
@@ -128,6 +137,57 @@ def summarize(patients):
 
 def mean_sd(values, digits=6):
     return f"{statistics.mean(values):.{digits}f} ± {statistics.stdev(values):.{digits}f}"
+
+
+def build_chart_results(groups):
+    results = []
+    for _, views, _ in VIEW_BINS[:5]:
+        summaries = [
+            summarize([
+                patient for patient in cohort_patients(groups["data_efficiency", fold], "HCC")
+                if patient.n == views
+            ])
+            for fold in FOLDS
+        ]
+        results.append({
+            "views": views,
+            "patients": summaries[0]["patients"],
+            "rate": statistics.mean(summary["any_image_rate"] for summary in summaries),
+        })
+    return results
+
+
+def write_chart(results):
+    views = [result["views"] for result in results]
+    rates = [result["rate"] for result in results]
+    fig, ax = plt.subplots(figsize=(10, 6.4))
+    ax.set_facecolor("#f6f5f3")
+    ax.plot(
+        views, rates, color="#2a78d6", marker="o", linewidth=2.8,
+        markersize=10, markeredgecolor="white", markeredgewidth=1.5,
+    )
+    for result in results:
+        ax.annotate(
+            f"{result['rate']:.3f}", (result["views"], result["rate"]),
+            xytext=(0, 12), textcoords="offset points", ha="center", fontsize=16,
+        )
+    ax.set_xticks(views, [
+        f"{result['views']}\n({result['patients']} patients)" for result in results
+    ])
+    ax.set_ylim(0, 1.04)
+    ax.set_xlabel("Images per patient", fontsize=18)
+    ax.set_ylabel("Presence-based detection rate", fontsize=18)
+    ax.tick_params(axis="both", labelsize=14, colors="#605e59")
+    ax.grid(axis="y", color="#e2e0dc", linewidth=1)
+    ax.set_axisbelow(True)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    for side in ("bottom", "left"):
+        ax.spines[side].set_color("#e2e0dc")
+    fig.tight_layout()
+    fig.savefig(CHART_PATH, dpi=200)
+    fig.savefig(PDF_PATH)
+    plt.close(fig)
 
 
 def patient_spatial_agreements(rows, manifest):
@@ -374,6 +434,10 @@ def main():
     print(f"Wrote {OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
     EXAMPLE_OUTPUT_PATH.write_text(example)
     print(f"Wrote {EXAMPLE_OUTPUT_PATH.relative_to(PROJECT_ROOT).as_posix()}")
+    groups = patient_groups(data.rows, json.loads(archived_manifest_bytes))
+    write_chart(build_chart_results(groups))
+    for path in (CHART_PATH, PDF_PATH):
+        print(f"Wrote {path.relative_to(PROJECT_ROOT).as_posix()}")
 
 
 if __name__ == "__main__":

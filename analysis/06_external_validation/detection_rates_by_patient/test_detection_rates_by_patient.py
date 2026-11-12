@@ -272,6 +272,42 @@ class DetectionRatesByPatientTests(unittest.TestCase):
             self.assertIn(hashlib.sha256(archive_bytes).hexdigest(), report)
 
 
+class PatientChartTests(unittest.TestCase):
+    def setUp(self):
+        groups = {}
+        for fold in analysis.FOLDS:
+            patients = [
+                analysis.PatientCounts(f"hcc-{views}", "malignant", None,
+                                       n=views, k=int(fold % 2 == 0))
+                for views in range(1, 7)
+            ]
+            patients.append(analysis.PatientCounts("extra-hcc", "malignant", None, n=2, k=2))
+            patients.append(analysis.PatientCounts("benign", "benign", None, n=1, k=0))
+            groups["data_efficiency", fold] = patients
+        self.results = analysis.build_chart_results(groups)
+
+    def test_chart_uses_hcc_any_image_fold_means_for_one_to_five_views(self):
+        self.assertEqual([result["views"] for result in self.results], [1, 2, 3, 4, 5])
+        self.assertEqual([result["patients"] for result in self.results], [1, 2, 1, 1, 1])
+        for result, expected in zip(self.results, [0.6, 0.8, 0.6, 0.6, 0.6]):
+            self.assertAlmostEqual(result["rate"], expected)
+
+    def test_chart_writes_both_formats_without_six_plus_or_legend_note(self):
+        with patch("matplotlib.figure.Figure.savefig", autospec=True) as savefig:
+            analysis.write_chart(self.results)
+        self.assertEqual([call.args[1] for call in savefig.call_args_list],
+                         [analysis.CHART_PATH, analysis.PDF_PATH])
+        figure = savefig.call_args_list[0].args[0]
+        ax = figure.axes[0]
+        self.assertEqual(list(ax.lines[0].get_xdata()), [1, 2, 3, 4, 5])
+        self.assertEqual([label.get_text() for label in ax.get_xticklabels()],
+                         ["1\n(1 patients)", "2\n(2 patients)", "3\n(1 patients)",
+                          "4\n(1 patients)", "5\n(1 patients)"])
+        self.assertEqual([text.get_text() for text in ax.texts],
+                         ["0.600", "0.800", "0.600", "0.600", "0.600"])
+        self.assertIsNone(ax.get_legend())
+
+
 class SpatialAgreementTests(unittest.TestCase):
     def test_patient_weighting_coverage_and_quartiles(self):
         patients = [analysis.PatientCounts("a", "malignant", None, n=3),
@@ -367,6 +403,12 @@ class CurrentDetectionRatesByPatientTests(unittest.TestCase):
     def test_current_report_matches_inputs(self):
         self.assertEqual(analysis.OUTPUT_PATH.read_text(),
                          self.report)
+
+    def test_current_chart_matches_original_one_to_five_view_values(self):
+        results = analysis.build_chart_results(self.groups)
+        self.assertEqual([result["patients"] for result in results], [129, 99, 67, 43, 29])
+        self.assertEqual([f"{result['rate']:.3f}" for result in results],
+                         ["0.916", "0.988", "0.988", "1.000", "1.000"])
 
     def test_current_example_matches_all_patient_images_and_totals(self):
         report = analysis.build_example_report(self.data, self.manifest, self.raw)
