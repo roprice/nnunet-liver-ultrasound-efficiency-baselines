@@ -1,6 +1,20 @@
 # Study log
 
 
+## 2026-11-14
+_Estimated development effort: 12 through today, 191 total_
+
+Refreshed all analysis based on final predictions_dataset snapshot: eb8bd31e22f0.
+
+Froze predictions dataset.
+
+Previously (per git commits on Oct 26, 27, 28, 30 and Nov 12): 
+
+- made multiple revisions to small-mass analysis through internal and external predictions
+-  conducted deeper and improved carbon footpring and energy use analysis, along with refined financial cost analysis
+- simplified external testing analysis by separating confirmed observations from exploratory ones
+- refined multi-image per patient analysis based on external testing
+
 ## 2026-10-25
 _Estimated development effort: 4 through today, 179 total_
 
