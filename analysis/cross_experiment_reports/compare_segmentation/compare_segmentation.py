@@ -46,6 +46,7 @@ def build_report(data, manifest):
 
     lines = [
         "# Segmentation comparison: 588-image final models", "",
+        f"Dataset snapshot `{data.snapshot_id}` (schema version {manifest['schema_version']}).", "",
         "Mean ± sample SD across five fold-model means; liver Dice uses all test images, "
         "mass Dice uses the corresponding mass images, and missing Dice values are excluded.", "",
         "| Metric | " + " | ".join(label for _, label in EXPERIMENTS) + " |",

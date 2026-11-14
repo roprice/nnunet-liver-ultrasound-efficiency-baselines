@@ -1,6 +1,6 @@
 # Detection rates by training-set size
 
-Augmentation-ablation experiment, 2940 rows, dataset snapshot 195716b4a6ec (schema version 4). Rates are mean ± sample SD across the five folds.
+Augmentation-ablation experiment, 2940 rows, dataset snapshot eb8bd31e22f0 (schema version 5). Rates are mean ± sample SD across the five folds.
 
 FP/normal image is the fraction of normal images with any retained predicted component, regardless of proximity criterion; FP/image counts unmatched predicted components per evaluated image.
 

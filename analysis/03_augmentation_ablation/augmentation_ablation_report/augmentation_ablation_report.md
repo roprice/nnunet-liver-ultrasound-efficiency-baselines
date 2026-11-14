@@ -1,6 +1,6 @@
 # Augmentation-ablation report
 
-Dataset snapshot `b63d4754f920` (schema 2); test split, seed 42, five fold models per training-pool size.
+Dataset snapshot `eb8bd31e22f0` (schema 5); test split, seed 42, five fold models per training-pool size.
 
 With brightness-augmentation probability increased from 0.15 to 0.5, models trained on pools of 74 and 588 images are evaluated on the same 147 test images for malignant detection and false positives, reported as mean ± sample SD across five fold models.
 

@@ -1,6 +1,6 @@
 # Data-efficiency report
 
-Dataset snapshot `cbed1239c12a` (schema 2); test split, seed 42, five fold models per training-pool size.
+Dataset snapshot `eb8bd31e22f0` (schema 5); test split, seed 42, five fold models per training-pool size.
 
 ## Definitions and cohort
 

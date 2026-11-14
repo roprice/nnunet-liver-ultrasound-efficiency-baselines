@@ -1,6 +1,6 @@
 # Effect of caliper marks on predictions
 
-Prediction snapshot `195716b4a6ec`. 380 hemangioma Clean frames (190 patients) with usable twin-derived proxies, each paired with its caliper twin: the same pixels plus the caliper marks. Both frames go through the same 5 final nnU-Net default-augmentation models (588-image AUL training pool, seed 42, 150 epochs, folds 0–4), so any difference between the two predictions is caused by the marks.
+Prediction snapshot `eb8bd31e22f0`. 380 hemangioma Clean frames (190 patients) with usable twin-derived proxies, each paired with its caliper twin: the same pixels plus the caliper marks. Both frames go through the same 5 final nnU-Net default-augmentation models (588-image AUL training pool, seed 42, 150 epochs, folds 0–4), so any difference between the two predictions is caused by the marks.
 
 Rates are mean ± sample SD across the five fold models on the same pairs; differences are marked twin minus Clean frame, as proportions, computed per fold. The study's relevance threshold is 0.03. Overlap and centroid detection use the same circular proxy for both frames of a pair. These are hemangioma marks only; HCC frames come from several scanners with other mark styles and are not tested here.
 

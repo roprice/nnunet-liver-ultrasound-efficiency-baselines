@@ -1,6 +1,6 @@
 # External-validation detection rates
 
-SMC-LUD Clean cohort, 2656 unique images, 39840 image-model rows, dataset snapshot 195716b4a6ec (schema version 4).
+SMC-LUD Clean cohort, 2656 unique images, 39840 image-model rows, dataset snapshot eb8bd31e22f0 (schema version 5).
 
 PlainConvUNet final checkpoints: 588 AUL training images, seed 42, 150 epochs, folds 0–4. Rates are mean ± sample SD across five models tested on the same images.
 

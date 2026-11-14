@@ -1,5 +1,7 @@
 # Malignant detection comparison: 588-image models
 
+Dataset snapshot `eb8bd31e22f0` (schema version 5).
+
 Mean ± sample SD across five fold-model rates; detection uses malignant images, normal flagged fraction uses normal images, and FP/image uses all test images.
 
 ## final
@@ -12,7 +14,6 @@ Mean ± sample SD across five fold-model rates; detection uses malignant images,
 | IoU > 0 FP/image | 0.107 ± 0.038 | 0.110 ± 0.012 | 0.101 ± 0.017 |
 | IoU > 0.2 detection rate | 0.899 ± 0.015 | 0.903 ± 0.006 | 0.901 ± 0.017 |
 | IoU > 0.2 FP/image | 0.177 ± 0.043 | 0.169 ± 0.021 | 0.156 ± 0.035 |
-
 
 ## best
 

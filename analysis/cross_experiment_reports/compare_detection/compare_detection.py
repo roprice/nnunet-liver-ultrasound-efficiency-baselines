@@ -59,6 +59,7 @@ def build_report(data, manifest):
     groups = select_groups(data.rows)
     lines = [
         "# Malignant detection comparison: 588-image models", "",
+        f"Dataset snapshot `{data.snapshot_id}` (schema version {manifest['schema_version']}).", "",
         "Mean ± sample SD across five fold-model rates; detection uses malignant images, "
         "normal flagged fraction uses normal images, and FP/image uses all test images.", "",
     ]

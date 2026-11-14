@@ -1,5 +1,5 @@
 {
-  "dataset_snapshot": "9266764b0e11",
+  "dataset_snapshot": "eb8bd31e22f0",
   "predictions": {
     "mask_per_image": [
       {
@@ -95216,18 +95216,18 @@
       "archives/02_data_efficiency/repo/logs/02_data_efficiency/inference/size588/fold4/inference_settings_cuda_fold4.json",
       "archives/02_data_efficiency/repo/logs/02_data_efficiency/inference/size588/fold4/inference_summary_cuda_fold4.csv",
       "archives/02_data_efficiency/repo/logs/02_data_efficiency/inference/size588/fold4/inference_throughput_cuda_fold4.csv",
-      "logs/05_prediction_efficiency/cpu/inference/inference_per_image_cpu_fold4.csv",
-      "logs/05_prediction_efficiency/cpu/inference/inference_settings_cpu_fold4.json",
-      "logs/05_prediction_efficiency/cpu/inference/inference_summary_cpu_fold4.csv",
-      "logs/05_prediction_efficiency/cpu/inference/inference_throughput_cpu_fold4.csv",
-      "logs/05_prediction_efficiency/cpu/inference/single_case_cpu.json",
-      "logs/05_prediction_efficiency/cpu/run_settings.json",
-      "logs/05_prediction_efficiency/mps/inference/inference_per_image_mps_fold4.csv",
-      "logs/05_prediction_efficiency/mps/inference/inference_settings_mps_fold4.json",
-      "logs/05_prediction_efficiency/mps/inference/inference_summary_mps_fold4.csv",
-      "logs/05_prediction_efficiency/mps/inference/inference_throughput_mps_fold4.csv",
-      "logs/05_prediction_efficiency/mps/inference/single_case_mps.json",
-      "logs/05_prediction_efficiency/mps/run_settings.json"
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/inference/inference_per_image_cpu_fold4.csv",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/inference/inference_settings_cpu_fold4.json",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/inference/inference_summary_cpu_fold4.csv",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/inference/inference_throughput_cpu_fold4.csv",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/inference/single_case_cpu.json",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/cpu/run_settings.json",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/inference/inference_per_image_mps_fold4.csv",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/inference/inference_settings_mps_fold4.json",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/inference/inference_summary_mps_fold4.csv",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/inference/inference_throughput_mps_fold4.csv",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/inference/single_case_mps.json",
+      "archives/05_prediction_efficiency/logs/05_prediction_efficiency/mps/run_settings.json"
     ]
   }
 }

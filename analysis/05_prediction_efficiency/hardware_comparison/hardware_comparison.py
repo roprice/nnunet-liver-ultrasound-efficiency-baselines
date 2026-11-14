@@ -204,6 +204,14 @@ def prediction_directory(run):
             / f"predictions_{device}_seed42_fold4_repeat{repeat}")
 
 
+def validate_recalculated_row(row, recalculated, label):
+    # Cross-fold agreement cannot be recomputed from one saved mask.
+    aggregate_field = "mean_pairwise_positive_fold_retained_mask_iou"
+    expected = {key: value for key, value in row.items() if key != aggregate_field}
+    actual = {key: value for key, value in recalculated.items() if key != aggregate_field}
+    require(actual == expected, f"Dataset facts differ from saved mask: {label}")
+
+
 def load_predictions(dataset, sources):
     archive = ROOT / "archives/02_data_efficiency"
     cases = metrics.load_test_cases(archive)
@@ -242,7 +250,7 @@ def load_predictions(dataset, sources):
             masks[name] = metrics.read_mask(path)
             if name != "cuda_benchmark":
                 recalculated = metrics.evaluate_case(dict(row, prediction_directory=path.parent), case)
-                require(recalculated == row, f"Dataset facts differ from saved mask: {name}/{image_id}")
+                validate_recalculated_row(row, recalculated, f"{name}/{image_id}")
         for left, right in comparison_pairs():
             row = mask_comparison(masks[left], masks[right])
             confusion[left, right] += row.pop("label_confusion")

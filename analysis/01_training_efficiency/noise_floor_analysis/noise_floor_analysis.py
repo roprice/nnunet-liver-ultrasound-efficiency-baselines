@@ -197,14 +197,16 @@ def main():
             + ", ".join(f"{criterion}={lost[criterion]}" for criterion in CRITERIA)
         )
 
-    write_markdown(results, mean_area)
-    write_json(results, mean_area)
+    write_markdown(results, mean_area, data.snapshot_id, manifest["schema_version"])
+    write_json(results, mean_area, data.snapshot_id, manifest["schema_version"])
 
 
-def write_markdown(results, mean_area):
+def write_markdown(results, mean_area, snapshot_id, schema_version):
     """Write the sweep table with the notes below it."""
     lines = [
         "# Relative noise-floor sweep",
+        "",
+        f"Dataset snapshot `{snapshot_id}` (schema version {schema_version}).",
         "",
         "| Fraction | AUL average (px) | Triage | Centroid 0.25 | Centroid 0.5 "
         "| Centroid 1.0 | Overlap >0 | Overlap >0.2 | Overlap >0.5 |",
@@ -233,9 +235,11 @@ def write_markdown(results, mean_area):
     print(f"Wrote {out}")
 
 
-def write_json(results, mean_area):
+def write_json(results, mean_area, snapshot_id, schema_version):
     """Write the machine-readable sweep results."""
     payload = {
+        "dataset_snapshot": snapshot_id,
+        "schema_version": schema_version,
         "description": (
             "Sweep of a relative noise floor (fraction of image area) against "
             "the selected floor. 'lost' counts mass-present cases detected "

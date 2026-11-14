@@ -1,5 +1,7 @@
 # Segmentation comparison: 588-image final models
 
+Dataset snapshot `eb8bd31e22f0` (schema version 5).
+
 Mean ± sample SD across five fold-model means; liver Dice uses all test images, mass Dice uses the corresponding mass images, and missing Dice values are excluded.
 
 | Metric | 02: Data efficiency | 03: Brightness ablation | 04: Gaussian-noise ablation |

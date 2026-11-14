@@ -8,7 +8,7 @@ import numpy as np
 from scipy import stats
 
 
-LOCAL = Path("logs/05_prediction_efficiency")
+LOCAL = Path("archives/05_prediction_efficiency/logs/05_prediction_efficiency")
 CUDA = Path("archives/02_data_efficiency/repo/logs/02_data_efficiency/inference/size588/fold4")
 MODEL = Path("archives/02_data_efficiency/nnUNet_results/Dataset001_AUL/"
              "nnUNetTrainer_dataSubsets_Seed42__nnUNetPlans__2d/fold_4")

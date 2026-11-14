@@ -1,6 +1,6 @@
 # Comparing malignant-mass detection of augmentation ablations
 
-02: baseline; 03: brightness ablation; 04: Gaussian-noise ablation (588 images only). Dataset snapshot b63d4754f920 (schema version 2).
+02: baseline; 03: brightness ablation; 04: Gaussian-noise ablation (588 images only). Dataset snapshot eb8bd31e22f0 (schema version 5).
 
 Matched test cohorts, seed 42, encoder and folds 0–4. Values are mean ± sample SD across five fold models; paired differences are ablation − 02 per fold, summarized as mean ± sample SD. Detection uses 87 malignant images; FP/normal image is the flagged fraction of 20 normal images. Component FP/image counts uncredited retained components across all 147 test images.
 

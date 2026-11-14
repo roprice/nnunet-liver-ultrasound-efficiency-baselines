@@ -1,6 +1,6 @@
 # Experiment 05: local CPU/MPS versus archived CUDA
 
-Dataset snapshot: `9266764b0e11`. Same pool-588, seed-42, fold-4, final/150-epoch model; 147 held-out images (87 malignant, 40 benign, 20 normal). No ensemble or retraining.
+Dataset snapshot: `eb8bd31e22f0`. Same pool-588, seed-42, fold-4, final/150-epoch model; 147 held-out images (87 malignant, 40 benign, 20 normal). No ensemble or retraining.
 
 CPU/MPS: Apple M1 Pro, 32 GiB shared RAM. CUDA: NVIDIA RTX 6000 Ada Generation, AMD EPYC 7443 24-Core Processor host. Hardware, OS, software and hosts differ: this compares systems/backends, not isolated device effects. Full settings are in `hardware_comparison.json`.
 
@@ -36,7 +36,7 @@ Image-size associations are descriptive, not causal; shape/sliding-window tiling
 
 ## Prediction agreement
 
-The baseline is the saved CUDA benchmark masks. Experiment 02's ordinary masks (`cuda_evaluation`) are separate: execution paths can slightly change the same model's masks. Canonical-dataset facts are verified against archived local masks; CUDA benchmark metrics use the same shared functions and experiment-02 references.
+The baseline is the **saved CUDA benchmark masks**. Experiment 02's ordinary masks (`cuda_evaluation`) are separate: execution paths can slightly change the same model's masks. Canonical-dataset facts are verified against archived local masks; CUDA benchmark metrics use the same shared functions and experiment-02 references.
 
 Repeat 1 is shown; within-backend repeatability is reported below.
 

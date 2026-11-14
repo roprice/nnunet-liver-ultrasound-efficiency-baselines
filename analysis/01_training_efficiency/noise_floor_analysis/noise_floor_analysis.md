@@ -1,5 +1,7 @@
 # Relative noise-floor sweep
 
+Dataset snapshot `eb8bd31e22f0` (schema version 5).
+
 | Fraction | AUL average (px) | Triage | Centroid 0.25 | Centroid 0.5 | Centroid 1.0 | Overlap >0 | Overlap >0.2 | Overlap >0.5 |
 |------:|------:|------:|------:|------:|------:|------:|------:|------:|
 | 0.00005 | 29 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |

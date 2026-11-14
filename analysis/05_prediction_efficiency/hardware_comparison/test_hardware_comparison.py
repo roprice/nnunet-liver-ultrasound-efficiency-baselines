@@ -84,6 +84,17 @@ class StatisticalTests(unittest.TestCase):
 
 
 class InputAndMaskTests(unittest.TestCase):
+    def test_single_mask_validation_excludes_only_cross_fold_aggregate(self):
+        row = dict(fact("a"), mean_pairwise_positive_fold_retained_mask_iou=0.5)
+        recalculated = dict(row, mean_pairwise_positive_fold_retained_mask_iou=None)
+        analysis.validate_recalculated_row(row, recalculated, "test/a")
+        for change in (dict(mass_dice=0.1), dict(reference_path="wrong.png")):
+            with self.subTest(change=change), self.assertRaisesRegex(ValueError, "Dataset facts differ"):
+                analysis.validate_recalculated_row(row, dict(recalculated, **change), "test/a")
+        del recalculated["mass_dice"]
+        with self.assertRaisesRegex(ValueError, "Dataset facts differ"):
+            analysis.validate_recalculated_row(row, recalculated, "test/a")
+
     def test_mask_agreement_distinguishes_liver_mass_and_full_labels(self):
         left = np.array([[0, 1], [2, 2]], dtype=np.uint8)
         right = np.array([[1, 1], [1, 2]], dtype=np.uint8)

@@ -1,4 +1,6 @@
 {
+  "dataset_snapshot": "eb8bd31e22f0",
+  "schema_version": 5,
   "description": "Sweep of a relative noise floor (fraction of image area) against the selected floor. 'lost' counts mass-present cases detected under the selected floor but missed under the candidate.",
   "aul_mean_area_px": 589926,
   "baseline_floor_fraction": 0.0003,
